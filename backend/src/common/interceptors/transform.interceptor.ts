@@ -28,12 +28,30 @@ export class TransformInterceptor<T> implements NestInterceptor<
     const statusCode = response.statusCode;
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        statusCode,
-        data: data !== undefined ? data : null,
-        timestamp: new Date().toISOString(),
-      })),
+      map((data: any) => {
+        let message = "Operation successful";
+        let actualData = data !== undefined ? data : null;
+        if (
+          data &&
+          typeof data === "object" &&
+          !Array.isArray(data) &&
+          "message" in data
+        ) {
+          message = data.message;
+          if ("data" in data) {
+            actualData = data.data;
+          } else if (Object.keys(data).length === 1) {
+            actualData = null;
+          }
+        }
+        return {
+          success: true,
+          statusCode,
+          message,
+          data: actualData,
+          timestamp: new Date().toISOString(),
+        };
+      }),
     );
   }
 }

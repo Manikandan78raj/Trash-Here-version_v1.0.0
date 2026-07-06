@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/common/api/client";
-import { toast } from "@/common/notifications/toast";
-import type { WalletSummary } from "./household.api";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/common/api/client';
+import { toast } from '@/common/notifications/toast';
+import type { WalletSummary } from './household.api';
 
 export interface RewardItem {
   id: string;
@@ -64,9 +64,9 @@ export interface WalletDashboardData {
 
 export const useWalletDashboard = () => {
   return useQuery({
-    queryKey: ["wallet", "dashboard"],
+    queryKey: ['wallet', 'dashboard'],
     queryFn: async () => {
-      const response = await apiClient.get<WalletDashboardData>("/wallet/dashboard");
+      const response = await apiClient.get<WalletDashboardData>('/wallet/dashboard');
       return response.data;
     },
     retry: 2,
@@ -76,9 +76,9 @@ export const useWalletDashboard = () => {
 
 export const useRewards = () => {
   return useQuery({
-    queryKey: ["wallet", "rewards"],
+    queryKey: ['wallet', 'rewards'],
     queryFn: async () => {
-      const response = await apiClient.get<RewardItem[]>("/wallet/rewards");
+      const response = await apiClient.get<RewardItem[]>('/wallet/rewards');
       return response.data;
     },
     staleTime: 60000,
@@ -87,9 +87,9 @@ export const useRewards = () => {
 
 export const useMyVouchers = () => {
   return useQuery({
-    queryKey: ["wallet", "my-vouchers"],
+    queryKey: ['wallet', 'my-vouchers'],
     queryFn: async () => {
-      const response = await apiClient.get<UserRewardItem[]>("/wallet/rewards/my-vouchers");
+      const response = await apiClient.get<UserRewardItem[]>('/wallet/rewards/my-vouchers');
       return response.data;
     },
     staleTime: 30000,
@@ -100,16 +100,16 @@ export const useRedeemReward = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ rewardId }: { rewardId: string }) => {
-      const response = await apiClient.post("/wallet/rewards/redeem", { rewardId });
+      const response = await apiClient.post('/wallet/rewards/redeem', { rewardId });
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`🎁 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to redeem reward voucher.");
+      toast.error(error?.response?.data?.message || 'Failed to redeem reward voucher.');
     },
   });
 };
@@ -118,24 +118,24 @@ export const useWithdrawCash = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ amount }: { amount: number }) => {
-      const response = await apiClient.post("/wallet/withdraw", { amount });
+      const response = await apiClient.post('/wallet/withdraw', { amount });
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`💸 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to process withdrawal.");
+      toast.error(error?.response?.data?.message || 'Failed to process withdrawal.');
     },
   });
 };
 
 export const useCoupons = () => {
   return useQuery({
-    queryKey: ["wallet", "coupons"],
+    queryKey: ['wallet', 'coupons'],
     queryFn: async () => {
-      const response = await apiClient.get<CouponItem[]>("/wallet/coupons");
+      const response = await apiClient.get<CouponItem[]>('/wallet/coupons');
       return response.data;
     },
     staleTime: 300000,
@@ -145,20 +145,22 @@ export const useCoupons = () => {
 export const useValidateCoupon = () => {
   return useMutation({
     mutationFn: async ({ code, orderAmount }: { code: string; orderAmount: number }) => {
-      const response = await apiClient.post("/wallet/coupons/validate", { code, orderAmount });
+      const response = await apiClient.post('/wallet/coupons/validate', { code, orderAmount });
       return response.data;
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Invalid or expired promo code.");
+      toast.error(error?.response?.data?.message || 'Invalid or expired promo code.');
     },
   });
 };
 
 export const useCurrentSubscription = () => {
   return useQuery({
-    queryKey: ["wallet", "subscription"],
+    queryKey: ['wallet', 'subscription'],
     queryFn: async () => {
-      const response = await apiClient.get<SubscriptionItem | null>("/wallet/subscriptions/current");
+      const response = await apiClient.get<SubscriptionItem | null>(
+        '/wallet/subscriptions/current',
+      );
       return response.data;
     },
     staleTime: 60000,
@@ -168,16 +170,22 @@ export const useCurrentSubscription = () => {
 export const useSubscribe = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ planName, paymentMethodId }: { planName: string; paymentMethodId?: string }) => {
-      const response = await apiClient.post("/wallet/subscriptions", { planName, paymentMethodId });
+    mutationFn: async ({
+      planName,
+      paymentMethodId,
+    }: {
+      planName: string;
+      paymentMethodId?: string;
+    }) => {
+      const response = await apiClient.post('/wallet/subscriptions', { planName, paymentMethodId });
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`👑 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to enroll in subscription.");
+      toast.error(error?.response?.data?.message || 'Failed to enroll in subscription.');
     },
   });
 };
@@ -186,15 +194,15 @@ export const useCancelSubscription = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ reason }: { reason?: string } = {}) => {
-      const response = await apiClient.post("/wallet/subscriptions/cancel", { reason });
+      const response = await apiClient.post('/wallet/subscriptions/cancel', { reason });
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`🚫 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to cancel subscription.");
+      toast.error(error?.response?.data?.message || 'Failed to cancel subscription.');
     },
   });
 };
@@ -202,17 +210,22 @@ export const useCancelSubscription = () => {
 export const useProcessCheckout = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (dto: { amount: number; currency?: string; pickupRequestId?: string; couponCode?: string }) => {
-      const response = await apiClient.post("/wallet/checkout", dto);
+    mutationFn: async (dto: {
+      amount: number;
+      currency?: string;
+      pickupRequestId?: string;
+      couponCode?: string;
+    }) => {
+      const response = await apiClient.post('/wallet/checkout', dto);
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`💳 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
-      queryClient.invalidateQueries({ queryKey: ["pickups"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['pickups'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Payment checkout failed.");
+      toast.error(error?.response?.data?.message || 'Payment checkout failed.');
     },
   });
 };
@@ -221,15 +234,15 @@ export const useProcessRefund = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (dto: { transactionId: string; amount: number; reason: string }) => {
-      const response = await apiClient.post("/wallet/refund", dto);
+      const response = await apiClient.post('/wallet/refund', dto);
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`🔄 Refund processed successfully ($${data.refundedAmount})`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Refund processing failed.");
+      toast.error(error?.response?.data?.message || 'Refund processing failed.');
     },
   });
 };
@@ -238,16 +251,16 @@ export const useClaimReferral = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ referralCode }: { referralCode: string }) => {
-      const response = await apiClient.post("/wallet/referral/claim", { referralCode });
+      const response = await apiClient.post('/wallet/referral/claim', { referralCode });
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(`🤝 ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to claim referral bonus.");
+      toast.error(error?.response?.data?.message || 'Failed to claim referral bonus.');
     },
   });
 };

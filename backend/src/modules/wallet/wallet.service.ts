@@ -230,7 +230,9 @@ export class WalletService {
     }
 
     if (coupon.usedCount >= coupon.usageLimit) {
-      throw new BadRequestException(`Coupon code '${dto.code}' has reached its usage limit.`);
+      throw new BadRequestException(
+        `Coupon code '${dto.code}' has reached its usage limit.`,
+      );
     }
 
     const discountAmount = Math.min(
@@ -250,8 +252,10 @@ export class WalletService {
 
   async subscribe(userId: string, dto: CreateSubscriptionDto) {
     const wallet = await this.getWallet(userId);
-    const priceMonthly = dto.planName === SubscriptionPlanName.ECO_PRO ? 49.0 : 19.0;
-    const pickupsPerMonth = dto.planName === SubscriptionPlanName.ECO_PRO ? 5 : 2;
+    const priceMonthly =
+      dto.planName === SubscriptionPlanName.ECO_PRO ? 49.0 : 19.0;
+    const pickupsPerMonth =
+      dto.planName === SubscriptionPlanName.ECO_PRO ? 5 : 2;
 
     return this.prisma.$transaction(async (tx) => {
       const existing = await tx.subscription.findFirst({
@@ -329,7 +333,9 @@ export class WalletService {
       data: { status: "CANCELLED" },
     });
 
-    this.logger.log(`🚫 User ${userId} cancelled subscription ${existing.planName} (Reason: ${dto?.reason || "None"})`);
+    this.logger.log(
+      `🚫 User ${userId} cancelled subscription ${existing.planName} (Reason: ${dto?.reason || "None"})`,
+    );
 
     return {
       success: true,
@@ -376,7 +382,9 @@ export class WalletService {
         });
       }
 
-      this.logger.log(`💳 User ${userId} completed checkout of $${finalAmount}`);
+      this.logger.log(
+        `💳 User ${userId} completed checkout of $${finalAmount}`,
+      );
 
       return {
         success: true,
@@ -395,7 +403,9 @@ export class WalletService {
     });
 
     if (!originalTx) {
-      throw new NotFoundException(`Transaction '${dto.transactionId}' not found.`);
+      throw new NotFoundException(
+        `Transaction '${dto.transactionId}' not found.`,
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -415,7 +425,9 @@ export class WalletService {
         },
       });
 
-      this.logger.log(`🔄 Refunded $${dto.amount} to User ${userId} for Tx ${dto.transactionId}`);
+      this.logger.log(
+        `🔄 Refunded $${dto.amount} to User ${userId} for Tx ${dto.transactionId}`,
+      );
 
       return {
         success: true,
@@ -433,7 +445,9 @@ export class WalletService {
     });
 
     if (!referrer) {
-      throw new NotFoundException(`Referral code '${dto.referralCode}' is invalid.`);
+      throw new NotFoundException(
+        `Referral code '${dto.referralCode}' is invalid.`,
+      );
     }
 
     if (referrer.id === userId) {
@@ -442,7 +456,9 @@ export class WalletService {
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (user?.referredBy) {
-      throw new BadRequestException("You have already claimed a referral code.");
+      throw new BadRequestException(
+        "You have already claimed a referral code.",
+      );
     }
 
     const refereeWallet = await this.getWallet(userId);
@@ -503,14 +519,54 @@ export class WalletService {
         },
       });
 
-      this.logger.log(`🤝 Referral claimed: User ${userId} invited by ${referrer.id}`);
+      this.logger.log(
+        `🤝 Referral claimed: User ${userId} invited by ${referrer.id}`,
+      );
 
       return {
         success: true,
-        message: "Referral bonus claimed! Both you and your friend earned 200 Green Points and $5.00 cash.",
+        message:
+          "Referral bonus claimed! Both you and your friend earned 200 Green Points and $5.00 cash.",
         newPointsBalance: updatedRefereeWallet.pointsBalance,
         newCashBalance: updatedRefereeWallet.cashBalance,
       };
+    });
+  }
+
+  async creditEarnings(
+    userId: string,
+    amount: number,
+    pointsAmount: number = 0,
+    description: string = "Job completion earnings",
+  ) {
+    const wallet = await this.getWallet(userId);
+    return this.prisma.$transaction(async (tx) => {
+      const updatedWallet = await tx.wallet.update({
+        where: { userId },
+        data: {
+          cashBalance: { increment: amount },
+          pointsBalance: { increment: pointsAmount },
+          totalCashEarned: { increment: amount },
+          totalPointsEarned: { increment: pointsAmount },
+        },
+      });
+
+      const transaction = await tx.transaction.create({
+        data: {
+          userId,
+          walletId: wallet.id,
+          amount,
+          pointsAmount,
+          type: TransactionType.BONUS,
+          status: TransactionStatus.COMPLETED,
+          description,
+        },
+      });
+
+      this.logger.log(
+        `💰 Credited $${amount} and ${pointsAmount} pts to User ${userId}`,
+      );
+      return { wallet: updatedWallet, transaction };
     });
   }
 }

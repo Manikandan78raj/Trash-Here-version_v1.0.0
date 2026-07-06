@@ -131,7 +131,9 @@ describe("WalletService", () => {
   describe("getWalletDashboard", () => {
     it("should return complete dashboard summary", async () => {
       mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
-      mockPrismaService.subscription.findFirst.mockResolvedValue(mockSubscription);
+      mockPrismaService.subscription.findFirst.mockResolvedValue(
+        mockSubscription,
+      );
       mockPrismaService.transaction.findMany.mockResolvedValue([]);
       mockPrismaService.userReward.findMany.mockResolvedValue([]);
       mockPrismaService.user.findUnique.mockResolvedValue({

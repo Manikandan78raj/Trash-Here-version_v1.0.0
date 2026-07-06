@@ -32,9 +32,7 @@ describe("Wallet API Endpoints (e2e)", () => {
   });
 
   it("/api/v1/wallet (GET) - should return 401 Unauthorized without JWT", () => {
-    return request(app.getHttpServer())
-      .get("/api/v1/wallet")
-      .expect(401);
+    return request(app.getHttpServer()).get("/api/v1/wallet").expect(401);
   });
 
   it("/api/v1/wallet/dashboard (GET) - should return 401 Unauthorized without JWT", () => {

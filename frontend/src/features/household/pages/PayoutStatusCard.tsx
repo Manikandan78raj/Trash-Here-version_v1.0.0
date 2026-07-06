@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import { Card, Heading, Text, Button, Input, Badge } from "@/components/ui";
-import { useWithdrawCash } from "../api/wallet.api";
+import React, { useState } from 'react';
+import { Card, Heading, Text, Button, Input, Badge } from '@/components/ui';
+import { useWithdrawCash } from '../api/wallet.api';
 
 interface PayoutStatusCardProps {
   availableBalance: number;
 }
 
-export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({
-  availableBalance,
-}) => {
-  const [withdrawAmount, setWithdrawAmount] = useState<string>("");
+export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({ availableBalance }) => {
+  const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const withdrawMutation = useWithdrawCash();
 
   const handleWithdraw = () => {
@@ -19,7 +17,7 @@ export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({
       { amount: amt },
       {
         onSuccess: () => {
-          setWithdrawAmount("");
+          setWithdrawAmount('');
         },
       },
     );
@@ -28,7 +26,7 @@ export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({
   return (
     <Card className="p-6 rounded-[30px] backdrop-blur-md bg-gradient-to-br from-zinc-900 to-black text-white border border-zinc-800 shadow-2xl relative overflow-hidden">
       <div className="absolute top-0 right-0 w-48 h-48 bg-[rgb(215,255,67)]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-      
+
       <div className="space-y-6 relative z-10">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
@@ -60,7 +58,7 @@ export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({
               Instant Transfer Ready
             </span>
           </div>
-          
+
           <div className="flex gap-3">
             <div className="relative flex-1">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">
@@ -87,7 +85,7 @@ export const PayoutStatusCard: React.FC<PayoutStatusCardProps> = ({
               }
               className="px-6 rounded-xl bg-[rgb(215,255,67)] hover:bg-[rgb(195,235,47)] text-black font-bold transition-all"
             >
-              {withdrawMutation.isPending ? "Transferring..." : "Withdraw Now"}
+              {withdrawMutation.isPending ? 'Transferring...' : 'Withdraw Now'}
             </Button>
           </div>
         </div>
