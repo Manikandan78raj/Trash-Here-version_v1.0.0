@@ -1,0 +1,444 @@
+// ============================================================================
+// TRASH HERE - ENTERPRISE PRISMA POSTGRESQL SCHEMA
+// 19 Production Models for AI-Powered Smart Waste Management Platform
+// ============================================================================
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum RoleType {
+  USER
+  COLLECTOR
+  RECYCLER
+  ADMIN
+}
+
+enum PickupStatus {
+  PENDING
+  ASSIGNED
+  EN_ROUTE
+  ARRIVED
+  VERIFIED
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionType {
+  PAYOUT
+  REWARD_REDEMPTION
+  SUBSCRIPTION
+  PAYMENT
+  BONUS
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  TRIAL
+}
+
+// 1. Role Model
+model Role {
+  id          String   @id @default(uuid())
+  name        RoleType @unique
+  description String?
+  permissions String[] // Array of permission scopes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+// 2. User Model
+model User {
+  id               String           @id @default(uuid())
+  email            String           @unique
+  phone            String?          @unique
+  passwordHash     String?
+  fullName         String
+  avatarUrl        String?
+  roleId           String
+  role             Role             @relation(fields: [roleId], references: [id])
+  ecoScore         Int              @default(100)
+  carbonSavedKg    Float            @default(0.0)
+  referralCode     String           @unique @default(uuid())
+  referredBy       String?
+  isVerified       Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  addresses        Address[]
+  collectorProfile Collector?
+  pickupRequests   PickupRequest[]  @relation("UserPickups")
+  transactions     Transaction[]
+  wallet           Wallet?
+  userRewards      UserReward[]
+  notifications    Notification[]
+  subscriptions    Subscription[]
+  complaints       Complaint[]
+  reviews          Review[]         @relation("UserReviews")
+  supportTickets   SupportTicket[]
+  auditLogs        AuditLog[]
+
+  @@index([roleId])
+}
+
+// 3. Address Model
+model Address {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label            String          @default("Home") // Home, Office, Apartment
+  street           String
+  city             String
+  state            String
+  zipCode          String
+  country          String          @default("USA")
+  lat              Float           @default(37.7749)
+  lng              Float           @default(-122.4194)
+  isDefault        Boolean         @default(false)
+  instructions     String?
+  createdAt        DateTime        @default(now())
+  pickupRequests   PickupRequest[]
+
+  @@index([userId])
+}
+
+// 4. Collector Model
+model Collector {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOnline         Boolean         @default(true)
+  isAvailable      Boolean         @default(true)
+  rating           Float           @default(5.0)
+  totalCompleted   Int             @default(0)
+  totalEarnings    Float           @default(0.0)
+  currentLat       Float?          @default(37.7749)
+  currentLng       Float?          @default(-122.4194)
+  serviceRadiusKm  Int             @default(15)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  vehicles         Vehicle[]
+  assignedPickups  PickupRequest[] @relation("CollectorPickups")
+  reviewsReceived  Review[]        @relation("CollectorReviews")
+
+  @@index([isOnline, isAvailable])
+  @@index([rating])
+}
+
+// 5. Vehicle Model
+model Vehicle {
+  id               String          @id @default(uuid())
+  collectorId      String
+  collector        Collector       @relation(fields: [collectorId], references: [id], onDelete: Cascade)
+  type             String          // Electric Van, Mini Truck, Heavy Loader
+  licensePlate     String          @unique
+  capacityKg       Float
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([collectorId])
+}
+
+// 6. PickupRequest Model
+model PickupRequest {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation("UserPickups", fields: [userId], references: [id])
+  collectorId      String?
+  collector        Collector?      @relation("CollectorPickups", fields: [collectorId], references: [id])
+  addressId        String
+  address          Address         @relation(fields: [addressId], references: [id])
+  status           PickupStatus    @default(PENDING)
+  scheduledDate    DateTime
+  completedDate    DateTime?
+  estimatedWeightKg Float
+  actualWeightKg   Float?
+  rewardPoints     Int             @default(0)
+  estimatedPayout  Float           @default(0.0)
+  actualPayout     Float?
+  qrCodeSecret     String          @default(uuid())
+  aiVerified       Boolean         @default(false)
+  notes            String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  items            PickupItem[]
+  transactions     Transaction[]
+  complaints       Complaint[]
+  reviews          Review[]
+
+  @@index([userId])
+  @@index([collectorId])
+  @@index([addressId])
+  @@index([status])
+  @@index([scheduledDate])
+}
+
+// 7. PickupItem Model
+model PickupItem {
+  id               String          @id @default(uuid())
+  pickupRequestId  String
+  pickupRequest    PickupRequest   @relation(fields: [pickupRequestId], references: [id], onDelete: Cascade)
+  categoryId       String
+  category         WasteCategory   @relation(fields: [categoryId], references: [id])
+  estimatedWeightKg Float
+  actualWeightKg   Float?
+  aiConfidence     Float?          @default(0.95)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([pickupRequestId])
+  @@index([categoryId])
+}
+
+// 8. WasteCategory Model
+model WasteCategory {
+  id               String          @id @default(uuid())
+  name             String          @unique
+  slug             String          @unique
+  description      String
+  iconName         String          // Lucide icon name: Cpu, Recycle, Leaf, Trash2, ShieldAlert
+  pricePerKg       Float
+  pointMultiplier  Int             @default(10)
+  isHazardous      Boolean         @default(false)
+  co2SavedPerKg    Float           @default(2.5) // kg of CO2 offset per kg recycled
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  pickupItems      PickupItem[]
+}
+
+// 9. Transaction Model
+model Transaction {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  walletId         String?
+  wallet           Wallet?           @relation(fields: [walletId], references: [id])
+  pickupRequestId  String?
+  pickupRequest    PickupRequest?    @relation(fields: [pickupRequestId], references: [id])
+  amount           Float
+  pointsAmount     Int?              @default(0)
+  type             TransactionType
+  status           TransactionStatus @default(COMPLETED)
+  stripePaymentId  String?
+  description      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([walletId])
+  @@index([pickupRequestId])
+  @@index([type, status])
+}
+
+// 10. Reward Model
+model Reward {
+  id               String          @id @default(uuid())
+  title            String
+  description      String
+  pointsCost       Int
+  partnerName      String          // e.g. Starbucks, Airbnb, Patagonia, Whole Foods
+  discountValue    String          // e.g. "$15 OFF", "20% Discount", "Free Coffee"
+  couponCode       String          @unique
+  validUntil       DateTime
+  imageUrl         String
+  isActive         Boolean         @default(true)
+  redeemedCount    Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  userRewards      UserReward[]
+}
+
+// 11. Wallet Model
+model Wallet {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pointsBalance    Int             @default(500) // Signup bonus points
+  cashBalance      Float           @default(0.0)
+  totalPointsEarned Int            @default(500)
+  totalCashEarned  Float           @default(0.0)
+  currency         String          @default("USD")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  transactions     Transaction[]
+}
+
+// 12. Notification Model
+model Notification {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title            String
+  message          String
+  type             String          @default("INFO") // INFO, PICKUP, REWARD, ALERT
+  isRead           Boolean         @default(false)
+  linkUrl          String?
+  createdAt        DateTime        @default(now())
+
+  @@index([userId, isRead])
+}
+
+// 13. Subscription Model
+model Subscription {
+  id               String             @id @default(uuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planName         String             // "Eco Starter" | "Eco Pro" | "Enterprise Green"
+  priceMonthly     Float
+  pickupsPerMonth  Int
+  status           SubscriptionStatus @default(ACTIVE)
+  stripeSubId      String?
+  currentPeriodEnd DateTime
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([userId, status])
+}
+
+// 14. Complaint Model
+model Complaint {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  pickupRequestId  String?
+  pickupRequest    PickupRequest?  @relation(fields: [pickupRequestId], references: [id])
+  subject          String
+  description      String
+  status           ComplaintStatus @default(OPEN)
+  resolutionNotes  String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([pickupRequestId, status])
+}
+
+// 15. Review Model
+model Review {
+  id               String          @id @default(uuid())
+  pickupRequestId  String
+  pickupRequest    PickupRequest   @relation(fields: [pickupRequestId], references: [id])
+  userId           String
+  user             User            @relation("UserReviews", fields: [userId], references: [id])
+  collectorId      String
+  collector        Collector       @relation("CollectorReviews", fields: [collectorId], references: [id])
+  rating           Int             @default(5)
+  comment          String?
+  createdAt        DateTime        @default(now())
+
+  @@index([collectorId])
+  @@index([userId])
+  @@index([pickupRequestId])
+}
+
+// 16. SupportTicket Model
+model SupportTicket {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  category         String          // Billing, Pickup Delay, App Technical, General
+  subject          String
+  message          String
+  priority         TicketPriority  @default(MEDIUM)
+  status           ComplaintStatus @default(OPEN)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([userId, status])
+}
+
+// 17. Promotion Model
+model Promotion {
+  id               String          @id @default(uuid())
+  title            String
+  subtitle         String
+  bannerUrl        String
+  targetRole       RoleType        @default(USER)
+  validFrom        DateTime        @default(now())
+  validTo          DateTime
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+}
+
+// 18. Coupon Model
+model Coupon {
+  id               String          @id @default(uuid())
+  code             String          @unique
+  discountPercent  Float
+  maxDiscount      Float
+  validUntil       DateTime
+  usageLimit       Int             @default(100)
+  usedCount        Int             @default(0)
+  createdAt        DateTime        @default(now())
+}
+
+// 19. AuditLog Model
+model AuditLog {
+  id               String          @id @default(uuid())
+  userId           String?
+  user             User?           @relation(fields: [userId], references: [id])
+  action           String          // LOGIN, CREATE_PICKUP, COMPLETE_JOB, REDEEM_REWARD
+  entity           String          // User, PickupRequest, Reward, Wallet
+  entityId         String?
+  ipAddress        String?         @default("127.0.0.1")
+  details          String?
+  timestamp        DateTime        @default(now())
+
+  @@index([userId])
+  @@index([action, entity])
+  @@index([timestamp])
+}
+
+// 20. UserReward Model (User redeemed partner vouchers)
+model UserReward {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rewardId       String
+  reward         Reward    @relation(fields: [rewardId], references: [id])
+  redeemedCode   String    @unique // e.g. "SBX-8821-ECO"
+  pointsSpent    Int
+  status         String    @default("ACTIVE") // ACTIVE, USED, EXPIRED
+  redeemedAt     DateTime  @default(now())
+  usedAt         DateTime?
+
+  @@index([userId, status])
+  @@index([rewardId])
+}
+

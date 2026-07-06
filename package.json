@@ -1,0 +1,47 @@
+{
+  "name": "trash-here-enterprise",
+  "version": "1.0.0",
+  "description": "Trash Here - AI-Powered Smart Waste Management Platform (Google Staff Engineer + Airbnb Design Quality)",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run start:dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build": "npm run build:backend && npm run build:frontend",
+    "lint:backend": "npm run lint --workspace=backend",
+    "lint:frontend": "npm run lint --workspace=frontend",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "typecheck:backend": "npm run typecheck --workspace=backend",
+    "typecheck:frontend": "npm run typecheck --workspace=frontend",
+    "typecheck": "npm run typecheck:backend && npm run typecheck:frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:frontend": "npm run test --workspace=frontend",
+    "test": "npm run test:backend && npm run test:frontend",
+    "db:validate": "npm run db:generate --workspace=backend && npx prisma validate --schema=backend/prisma/schema.prisma",
+    "db:migrate": "npm run db:migrate --workspace=backend",
+    "db:seed": "npm run db:seed --workspace=backend",
+    "db:studio": "npm run db:studio --workspace=backend"
+  },
+  "keywords": [
+    "waste-management",
+    "sustainability",
+    "recycling",
+    "ai",
+    "nestjs",
+    "react",
+    "prisma",
+    "postgres"
+  ],
+  "author": "Senior Staff Software Engineer @ Google & Senior Product Designer @ Airbnb",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@prisma/client": "^5.8.1",
+    "prisma": "^5.8.1"
+  }
+}

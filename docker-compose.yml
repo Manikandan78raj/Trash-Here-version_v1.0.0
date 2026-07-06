@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: trash_here_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: trash_here
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d trash_here"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - trash_here_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: trash_here_backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:password123@postgres:5432/trash_here?schema=public
+      JWT_SECRET: super-secret-enterprise-jwt-key-change-in-prod-2026
+      JWT_EXPIRES_IN: 15m
+      REFRESH_TOKEN_SECRET: super-secret-refresh-key-change-in-prod-2026
+      REFRESH_TOKEN_EXPIRES_IN: 7d
+      API_PREFIX: api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - trash_here_network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: trash_here_frontend
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - trash_here_network
+
+volumes:
+  postgres_data:
+
+networks:
+  trash_here_network:
+    driver: bridge
