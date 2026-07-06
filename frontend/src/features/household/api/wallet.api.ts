@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/common/api/client";
 import { toast } from "@/common/notifications/toast";
-import { WalletSummary } from "./household.api";
+import type { WalletSummary } from "./household.api";
 
 export interface RewardItem {
   id: string;

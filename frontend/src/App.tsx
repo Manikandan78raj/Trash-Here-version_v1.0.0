@@ -29,6 +29,24 @@ const LivePickupTrackingPage = lazy(() =>
   })),
 );
 
+const WalletDashboardPage = lazy(() =>
+  import('@/features/household/pages/WalletDashboardPage').then((module) => ({
+    default: module.WalletDashboardPage,
+  })),
+);
+
+const RewardsStorePage = lazy(() =>
+  import('@/features/household/pages/RewardsStorePage').then((module) => ({
+    default: module.RewardsStorePage,
+  })),
+);
+
+const SubscriptionPage = lazy(() =>
+  import('@/features/household/pages/SubscriptionPage').then((module) => ({
+    default: module.SubscriptionPage,
+  })),
+);
+
 const PageLoadingFallback: React.FC = () => (
   <div className="space-y-6 p-6">
     <div className="flex items-center justify-between">
@@ -55,6 +73,9 @@ export const App: React.FC = () => {
             <Route path="app/book" element={<PickupBookingPage />} />
             <Route path="app/tracking" element={<LivePickupTrackingPage />} />
             <Route path="app/pickups/:id" element={<LivePickupTrackingPage />} />
+            <Route path="app/wallet" element={<WalletDashboardPage />} />
+            <Route path="app/rewards" element={<RewardsStorePage />} />
+            <Route path="app/subscriptions" element={<SubscriptionPage />} />
             <Route path="app/*" element={<HouseholdDashboard />} />
             <Route
               path="collector/*"

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, Home, Recycle, ShieldAlert, Calendar, Navigation } from 'lucide-react';
+import { Sparkles, Home, Recycle, ShieldAlert, Calendar, Navigation, Wallet, Gift, Crown } from 'lucide-react';
 import { cn } from './Typography';
 
 export interface SidebarProps {
@@ -69,6 +69,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, children }) => {
                 icon={<Navigation />}
                 label="Live Tracking"
                 badge="M3.3"
+                isCollapsed={!isOpen}
+              />
+              <SidebarItem
+                to="/app/wallet"
+                icon={<Wallet />}
+                label="Wallet & Ledger"
+                badge="S5"
+                isCollapsed={!isOpen}
+              />
+              <SidebarItem
+                to="/app/rewards"
+                icon={<Gift />}
+                label="Rewards Store"
+                badge="S5"
+                isCollapsed={!isOpen}
+              />
+              <SidebarItem
+                to="/app/subscriptions"
+                icon={<Crown />}
+                label="Eco Subscriptions"
+                badge="S5"
                 isCollapsed={!isOpen}
               />
               <SidebarItem

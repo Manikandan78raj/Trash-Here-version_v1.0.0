@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   Heading,
   Text,
   Button,
@@ -76,13 +79,12 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
   };
 
   return (
-    <Dialog
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Secure Eco Checkout"
-      className="max-w-md rounded-[30px] backdrop-blur-md bg-white/90 dark:bg-zinc-900/90 shadow-2xl border border-white/20"
-    >
-      <div className="space-y-6 p-2">
+    <Dialog open={isOpen} onOpenChange={(val) => !val && onClose()}>
+      <DialogContent className="max-w-md rounded-[30px] backdrop-blur-md bg-white/90 dark:bg-zinc-900/90 shadow-2xl border border-white/20">
+        <DialogHeader>
+          <DialogTitle>Secure Eco Checkout</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-6 p-2">
         <div className="text-center space-y-1">
           <Badge variant="success" className="bg-[rgb(215,255,67)] text-black font-semibold px-3 py-1 rounded-full">
             Stripe Simulated Checkout
@@ -155,6 +157,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
           </Button>
         </div>
       </div>
+      </DialogContent>
     </Dialog>
   );
 };

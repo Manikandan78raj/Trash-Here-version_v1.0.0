@@ -15,6 +15,9 @@ import {
   TableCell,
   Input,
   Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui";
 import { useWalletDashboard, useClaimReferral } from "../api/wallet.api";
 import { PaymentCheckoutModal } from "./PaymentCheckoutModal";
@@ -270,13 +273,12 @@ export const WalletDashboardPage: React.FC = () => {
       />
 
       {/* Refer & Earn Modal */}
-      <Dialog
-        isOpen={isReferralOpen}
-        onClose={() => setIsReferralOpen(false)}
-        title="Claim Referral Bonus"
-        className="max-w-md rounded-[30px] p-6 bg-white dark:bg-zinc-900 border border-zinc-800 shadow-2xl"
-      >
-        <div className="space-y-4 pt-2">
+      <Dialog open={isReferralOpen} onOpenChange={(val) => !val && setIsReferralOpen(false)}>
+        <DialogContent className="max-w-md rounded-[30px] p-6 bg-white dark:bg-zinc-900 border border-zinc-800 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle>Claim Referral Bonus</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
           <Text variant="muted" className="text-sm">
             Enter a friend's invite code to claim your welcome bonus of 200 Green Points and $5.00 cash!
           </Text>
@@ -309,6 +311,7 @@ export const WalletDashboardPage: React.FC = () => {
             </Button>
           </div>
         </div>
+        </DialogContent>
       </Dialog>
     </div>
   );
