@@ -14,6 +14,7 @@ import { HealthModule } from "./modules/health/health.module";
 import { NotificationsModule } from "./modules/notifications/notifications.module";
 import { ProfileModule } from "./modules/profile/profile.module";
 import { SettingsModule } from "./modules/settings/settings.module";
+import { RecyclerModule } from "./modules/recycler/recycler.module";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SettingsModule } from "./modules/settings/settings.module";
     NotificationsModule,
     ProfileModule,
     SettingsModule,
+    RecyclerModule,
   ],
   controllers: [],
   providers: [

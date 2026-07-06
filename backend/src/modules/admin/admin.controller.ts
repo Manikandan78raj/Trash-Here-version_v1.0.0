@@ -1,64 +1,125 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import { AdminService } from './admin.service';
+import { AdminRbacService } from './services/admin-rbac.service';
+import { AdminFleetService } from './services/admin-fleet.service';
+import { AdminFinanceService } from './services/admin-finance.service';
+import { AdminAuditService } from './services/admin-audit.service';
+import { AdminImpersonationService } from './services/admin-impersonation.service';
+import { AdminConfigService } from './services/admin-config.service';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from "@nestjs/swagger";
-import { AdminService } from "./admin.service";
-import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { RoleType } from "@prisma/client";
+  AssignRoleDto,
+  CreateDispatchOrderDto,
+  ReassignRouteDto,
+  StartImpersonationDto,
+  StopImpersonationDto,
+  UpdateSystemConfigDto,
+  AuditFilterDto,
+  FinanceReconcileDto,
+} from './dto/admin.dto';
+import { RoleType } from '@prisma/client';
 
-@ApiTags("Enterprise Admin Command Center")
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(RoleType.ADMIN)
-@ApiBearerAuth("access-token")
-@Controller("admin")
+@Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly rbacService: AdminRbacService,
+    private readonly fleetService: AdminFleetService,
+    private readonly financeService: AdminFinanceService,
+    private readonly auditService: AdminAuditService,
+    private readonly impersonationService: AdminImpersonationService,
+    private readonly configService: AdminConfigService
+  ) {}
 
-  @Get("analytics")
-  @ApiOperation({
-    summary:
-      "Get high-level system analytics, waste volume, revenue, and carbon offset",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Enterprise analytics data returned",
-  })
+  // --- Legacy & Overview Analytics Endpoints ---
+  @Get('analytics')
   async getAnalytics() {
     return this.adminService.getAnalytics();
   }
 
-  @Get("users")
-  @ApiOperation({
-    summary: "Get all registered users with wallets and eco scores",
-  })
-  async getUsers() {
-    return this.adminService.getUsers();
+  @Get('analytics/chart')
+  async getAnalyticsChartData(@Query('period') period?: string) {
+    return this.adminService.getAnalyticsChartData(period || '30d');
   }
 
-  @Get("collectors")
-  @ApiOperation({
-    summary: "Get all waste collectors with vehicle ratings and earnings",
-  })
-  async getCollectors() {
-    return this.adminService.getCollectors();
+  @Get('activity')
+  async getRecentActivity(@Query('limit') limit?: string) {
+    return this.adminService.getRecentActivity(limit ? parseInt(limit, 10) : 20);
   }
 
-  @Get("pickups")
-  @ApiOperation({ summary: "Get live system feed of all pickup requests" })
-  async getPickups() {
-    return this.adminService.getPickups();
+  @Get('status')
+  async getSystemStatus() {
+    return this.adminService.getSystemStatus();
   }
 
-  @Get("revenue")
-  @ApiOperation({
-    summary: "Get detailed financial revenue and transaction report",
-  })
-  async getRevenueReport() {
-    return this.adminService.getRevenueReport();
+  // --- RBAC Endpoints ---
+  @Post('roles/assign')
+  async assignRole(@Body() dto: AssignRoleDto) {
+    return this.rbacService.assignRole(dto);
+  }
+
+  @Get('users/role/:roleType')
+  async getUsersByRole(@Param('roleType') roleType: RoleType) {
+    return this.rbacService.getUsersByRole(roleType);
+  }
+
+  // --- Fleet & Dispatch Endpoints ---
+  @Get('fleet/map')
+  async getLiveFleetMap() {
+    return this.fleetService.getLiveFleetMap();
+  }
+
+  @Post('dispatch/order')
+  async createDispatchOrder(@Body() dto: CreateDispatchOrderDto) {
+    return this.fleetService.createDispatchOrder(dto);
+  }
+
+  @Put('dispatch/reassign')
+  async reassignRoute(@Body() dto: ReassignRouteDto) {
+    return this.fleetService.reassignRoute(dto);
+  }
+
+  // --- Finance & P&L Endpoints ---
+  @Get('finance/pnl')
+  async getPnLSnapshot(@Query() query: FinanceReconcileDto) {
+    const start = query.startDate ? new Date(query.startDate) : new Date('2026-01-01');
+    const end = query.endDate ? new Date(query.endDate) : new Date('2026-12-31');
+    return this.financeService.calculatePnL(start, end);
+  }
+
+  @Post('finance/reconcile')
+  async reconcileLedgers() {
+    return this.financeService.reconcileLedgers();
+  }
+
+  // --- Audit & Security Endpoints ---
+  @Get('audit/logs')
+  async getAuditLogs(@Query() filter: AuditFilterDto) {
+    return this.auditService.getAuditLogs(filter);
+  }
+
+  // --- Impersonation Endpoints ---
+  @Post('impersonate/start')
+  async startImpersonation(@Req() req: any, @Body() dto: StartImpersonationDto) {
+    const adminId = req.user?.id || 'usr-admin-default';
+    const ip = req.ip || '127.0.0.1';
+    const ua = req.headers?.['user-agent'] || 'Unknown';
+    return this.impersonationService.startImpersonation(adminId, dto, ip, ua);
+  }
+
+  @Post('impersonate/stop')
+  async stopImpersonation(@Body() dto: StopImpersonationDto) {
+    return this.impersonationService.stopImpersonation(dto.impersonationLogId);
+  }
+
+  // --- System Config Endpoints ---
+  @Get('config')
+  async getAllConfigs() {
+    return this.configService.getAllConfigs();
+  }
+
+  @Put('config')
+  async updateConfig(@Req() req: any, @Body() dto: UpdateSystemConfigDto) {
+    const adminId = req.user?.id || 'usr-admin-default';
+    return this.configService.updateConfig(adminId, dto);
   }
 }

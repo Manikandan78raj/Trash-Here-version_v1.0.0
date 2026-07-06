@@ -17,6 +17,10 @@ enum RoleType {
   COLLECTOR
   RECYCLER
   ADMIN
+  SUPER_ADMIN
+  DISPATCHER
+  FINANCE_MANAGER
+  SUPPORT_AGENT
 }
 
 enum PickupStatus {
@@ -84,6 +88,104 @@ enum NotificationCategory {
   PROMOTION
 }
 
+enum LoadStatus {
+  ARRIVED
+  WEIGHING_IN
+  INSPECTING
+  UNLOADING
+  WEIGHING_OUT
+  ACCEPTED
+  REJECTED
+  CONTAMINATED
+}
+
+enum IntakeSourceType {
+  MUNICIPAL
+  COMMERCIAL
+  COLLECTOR_FLEET
+  PUBLIC_DROP_OFF
+}
+
+enum InspectionGrade {
+  GRADE_A_PURE
+  GRADE_B_MINOR_SORT
+  GRADE_C_HEAVY_SORT
+  REJECTED_HAZARDOUS
+}
+
+enum ContaminantType {
+  BIOLOGICAL_HAZARD
+  NON_RECYCLABLE_PLASTIC
+  HEAVY_METALS
+  ELECTRONIC_WASTE
+  CHEMICAL_RESIDUE
+  OIL_GREASE
+  GENERAL_DEBRIS
+}
+
+enum ContaminantSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ContaminantAction {
+  SORTED_OUT
+  PENALTY_APPLIED
+  LOAD_REJECTED
+  QUARANTINED
+}
+
+enum BatchStatus {
+  RAW_INTAKE
+  IN_SORTING
+  SHREDDING
+  WASHING
+  PELLETIZING
+  READY_FOR_SALE
+  SOLD
+}
+
+enum ProcessingStage {
+  SORTING
+  SHREDDING
+  WASHING
+  PELLETIZING
+  COMPACTING
+  BALING
+}
+
+enum ProcessingStatus {
+  QUEUED
+  IN_PROGRESS
+  COMPLETED
+  HALTED_MAINTENANCE
+}
+
+enum EsgComplianceStatus {
+  COMPLIANT
+  UNDER_REVIEW
+  NON_COMPLIANT
+}
+
+enum ManifestType {
+  INTAKE_RECEIPT
+  WEIGHT_CERTIFICATE
+  QUALITY_INSPECTION
+  ESG_COMPLIANCE_MANIFEST
+  TRANSFER_BILL_OF_LADING
+}
+
+enum DispatchStatus {
+  QUEUED
+  OFFERED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
 // 1. Role Model
 model Role {
   id          String   @id @default(uuid())
@@ -120,6 +222,7 @@ model User {
 
   addresses        Address[]
   collectorProfile Collector?
+  recyclerProfile  RecyclerProfile?
   pickupRequests   PickupRequest[]  @relation("UserPickups")
   transactions     Transaction[]
   wallet           Wallet?
@@ -132,6 +235,8 @@ model User {
   auditLogs        AuditLog[]
   settings         UserSettings?
   gdprExports      GdprExport[]
+  impersonationsPerformed AdminImpersonationLog[] @relation("AdminImpersonations")
+  impersonationsReceived  AdminImpersonationLog[] @relation("TargetImpersonations")
 
   @@index([roleId])
 }
@@ -179,6 +284,8 @@ model Collector {
   vehicles         Vehicle[]
   assignedPickups  PickupRequest[] @relation("CollectorPickups")
   reviewsReceived  Review[]        @relation("CollectorReviews")
+  incomingLoads    IncomingLoad[]  @relation("CollectorLoads")
+  dispatchOrders   DispatchOrder[]
 
   @@index([isOnline, isAvailable])
   @@index([rating])
@@ -226,6 +333,7 @@ model PickupRequest {
   transactions     Transaction[]
   complaints       Complaint[]
   reviews          Review[]
+  dispatchOrders   DispatchOrder[]
 
   @@index([userId])
   @@index([collectorId])
@@ -265,7 +373,9 @@ model WasteCategory {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 
-  pickupItems      PickupItem[]
+  pickupItems          PickupItem[]
+  materialBatches      MaterialBatch[]
+  warehouseInventories WarehouseInventory[]
 }
 
 // 9. Transaction Model
@@ -524,4 +634,295 @@ model GdprExport {
 
   @@index([userId, status])
 }
+
+// 23. RecyclerProfile Model (Recycler Facilities)
+model RecyclerProfile {
+  id                     String               @id @default(uuid())
+  userId                 String               @unique
+  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  facilityName           String
+  facilityCode           String               @unique // e.g., "REC-SF-01"
+  licenseNumber          String               @unique // e.g., "EPA-CA-99281"
+  address                String               // Physical facility location
+  capacityDailyTons      Float                @default(50.0)
+  operatingHours         String               @default("06:00 - 22:00 MON-SAT")
+  contactPhone           String?
+  certificationStandards String[]             // ["ISO_14001", "E_STEWARDS", "R2_CERTIFIED"]
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  incomingLoads          IncomingLoad[]
+  scaleRecords           ScaleRecord[]
+  qualityInspections     QualityInspection[]
+  materialBatches        MaterialBatch[]
+  warehouseInventories   WarehouseInventory[]
+  processingQueue        ProcessingQueue[]
+  esgReports             EsgReport[]
+  pdfManifests           PdfManifest[]
+
+  @@index([facilityCode])
+  @@index([licenseNumber])
+}
+
+// 24. IncomingLoad Model (Waste Intake Records)
+model IncomingLoad {
+  id               String            @id @default(uuid())
+  recyclerId       String
+  recycler         RecyclerProfile   @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  collectorId      String?
+  collector        Collector?        @relation("CollectorLoads", fields: [collectorId], references: [id], onDelete: SetNull)
+  truckPlate       String            // License plate of delivery vehicle
+  driverName       String
+  status           LoadStatus        @default(ARRIVED)
+  sourceType       IntakeSourceType  @default(COLLECTOR_FLEET)
+  manifestNumber   String            @unique // e.g., "LD-2026-88192"
+  scheduledArrival DateTime
+  actualArrival    DateTime          @default(now())
+  departedAt       DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  scaleRecord      ScaleRecord?
+  qualityInspection QualityInspection?
+  materialBatches  MaterialBatch[]
+  pdfManifests     PdfManifest[]
+
+  @@index([recyclerId, status])
+  @@index([collectorId])
+  @@index([manifestNumber])
+  @@index([actualArrival])
+}
+
+// 25. ScaleRecord Model (Digital Scale Weight Verification)
+model ScaleRecord {
+  id               String          @id @default(uuid())
+  loadId           String          @unique
+  load             IncomingLoad    @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  recyclerId       String
+  recycler         RecyclerProfile @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  scaleId          String          @default("SCALE-BRIDGE-01")
+  grossWeightKg    Float           // Weight of loaded vehicle
+  tareWeightKg     Float           // Weight of empty vehicle after unloading
+  netWeightKg      Float           // Calculated waste weight (gross - tare)
+  weighInTimestamp DateTime        @default(now())
+  weighOutTimestamp DateTime?
+  weighmasterName  String
+  signatureUrl     String?
+  digitalSeal      String          // HMAC SHA-256 cryptographic seal for tamper-proofing
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([recyclerId, weighInTimestamp])
+  @@index([scaleId])
+}
+
+// 26. QualityInspection Model (Material Purity & Grading)
+model QualityInspection {
+  id               String            @id @default(uuid())
+  loadId           String            @unique
+  load             IncomingLoad      @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  recyclerId       String
+  recycler         RecyclerProfile   @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  inspectorName    String
+  overallGrade     InspectionGrade   @default(GRADE_A_PURE)
+  moisturePercent  Float             @default(2.5) // % moisture content
+  contaminationRate Float            @default(1.2) // % contamination by weight
+  notes            String?
+  inspectedAt      DateTime          @default(now())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  contaminationFlags ContaminationFlag[]
+
+  @@index([recyclerId, overallGrade])
+  @@index([inspectedAt])
+}
+
+// 27. ContaminationFlag Model (Contaminant Detection & Penalties)
+model ContaminationFlag {
+  id                String              @id @default(uuid())
+  inspectionId      String
+  inspection        QualityInspection   @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  contaminantType   ContaminantType
+  severity          ContaminantSeverity @default(MEDIUM)
+  estimatedWeightKg Float
+  photoUrl          String?
+  actionTaken       ContaminantAction   @default(SORTED_OUT)
+  createdAt         DateTime            @default(now())
+
+  @@index([inspectionId])
+  @@index([contaminantType, severity])
+}
+
+// 28. MaterialBatch Model (Sorted Material Lots & Tracking)
+model MaterialBatch {
+  id               String          @id @default(uuid())
+  batchNumber      String          @unique // e.g., "BAT-2026-0707-PET"
+  recyclerId       String
+  recycler         RecyclerProfile @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  loadId           String?
+  load             IncomingLoad?   @relation(fields: [loadId], references: [id], onDelete: SetNull)
+  categoryId       String
+  category         WasteCategory   @relation(fields: [categoryId], references: [id])
+  weightKg         Float
+  purityPercent    Float           @default(98.5)
+  status           BatchStatus     @default(RAW_INTAKE)
+  warehouseLocation String         @default("BAY-A1") // Storage bay or zone
+  processedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  processingQueueItems ProcessingQueue[]
+
+  @@index([recyclerId, status])
+  @@index([categoryId])
+  @@index([batchNumber])
+}
+
+// 29. WarehouseInventory Model (Facility Stock & Purity Aggregation)
+model WarehouseInventory {
+  id                String          @id @default(uuid())
+  recyclerId        String
+  recycler          RecyclerProfile @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  categoryId        String
+  category          WasteCategory   @relation(fields: [categoryId], references: [id])
+  totalWeightKg     Float           @default(0.0)
+  allocatedWeightKg Float           @default(0.0) // Reserved for active processing or sales orders
+  availableWeightKg Float           @default(0.0) // Free stock ready for allocation
+  averagePurity     Float           @default(98.0)
+  lastAuditedAt     DateTime        @default(now())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([recyclerId, categoryId])
+  @@index([recyclerId])
+}
+
+// 30. ProcessingQueue Model (Manufacturing & Recycling Operations)
+model ProcessingQueue {
+  id               String           @id @default(uuid())
+  recyclerId       String
+  recycler         RecyclerProfile  @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  batchId          String
+  batch            MaterialBatch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  machineId        String           // e.g., "SHREDDER-LINE-01", "WASHING-UNIT-03"
+  processStage     ProcessingStage  @default(SORTING)
+  status           ProcessingStatus @default(QUEUED)
+  inputWeightKg    Float
+  outputWeightKg   Float?
+  wasteLossKg      Float?           // Material lost during processing (evaporation, residue)
+  operatorName     String
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([recyclerId, status])
+  @@index([batchId])
+  @@index([machineId])
+}
+
+// 31. EsgReport Model (Environmental, Social, Governance & Carbon Offsets)
+model EsgReport {
+  id                    String              @id @default(uuid())
+  reportNumber          String              @unique // e.g., "ESG-2026-Q2-REV"
+  recyclerId            String
+  recycler              RecyclerProfile     @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  reportingPeriod       String              // e.g., "2026-Q2", "2026-ANNUAL"
+  startDate             DateTime
+  endDate               DateTime
+  totalIntakeKg         Float
+  totalProcessedKg      Float
+  totalRecycledKg       Float
+  landfillDiversionRate Float               // e.g., 96.4%
+  co2OffsetKg           Float               // Total carbon emissions prevented
+  energySavedKwh        Float               // Energy conserved vs virgin material production
+  waterSavedLiters      Float               // Water conserved vs virgin material production
+  complianceStatus      EsgComplianceStatus @default(COMPLIANT)
+  generatedBy           String              @default("SYSTEM_ESG_ENGINE")
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  manifests             PdfManifest[]
+
+  @@index([recyclerId, reportingPeriod])
+  @@index([complianceStatus])
+}
+
+// 32. PdfManifest Model (Tamper-Proof Legal & ESG Documentation)
+model PdfManifest {
+  id             String          @id @default(uuid())
+  manifestNumber String          @unique // e.g., "MAN-2026-88912"
+  recyclerId     String
+  recycler       RecyclerProfile @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  loadId         String?
+  load           IncomingLoad?   @relation(fields: [loadId], references: [id], onDelete: SetNull)
+  esgReportId    String?
+  esgReport      EsgReport?      @relation(fields: [esgReportId], references: [id], onDelete: SetNull)
+  manifestType   ManifestType    @default(INTAKE_RECEIPT)
+  fileUrl        String          // Secure Cloudinary / S3 PDF URL
+  fileSizeBytes  Int             @default(245760) // ~240 KB
+  sha256Hash     String          // Immutable cryptographic hash of PDF contents
+  issuedTo       String          // Entity receiving manifest (e.g., EPA, Municipal Gov, Corporate Partner)
+  issuedAt       DateTime        @default(now())
+  createdAt      DateTime        @default(now())
+
+  @@index([recyclerId, manifestType])
+  @@index([loadId])
+  @@index([esgReportId])
+  @@index([manifestNumber])
+}
+
+// 33. AdminImpersonationLog Model (Secure Admin User Impersonation & Audit)
+model AdminImpersonationLog {
+  id             String   @id @default(uuid())
+  adminId        String
+  admin          User     @relation("AdminImpersonations", fields: [adminId], references: [id], onDelete: Cascade)
+  targetUserId   String
+  targetUser     User     @relation("TargetImpersonations", fields: [targetUserId], references: [id], onDelete: Cascade)
+  reason         String   // Mandatory explanation for customer support/audit
+  ipAddress      String?  @default("127.0.0.1")
+  userAgent      String?
+  startedAt      DateTime @default(now())
+  endedAt        DateTime?
+  
+  @@index([adminId])
+  @@index([targetUserId])
+  @@index([startedAt])
+}
+
+// 34. SystemConfig Model (Platform Key-Value Settings & Feature Flags)
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique // e.g., "BASE_PICKUP_FEE_USD", "GREEN_POINT_VALUE_USD", "AUTO_DISPATCH_RADIUS_KM"
+  value       String   // Stringified JSON or raw setting value
+  description String?
+  updatedBy   String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([key])
+}
+
+// 35. DispatchOrder Model (Live Fleet Dispatch Queue & Algorithm Scoring)
+model DispatchOrder {
+  id              String         @id @default(uuid())
+  pickupRequestId String
+  pickupRequest   PickupRequest  @relation(fields: [pickupRequestId], references: [id], onDelete: Cascade)
+  collectorId     String?
+  collector       Collector?     @relation(fields: [collectorId], references: [id], onDelete: SetNull)
+  status          DispatchStatus @default(QUEUED)
+  offeredAt       DateTime       @default(now())
+  expiresAt       DateTime
+  respondedAt     DateTime?
+  dispatchScore   Float?         @default(0.0) // Algorithmic score (ETA, distance, collector rating)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([pickupRequestId, status])
+  @@index([collectorId, status])
+  @@index([expiresAt])
+}
+
+
 
