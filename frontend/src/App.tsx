@@ -65,8 +65,33 @@ const CollectorWorkspacePage = lazy(() =>
   })),
 );
 
+// Marketing & SEO Hub Lazy Loading
+const PublicLayout = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PublicLayout })));
+const HomePage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.HomePage })));
+const AboutPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.AboutPage })));
+const FeaturesPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.FeaturesPage })));
+const HowItWorksPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.HowItWorksPage })));
+const EcoCalculatorPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.EcoCalculatorPage })));
+const PricingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PricingPage })));
+const BusinessSolutionsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BusinessSolutionsPage })));
+const CollectorsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CollectorsPage })));
+const RecyclersPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.RecyclersPage })));
+const PartnersPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PartnersPage })));
+const TestimonialsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.TestimonialsPage })));
+const FaqPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.FaqPage })));
+const BlogListingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BlogListingPage })));
+const BlogDetailPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BlogDetailPage })));
+const CareersListingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CareersListingPage })));
+const CareerDetailPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CareerDetailPage })));
+const ContactPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.ContactPage })));
+const InvestorRelationsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.InvestorRelationsPage })));
+const PrivacyPolicyPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PrivacyPolicyPage })));
+const TermsConditionsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.TermsConditionsPage })));
+const CookiesPolicyPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CookiesPolicyPage })));
+const Custom404Page = lazy(() => import('@/features/marketing').then((m) => ({ default: m.Custom404Page })));
+
 const PageLoadingFallback: React.FC = () => (
-  <div className="space-y-6 p-6">
+  <div className="space-y-6 p-6 min-h-screen bg-slate-950 text-slate-100">
     <div className="flex items-center justify-between">
       <Skeleton variant="text" width="40%" height="3rem" />
       <Skeleton variant="rectangular" width="120px" height="2.5rem" />
@@ -85,23 +110,60 @@ export const App: React.FC = () => {
     <ErrorBoundary>
       <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<DesignSystemShowcase />} />
-            <Route path="app" element={<HouseholdDashboard />} />
-            <Route path="app/book" element={<PickupBookingPage />} />
-            <Route path="app/tracking" element={<LivePickupTrackingPage />} />
-            <Route path="app/pickups/:id" element={<LivePickupTrackingPage />} />
-            <Route path="app/wallet" element={<WalletDashboardPage />} />
-            <Route path="app/rewards" element={<RewardsStorePage />} />
-            <Route path="app/subscriptions" element={<SubscriptionPage />} />
-            <Route path="app/settings" element={<HubPage />} />
-            <Route path="app/profile" element={<HubPage />} />
-            <Route path="app/notifications" element={<NotificationsPage />} />
-            <Route path="app/*" element={<HouseholdDashboard />} />
-            <Route path="collector/*" element={<CollectorWorkspacePage />} />
-            <Route
-              path="admin/*"
-              element={
+          {/* Public Marketing Website & SEO Hub */}
+          <Route path="/" element={<PublicLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="features" element={<FeaturesPage />} />
+            <Route path="how-it-works" element={<HowItWorksPage />} />
+            <Route path="eco-calculator" element={<EcoCalculatorPage />} />
+            <Route path="pricing" element={<PricingPage />} />
+            <Route path="business" element={<BusinessSolutionsPage />} />
+            <Route path="collectors" element={<CollectorsPage />} />
+            <Route path="recyclers" element={<RecyclersPage />} />
+            <Route path="partners" element={<PartnersPage />} />
+            <Route path="testimonials" element={<TestimonialsPage />} />
+            <Route path="faq" element={<FaqPage />} />
+            <Route path="blog" element={<BlogListingPage />} />
+            <Route path="blog/:slug" element={<BlogDetailPage />} />
+            <Route path="careers" element={<CareersListingPage />} />
+            <Route path="careers/:slug" element={<CareerDetailPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="investor-relations" element={<InvestorRelationsPage />} />
+            <Route path="privacy" element={<PrivacyPolicyPage />} />
+            <Route path="terms" element={<TermsConditionsPage />} />
+            <Route path="cookies" element={<CookiesPolicyPage />} />
+          </Route>
+
+          {/* Internal Logged-In Application & Dashboards */}
+          <Route path="/app" element={<AppLayout />}>
+            <Route index element={<HouseholdDashboard />} />
+            <Route path="book" element={<PickupBookingPage />} />
+            <Route path="tracking" element={<LivePickupTrackingPage />} />
+            <Route path="pickups/:id" element={<LivePickupTrackingPage />} />
+            <Route path="wallet" element={<WalletDashboardPage />} />
+            <Route path="rewards" element={<RewardsStorePage />} />
+            <Route path="subscriptions" element={<SubscriptionPage />} />
+            <Route path="settings" element={<HubPage />} />
+            <Route path="profile" element={<HubPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="showcase" element={<DesignSystemShowcase />} />
+            <Route path="*" element={<HouseholdDashboard />} />
+          </Route>
+
+          <Route
+            path="/collector/*"
+            element={
+              <AppLayout>
+                <CollectorWorkspacePage />
+              </AppLayout>
+            }
+          />
+
+          <Route
+            path="/admin/*"
+            element={
+              <AppLayout>
                 <Card className="p-12 text-center max-w-2xl mx-auto my-12 space-y-4">
                   <Heading level={2}>Enterprise Admin Dashboard</Heading>
                   <Text variant="muted">
@@ -109,22 +171,11 @@ export const App: React.FC = () => {
                     analytics, user tables, and waste pricing management.
                   </Text>
                 </Card>
-              }
-            />
-          </Route>
-          <Route
-            path="*"
-            element={
-              <div className="flex h-screen items-center justify-center p-4">
-                <Card className="p-10 text-center max-w-md">
-                  <Heading level={2}>404 — Page Not Found</Heading>
-                  <Text variant="muted" className="mt-2">
-                    The requested workspace or route does not exist.
-                  </Text>
-                </Card>
-              </div>
+              </AppLayout>
             }
           />
+
+          <Route path="*" element={<Custom404Page />} />
         </Routes>
       </Suspense>
     </ErrorBoundary>
@@ -132,3 +183,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

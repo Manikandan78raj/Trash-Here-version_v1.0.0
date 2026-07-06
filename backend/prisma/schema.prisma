@@ -924,5 +924,160 @@ model DispatchOrder {
   @@index([expiresAt])
 }
 
+// ============================================================================
+// SPRINT 10 MARKETING & SEO HUB MODELS
+// ============================================================================
 
+enum ContactStatus {
+  PENDING
+  REVIEWED
+  RESPONDED
+  SPAM
+}
 
+enum JobWorkplaceType {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  REVIEWING
+  INTERVIEWING
+  OFFERED
+  REJECTED
+}
+
+// 36. ContactSubmission Model (Public Contact Form Inquiries)
+model ContactSubmission {
+  id          String        @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  subject     String
+  message     String
+  ipAddress   String?       @default("127.0.0.1")
+  status      ContactStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([email])
+  @@index([status, createdAt])
+}
+
+// 37. NewsletterSubscriber Model (Email Marketing & Deduplication)
+model NewsletterSubscriber {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  source      String?   @default("landing_footer")
+  isActive    Boolean   @default(true)
+  verifiedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([email, isActive])
+}
+
+// 38. BlogPost Model (Programmatic SEO & Content Hub)
+model BlogPost {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  title           String
+  excerpt         String
+  content         String
+  authorName      String
+  authorRole      String
+  authorAvatar    String?
+  category        String
+  coverImage      String?
+  readTimeMinutes Int       @default(5)
+  isPublished     Boolean   @default(true)
+  publishedAt     DateTime  @default(now())
+  seoTitle        String?
+  seoDescription  String?
+  tags            String[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([slug, isPublished])
+  @@index([category])
+  @@index([publishedAt])
+}
+
+// 39. CareerJob Model (Job Openings & Hiring Postings)
+model CareerJob {
+  id             String           @id @default(uuid())
+  slug           String           @unique
+  title          String
+  department     String
+  location       String
+  employmentType String           @default("Full-time") // Full-time, Contract, Intern
+  workplaceType  JobWorkplaceType @default(REMOTE)
+  salaryRange    String?          // e.g. "$140,000 - $180,000 USD"
+  description    String
+  requirements   String[]
+  isPublished    Boolean          @default(true)
+  applications   CareerApplication[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([slug, isPublished])
+  @@index([department])
+}
+
+// 40. CareerApplication Model (Resume Ingest & Applicant Tracking)
+model CareerApplication {
+  id           String            @id @default(uuid())
+  jobId        String
+  job          CareerJob         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  phone        String
+  resumeUrl    String
+  coverLetter  String?
+  linkedinUrl  String?
+  portfolioUrl String?
+  status       ApplicationStatus @default(SUBMITTED)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([jobId, status])
+  @@index([email])
+}
+
+// 41. SeoMetadata Model (Dynamic Route-Specific SEO Tag Overrides)
+model SeoMetadata {
+  id             String   @id @default(uuid())
+  route          String   @unique // e.g. "/", "/eco-calculator", "/about"
+  title          String
+  description    String
+  canonicalUrl   String?
+  ogImage        String?
+  ogType         String   @default("website")
+  twitterCard    String   @default("summary_large_image")
+  keywords       String?
+  jsonLdSchema   String?  // Stringified JSON-LD schema
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([route])
+}
+
+// 42. PublicAnalyticsEvent Model (Pageview & Telemetry Ingestion)
+model PublicAnalyticsEvent {
+  id          String   @id @default(uuid())
+  eventName   String   // e.g. "PAGE_VIEW", "CALCULATOR_USE", "CTA_CLICK"
+  route       String
+  visitorId   String?
+  sessionId   String?
+  referrer    String?
+  userAgent   String?
+  ipAddress   String?  @default("127.0.0.1")
+  metadata    String?  // Stringified JSON metadata
+  timestamp   DateTime @default(now())
+
+  @@index([eventName, route])
+  @@index([timestamp])
+}

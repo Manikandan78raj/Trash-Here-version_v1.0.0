@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Trash Here Engineering &amp; Climate Blog</title>
+  <link>https://trashhere.com/blog</link>
+  <description>Dispatches on algorithmic waste routing, SHA-256 carbon manifests, weighbridge IoT telemetry, and circular economy infrastructure.</description>
+  <language>en-us</language>
+  <lastBuildDate>Mon, 06 Jul 2026 12:00:00 GMT</lastBuildDate>
+  <atom:link href="https://trashhere.com/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>How AI Polyline Routing Reduces Municipal Fuel Emissions by 38%</title>
+    <link>https://trashhere.com/blog/how-ai-polyline-routing-reduces-municipal-fuel-emissions-by-38-percent</link>
+    <description>Traditional garbage trucks follow rigid, static weekly schedules—driving thousands of miles of deadhead routes to empty half-full dumpsters while overflowing bins in dense commercial corridors sit unattended. At Trash Here, we took a radically different engineering approach.</description>
+    <pubDate>Mon, 06 Jul 2026 09:00:00 GMT</pubDate>
+    <guid isPermaLink="true">https://trashhere.com/blog/how-ai-polyline-routing-reduces-municipal-fuel-emissions-by-38-percent</guid>
+  </item>
+
+  <item>
+    <title>The Rise of SHA-256 Cryptographic Manifests in Corporate ESG Auditing</title>
+    <link>https://trashhere.com/blog/the-rise-of-sha-256-cryptographic-manifests-in-corporate-esg-auditing</link>
+    <description>For decades, corporate sustainability teams and environmental regulators have struggled with a fundamental flaw in recycling carbon accounting: the lack of verifiable, tamper-proof audit trails. Discover how Trash Here generates SHA-256 cryptographic manifests directly from 50-ton industrial weighbridge IoT telemetry.</description>
+    <pubDate>Fri, 03 Jul 2026 14:00:00 GMT</pubDate>
+    <guid isPermaLink="true">https://trashhere.com/blog/the-rise-of-sha-256-cryptographic-manifests-in-corporate-esg-auditing</guid>
+  </item>
+
+  <item>
+    <title>Monetizing Urban Scrap: How Independent Collectors Earn Instant Stripe Connect Payouts</title>
+    <link>https://trashhere.com/blog/monetizing-urban-scrap-how-independent-collectors-earn-instant-stripe-payouts</link>
+    <description>In traditional solid waste hauling, independent drivers and scrap collectors face exploitative brokerage fees and net-60 payment terms. By integrating automated double-entry ledger reconciliation with Stripe Connect, Trash Here enables instant payouts the second a load is weighed.</description>
+    <pubDate>Tue, 30 Jun 2026 11:00:00 GMT</pubDate>
+    <guid isPermaLink="true">https://trashhere.com/blog/monetizing-urban-scrap-how-independent-collectors-earn-instant-stripe-payouts</guid>
+  </item>
+</channel>
+</rss>

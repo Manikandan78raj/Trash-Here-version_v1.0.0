@@ -15,6 +15,7 @@ import { NotificationsModule } from "./modules/notifications/notifications.modul
 import { ProfileModule } from "./modules/profile/profile.module";
 import { SettingsModule } from "./modules/settings/settings.module";
 import { RecyclerModule } from "./modules/recycler/recycler.module";
+import { MarketingModule } from "./modules/marketing/marketing.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { RecyclerModule } from "./modules/recycler/recycler.module";
     ProfileModule,
     SettingsModule,
     RecyclerModule,
+    MarketingModule,
   ],
   controllers: [],
   providers: [

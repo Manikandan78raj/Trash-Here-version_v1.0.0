@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /features
+Allow: /how-it-works
+Allow: /eco-calculator
+Allow: /pricing
+Allow: /business
+Allow: /collectors
+Allow: /recyclers
+Allow: /partners
+Allow: /testimonials
+Allow: /faq
+Allow: /blog
+Allow: /careers
+Allow: /contact
+Allow: /investor-relations
+Allow: /privacy
+Allow: /terms
+Allow: /cookies
+
+# Protect internal logged-in dashboards & workspaces from search engine crawlers
+Disallow: /app/
+Disallow: /collector/
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap Location
+Sitemap: https://trashhere.com/sitemap.xml
