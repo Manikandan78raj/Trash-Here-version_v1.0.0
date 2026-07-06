@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Navbar } from '@/components/ui/Navbar';
 import { Sidebar } from '@/components/ui/Sidebar';
+import { socketService } from '@/features/hub';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -9,6 +11,14 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    socketService.connect(queryClient);
+    return () => {
+      socketService.disconnect();
+    };
+  }, [queryClient]);
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">

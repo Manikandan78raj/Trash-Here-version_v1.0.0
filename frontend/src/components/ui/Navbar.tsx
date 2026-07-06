@@ -1,8 +1,10 @@
 import React from 'react';
-import { Menu, Sun, Moon, Laptop, Bell, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Menu, Sun, Moon, Laptop, User } from 'lucide-react';
 import { useTheme } from '@/common/theme/useTheme';
 import { useAuth } from '@/common/auth/useAuth';
 import { Button } from './Button';
+import { NotificationBell } from '@/features/hub';
 
 export interface NavbarProps {
   onToggleSidebar?: () => void;
@@ -11,6 +13,7 @@ export interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const { theme, setTheme } = useTheme();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     if (theme === 'light') setTheme('dark');
@@ -58,36 +61,34 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
         </Button>
 
         {/* Notifications Bell */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative rounded-2xl hover:bg-muted/80 border border-border/40"
-          aria-label="Notifications"
-        >
-          <Bell className="h-5 w-5 text-muted-foreground" />
-          <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-primary glow-primary" />
-        </Button>
+        <NotificationBell />
 
         {/* User Profile Snippet */}
         <div className="flex items-center gap-3 pl-2 border-l border-border/40">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/20 text-foreground font-bold border border-primary/30">
-            {user?.avatarUrl ? (
-              <img
-                src={user.avatarUrl}
-                alt={user.fullName}
-                className="h-full w-full rounded-2xl object-cover"
-              />
-            ) : (
-              <User className="h-5 w-5 text-primary" />
-            )}
-          </div>
-          <div className="hidden flex-col md:flex">
-            <span className="text-sm font-bold text-foreground leading-none">
-              {user?.fullName || 'Guest User'}
-            </span>
-            <span className="text-xs text-muted-foreground leading-tight pt-0.5 uppercase tracking-wider font-semibold">
-              {user?.role?.name || 'HOUSEHOLD'}
-            </span>
+          <div
+            onClick={() => navigate('/app/settings')}
+            className="flex items-center gap-3 cursor-pointer group hover:opacity-85 transition-all"
+            title="Open Profile & Settings Hub"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/20 text-foreground font-bold border border-primary/30 group-hover:border-primary transition-colors">
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.fullName}
+                  className="h-full w-full rounded-2xl object-cover"
+                />
+              ) : (
+                <User className="h-5 w-5 text-primary" />
+              )}
+            </div>
+            <div className="hidden flex-col md:flex">
+              <span className="text-sm font-bold text-foreground leading-none group-hover:text-primary transition-colors">
+                {user?.fullName || 'Guest User'}
+              </span>
+              <span className="text-xs text-muted-foreground leading-tight pt-0.5 uppercase tracking-wider font-semibold">
+                {user?.role?.name || 'HOUSEHOLD'}
+              </span>
+            </div>
           </div>
           {user && (
             <Button

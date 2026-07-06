@@ -42,9 +42,6 @@ describe('PayoutStatusCard Component', () => {
     expect(button).not.toBeDisabled();
 
     fireEvent.click(button);
-    expect(mockMutate).toHaveBeenCalledWith(
-      { amount: 25 },
-      expect.any(Object),
-    );
+    expect(mockMutate).toHaveBeenCalledWith({ amount: 25 }, expect.any(Object));
   });
 });

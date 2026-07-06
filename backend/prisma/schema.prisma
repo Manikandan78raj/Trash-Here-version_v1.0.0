@@ -66,6 +66,24 @@ enum SubscriptionStatus {
   TRIAL
 }
 
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum NotificationCategory {
+  PICKUP
+  PAYMENT
+  WALLET
+  REWARD
+  SUBSCRIPTION
+  SECURITY
+  SYSTEM
+  PROMOTION
+}
+
 // 1. Role Model
 model Role {
   id          String   @id @default(uuid())
@@ -92,6 +110,11 @@ model User {
   referralCode     String           @unique @default(uuid())
   referredBy       String?
   isVerified       Boolean          @default(true)
+  emailVerifiedAt  DateTime?
+  bio              String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  deviceTokens     String[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
@@ -107,6 +130,8 @@ model User {
   reviews          Review[]         @relation("UserReviews")
   supportTickets   SupportTicket[]
   auditLogs        AuditLog[]
+  settings         UserSettings?
+  gdprExports      GdprExport[]
 
   @@index([roleId])
 }
@@ -145,6 +170,9 @@ model Collector {
   currentLat       Float?          @default(37.7749)
   currentLng       Float?          @default(-122.4194)
   serviceRadiusKm  Int             @default(15)
+  stripeConnectId  String?         @default("acct_1032D8299381")
+  bankAccountLast4 String?         @default("4242")
+  instantPayoutsEnabled Boolean    @default(true)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 
@@ -301,17 +329,24 @@ model Wallet {
 
 // 12. Notification Model
 model Notification {
-  id               String          @id @default(uuid())
+  id               String               @id @default(uuid())
   userId           String
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   title            String
   message          String
-  type             String          @default("INFO") // INFO, PICKUP, REWARD, ALERT
-  isRead           Boolean         @default(false)
+  type             String               @default("INFO") // INFO, PICKUP, REWARD, ALERT
+  priority         NotificationPriority @default(NORMAL)
+  category         NotificationCategory @default(SYSTEM)
+  isRead           Boolean              @default(false)
   linkUrl          String?
-  createdAt        DateTime        @default(now())
+  actionUrl        String?
+  metadata         Json?
+  expirationDate   DateTime?
+  scheduledAt      DateTime?
+  createdAt        DateTime             @default(now())
 
   @@index([userId, isRead])
+  @@index([category, priority])
 }
 
 // 13. Subscription Model
@@ -417,6 +452,7 @@ model AuditLog {
   entity           String          // User, PickupRequest, Reward, Wallet
   entityId         String?
   ipAddress        String?         @default("127.0.0.1")
+  userAgent        String?
   details          String?
   timestamp        DateTime        @default(now())
 
@@ -440,5 +476,52 @@ model UserReward {
 
   @@index([userId, status])
   @@index([rewardId])
+}
+
+// 21. UserSettings Model
+model UserSettings {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Notification Preferences
+  emailNotifications    Boolean  @default(true)
+  smsNotifications      Boolean  @default(true)
+  pushNotifications     Boolean  @default(true)
+  pickupAlerts          Boolean  @default(true)
+  rewardAlerts          Boolean  @default(true)
+  securityAlerts        Boolean  @default(true)
+  marketingAlerts       Boolean  @default(false)
+  
+  // Privacy Settings
+  profileVisibility     String   @default("PUBLIC") // PUBLIC, FRIENDS, PRIVATE
+  locationSharing       Boolean  @default(true)
+  dataCollectionConsent Boolean  @default(true)
+  
+  // Security Settings
+  twoFactorEnabled      Boolean  @default(false)
+  loginAlerts           Boolean  @default(true)
+  sessionTimeoutMinutes Int      @default(60)
+  
+  // Appearance & Locale
+  theme                 String   @default("SYSTEM") // LIGHT, DARK, SYSTEM
+  language              String   @default("en")
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// 22. GdprExport Model
+model GdprExport {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  fileUrl     String?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, status])
 }
 

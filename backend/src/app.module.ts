@@ -11,6 +11,9 @@ import { CollectorsModule } from "./modules/collectors/collectors.module";
 import { WalletModule } from "./modules/wallet/wallet.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { ProfileModule } from "./modules/profile/profile.module";
+import { SettingsModule } from "./modules/settings/settings.module";
 
 @Module({
   imports: [
@@ -33,6 +36,9 @@ import { HealthModule } from "./modules/health/health.module";
     WalletModule,
     AdminModule,
     HealthModule,
+    NotificationsModule,
+    ProfileModule,
+    SettingsModule,
   ],
   controllers: [],
   providers: [

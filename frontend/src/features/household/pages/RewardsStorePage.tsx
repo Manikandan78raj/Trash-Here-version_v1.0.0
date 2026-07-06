@@ -1,23 +1,10 @@
-import React, { useState } from "react";
-import {
-  Card,
-  Heading,
-  Text,
-  Button,
-  Badge,
-  Skeleton,
-  EmptyState,
-} from "@/components/ui";
-import {
-  useRewards,
-  useMyVouchers,
-  useRedeemReward,
-  useWalletDashboard,
-} from "../api/wallet.api";
-import { toast } from "@/common/notifications/toast";
+import React, { useState } from 'react';
+import { Card, Heading, Text, Button, Badge, Skeleton, EmptyState } from '@/components/ui';
+import { useRewards, useMyVouchers, useRedeemReward, useWalletDashboard } from '../api/wallet.api';
+import { toast } from '@/common/notifications/toast';
 
 export const RewardsStorePage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"catalog" | "my-vouchers">("catalog");
+  const [activeTab, setActiveTab] = useState<'catalog' | 'my-vouchers'>('catalog');
   const { data: rewards, isLoading: rewardsLoading } = useRewards();
   const { data: vouchers, isLoading: vouchersLoading } = useMyVouchers();
   const { data: dashboard } = useWalletDashboard();
@@ -43,7 +30,8 @@ export const RewardsStorePage: React.FC = () => {
             Redeem Green Points
           </Heading>
           <Text variant="muted" className="text-zinc-300 max-w-xl">
-            Convert your recycling achievements into exclusive discounts and vouchers from sustainable partner brands.
+            Convert your recycling achievements into exclusive discounts and vouchers from
+            sustainable partner brands.
           </Text>
         </div>
         <div className="bg-zinc-800/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-zinc-700/60 text-right relative z-10">
@@ -51,7 +39,8 @@ export const RewardsStorePage: React.FC = () => {
             Your Green Points
           </span>
           <span className="text-3xl font-black text-[rgb(215,255,67)]">
-            {userPoints.toLocaleString()} <span className="text-sm font-normal text-white">pts</span>
+            {userPoints.toLocaleString()}{' '}
+            <span className="text-sm font-normal text-white">pts</span>
           </span>
         </div>
       </Card>
@@ -59,24 +48,24 @@ export const RewardsStorePage: React.FC = () => {
       {/* Tabs */}
       <div className="flex gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-2">
         <button
-          onClick={() => setActiveTab("catalog")}
+          onClick={() => setActiveTab('catalog')}
           className={`pb-3 px-4 font-bold text-base transition-all relative ${
-            activeTab === "catalog"
-              ? "text-black dark:text-white"
-              : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+            activeTab === 'catalog'
+              ? 'text-black dark:text-white'
+              : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'
           }`}
         >
           Partner Catalog
-          {activeTab === "catalog" && (
+          {activeTab === 'catalog' && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-[rgb(215,255,67)] rounded-full" />
           )}
         </button>
         <button
-          onClick={() => setActiveTab("my-vouchers")}
+          onClick={() => setActiveTab('my-vouchers')}
           className={`pb-3 px-4 font-bold text-base transition-all relative flex items-center gap-2 ${
-            activeTab === "my-vouchers"
-              ? "text-black dark:text-white"
-              : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+            activeTab === 'my-vouchers'
+              ? 'text-black dark:text-white'
+              : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'
           }`}
         >
           My Vouchers
@@ -85,14 +74,14 @@ export const RewardsStorePage: React.FC = () => {
               {vouchers.length}
             </span>
           )}
-          {activeTab === "my-vouchers" && (
+          {activeTab === 'my-vouchers' && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-[rgb(215,255,67)] rounded-full" />
           )}
         </button>
       </div>
 
       {/* Tab Content: Catalog */}
-      {activeTab === "catalog" && (
+      {activeTab === 'catalog' && (
         <div>
           {rewardsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -116,7 +105,10 @@ export const RewardsStorePage: React.FC = () => {
                   >
                     <div className="space-y-4">
                       <div className="flex justify-between items-start">
-                        <Badge variant="secondary" className="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold px-3 py-1">
+                        <Badge
+                          variant="secondary"
+                          className="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold px-3 py-1"
+                        >
                           {reward.partnerName}
                         </Badge>
                         <span className="text-lg font-black text-emerald-600 dark:text-[rgb(215,255,67)]">
@@ -141,16 +133,16 @@ export const RewardsStorePage: React.FC = () => {
                       </div>
 
                       <Button
-                        variant={canAfford ? "primary" : "secondary"}
+                        variant={canAfford ? 'primary' : 'secondary'}
                         onClick={() => redeemMutation.mutate({ rewardId: reward.id })}
                         disabled={!canAfford || redeemMutation.isPending}
                         className={`rounded-2xl px-5 py-2.5 font-bold text-sm ${
                           canAfford
-                            ? "bg-[rgb(215,255,67)] hover:bg-[rgb(195,235,47)] text-black shadow-md shadow-[rgb(215,255,67)]/20"
-                            : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed"
+                            ? 'bg-[rgb(215,255,67)] hover:bg-[rgb(195,235,47)] text-black shadow-md shadow-[rgb(215,255,67)]/20'
+                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
                         }`}
                       >
-                        {redeemMutation.isPending ? "..." : canAfford ? "Redeem" : "Need Points"}
+                        {redeemMutation.isPending ? '...' : canAfford ? 'Redeem' : 'Need Points'}
                       </Button>
                     </div>
                   </Card>
@@ -162,7 +154,7 @@ export const RewardsStorePage: React.FC = () => {
       )}
 
       {/* Tab Content: My Vouchers */}
-      {activeTab === "my-vouchers" && (
+      {activeTab === 'my-vouchers' && (
         <div>
           {vouchersLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -183,16 +175,19 @@ export const RewardsStorePage: React.FC = () => {
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <Badge variant="success" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold mb-2">
+                      <Badge
+                        variant="success"
+                        className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold mb-2"
+                      >
                         {item.status}
                       </Badge>
-                      <Heading level={4}>{item.reward?.title || "Discount Voucher"}</Heading>
+                      <Heading level={4}>{item.reward?.title || 'Discount Voucher'}</Heading>
                       <Text variant="muted" className="text-xs">
                         Redeemed on {new Date(item.redeemedAt).toLocaleDateString()}
                       </Text>
                     </div>
                     <span className="text-xl font-black text-emerald-600 dark:text-[rgb(215,255,67)]">
-                      {item.reward?.discountValue || "VOUCHER"}
+                      {item.reward?.discountValue || 'VOUCHER'}
                     </span>
                   </div>
 

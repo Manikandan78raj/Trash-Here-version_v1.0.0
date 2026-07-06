@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Card,
   Heading,
@@ -18,17 +18,17 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui";
-import { useWalletDashboard, useClaimReferral } from "../api/wallet.api";
-import { PaymentCheckoutModal } from "./PaymentCheckoutModal";
-import { PayoutStatusCard } from "./PayoutStatusCard";
-import { toast } from "@/common/notifications/toast";
+} from '@/components/ui';
+import { useWalletDashboard, useClaimReferral } from '../api/wallet.api';
+import { PaymentCheckoutModal } from './PaymentCheckoutModal';
+import { PayoutStatusCard } from './PayoutStatusCard';
+import { toast } from '@/common/notifications/toast';
 
 export const WalletDashboardPage: React.FC = () => {
   const { data: dashboard, isLoading } = useWalletDashboard();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isReferralOpen, setIsReferralOpen] = useState(false);
-  const [referralCodeInput, setReferralCodeInput] = useState("");
+  const [referralCodeInput, setReferralCodeInput] = useState('');
 
   const claimReferralMutation = useClaimReferral();
 
@@ -56,7 +56,7 @@ export const WalletDashboardPage: React.FC = () => {
   const stats = dashboard?.stats || {
     ecoScore: 100,
     carbonSavedKg: 0.0,
-    referralCode: "ECO-USER",
+    referralCode: 'ECO-USER',
   };
 
   const transactions = dashboard?.recentTransactions || [];
@@ -73,7 +73,7 @@ export const WalletDashboardPage: React.FC = () => {
       {
         onSuccess: () => {
           setIsReferralOpen(false);
-          setReferralCodeInput("");
+          setReferralCodeInput('');
         },
       },
     );
@@ -84,15 +84,16 @@ export const WalletDashboardPage: React.FC = () => {
       {/* Hero Wallet Card */}
       <Card className="p-8 rounded-[30px] bg-gradient-to-r from-black via-zinc-900 to-zinc-900 text-white border border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="absolute top-0 right-1/4 w-72 h-72 bg-[rgb(215,255,67)]/15 rounded-full blur-3xl pointer-events-none" />
-        
+
         <div className="space-y-4 relative z-10">
           <div className="flex items-center gap-3">
-            <Badge variant="success" className="bg-[rgb(215,255,67)] text-black font-extrabold px-3 py-1">
+            <Badge
+              variant="success"
+              className="bg-[rgb(215,255,67)] text-black font-extrabold px-3 py-1"
+            >
               Trash Here Wallet
             </Badge>
-            <span className="text-xs text-zinc-400 font-medium">
-              Verified Green Ledger
-            </span>
+            <span className="text-xs text-zinc-400 font-medium">Verified Green Ledger</span>
           </div>
 
           <div className="flex items-baseline gap-8">
@@ -101,7 +102,7 @@ export const WalletDashboardPage: React.FC = () => {
                 Green Points
               </span>
               <span className="text-4xl md:text-5xl font-black text-[rgb(215,255,67)] tracking-tight">
-                {wallet.pointsBalance.toLocaleString()}{" "}
+                {wallet.pointsBalance.toLocaleString()}{' '}
                 <span className="text-sm font-normal text-white">pts</span>
               </span>
             </div>
@@ -146,8 +147,15 @@ export const WalletDashboardPage: React.FC = () => {
             <span className="text-3xl font-black text-emerald-600 dark:text-[rgb(215,255,67)]">
               {stats.ecoScore}
             </span>
-            <Badge variant="success" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">
-              {stats.ecoScore >= 200 ? "Platinum Eco" : stats.ecoScore >= 100 ? "Gold Eco" : "Silver Eco"}
+            <Badge
+              variant="success"
+              className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold"
+            >
+              {stats.ecoScore >= 200
+                ? 'Platinum Eco'
+                : stats.ecoScore >= 100
+                  ? 'Gold Eco'
+                  : 'Silver Eco'}
             </Badge>
           </div>
           <Text variant="muted" className="text-xs">
@@ -161,7 +169,7 @@ export const WalletDashboardPage: React.FC = () => {
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-black text-black dark:text-white">
-              {stats.carbonSavedKg.toFixed(1)}{" "}
+              {stats.carbonSavedKg.toFixed(1)}{' '}
               <span className="text-sm font-normal text-zinc-500">kg CO₂</span>
             </span>
             <span className="text-xs font-bold text-emerald-500">🌱 Verified</span>
@@ -231,16 +239,20 @@ export const WalletDashboardPage: React.FC = () => {
                   return (
                     <TableRow key={tx.id}>
                       <TableCell className="text-xs text-zinc-500">
-                        {new Date(tx.createdAt).toLocaleDateString()} {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(tx.createdAt).toLocaleDateString()}{' '}
+                        {new Date(tx.createdAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </TableCell>
                       <TableCell>
                         <Badge
                           variant={
-                            tx.type === "BONUS" || tx.type === "PAYOUT"
-                              ? "success"
-                              : tx.type === "REWARD_REDEMPTION"
-                              ? "warning"
-                              : "secondary"
+                            tx.type === 'BONUS' || tx.type === 'PAYOUT'
+                              ? 'success'
+                              : tx.type === 'REWARD_REDEMPTION'
+                                ? 'warning'
+                                : 'secondary'
                           }
                           className="font-bold text-xs"
                         >
@@ -250,11 +262,19 @@ export const WalletDashboardPage: React.FC = () => {
                       <TableCell className="font-medium text-sm text-black dark:text-white">
                         {tx.description}
                       </TableCell>
-                      <TableCell className={`text-right font-bold text-sm ${isPositiveCash ? "text-emerald-600 dark:text-emerald-400" : tx.amount < 0 ? "text-red-500" : "text-zinc-400"}`}>
-                        {tx.amount === 0 ? "—" : `${isPositiveCash ? "+" : ""}$${Math.abs(tx.amount).toFixed(2)}`}
+                      <TableCell
+                        className={`text-right font-bold text-sm ${isPositiveCash ? 'text-emerald-600 dark:text-emerald-400' : tx.amount < 0 ? 'text-red-500' : 'text-zinc-400'}`}
+                      >
+                        {tx.amount === 0
+                          ? '—'
+                          : `${isPositiveCash ? '+' : ''}$${Math.abs(tx.amount).toFixed(2)}`}
                       </TableCell>
-                      <TableCell className={`text-right font-bold text-sm ${isPositivePoints ? "text-[rgb(215,255,67)]" : (tx.pointsAmount || 0) < 0 ? "text-amber-500" : "text-zinc-400"}`}>
-                        {!tx.pointsAmount ? "—" : `${isPositivePoints ? "+" : ""}${tx.pointsAmount} pts`}
+                      <TableCell
+                        className={`text-right font-bold text-sm ${isPositivePoints ? 'text-[rgb(215,255,67)]' : (tx.pointsAmount || 0) < 0 ? 'text-amber-500' : 'text-zinc-400'}`}
+                      >
+                        {!tx.pointsAmount
+                          ? '—'
+                          : `${isPositivePoints ? '+' : ''}${tx.pointsAmount} pts`}
                       </TableCell>
                     </TableRow>
                   );
@@ -279,38 +299,37 @@ export const WalletDashboardPage: React.FC = () => {
             <DialogTitle>Claim Referral Bonus</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
-          <Text variant="muted" className="text-sm">
-            Enter a friend's invite code to claim your welcome bonus of 200 Green Points and $5.00 cash!
-          </Text>
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-zinc-500">
-              Referral Code
-            </label>
-            <Input
-              value={referralCodeInput}
-              onChange={(e) => setReferralCodeInput(e.target.value.toUpperCase())}
-              placeholder="e.g. ECO-USER-88419"
-              className="rounded-xl uppercase font-mono"
-            />
+            <Text variant="muted" className="text-sm">
+              Enter a friend's invite code to claim your welcome bonus of 200 Green Points and $5.00
+              cash!
+            </Text>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase text-zinc-500">Referral Code</label>
+              <Input
+                value={referralCodeInput}
+                onChange={(e) => setReferralCodeInput(e.target.value.toUpperCase())}
+                placeholder="e.g. ECO-USER-88419"
+                className="rounded-xl uppercase font-mono"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="primary"
+                onClick={handleClaimReferral}
+                disabled={!referralCodeInput.trim() || claimReferralMutation.isPending}
+                className="flex-1 rounded-xl bg-[rgb(215,255,67)] hover:bg-[rgb(195,235,47)] text-black font-bold py-3"
+              >
+                {claimReferralMutation.isPending ? 'Claiming...' : 'Claim $5 & 200 pts'}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setIsReferralOpen(false)}
+                className="rounded-xl px-4"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-3 pt-2">
-            <Button
-              variant="primary"
-              onClick={handleClaimReferral}
-              disabled={!referralCodeInput.trim() || claimReferralMutation.isPending}
-              className="flex-1 rounded-xl bg-[rgb(215,255,67)] hover:bg-[rgb(195,235,47)] text-black font-bold py-3"
-            >
-              {claimReferralMutation.isPending ? "Claiming..." : "Claim $5 & 200 pts"}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setIsReferralOpen(false)}
-              className="rounded-xl px-4"
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
         </DialogContent>
       </Dialog>
     </div>

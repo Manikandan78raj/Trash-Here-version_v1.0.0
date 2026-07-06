@@ -11,12 +11,18 @@ import {
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
   ApiBearerAuth,
   ApiQuery,
 } from "@nestjs/swagger";
 import { CollectorsService } from "./collectors.service";
-import { UpdateLocationDto, ToggleStatusDto } from "./dto/collectors.dto";
+import { CollectorLogisticsService } from "./services/collector-logistics.service";
+import { CollectorPayoutsService } from "./services/collector-payouts.service";
+import {
+  UpdateLocationDto,
+  ToggleStatusDto,
+  CompleteJobDto,
+  InstantPayoutDto,
+} from "./dto/collectors.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/roles.guard";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -29,7 +35,11 @@ import { RoleType } from "@prisma/client";
 @ApiBearerAuth("access-token")
 @Controller("collectors")
 export class CollectorsController {
-  constructor(private readonly collectorsService: CollectorsService) {}
+  constructor(
+    private readonly collectorsService: CollectorsService,
+    private readonly collectorLogisticsService: CollectorLogisticsService,
+    private readonly collectorPayoutsService: CollectorPayoutsService,
+  ) {}
 
   @Get("dashboard")
   @ApiOperation({
@@ -65,7 +75,8 @@ export class CollectorsController {
     @CurrentUser() user: any,
     @Body() dto: UpdateLocationDto,
   ) {
-    return this.collectorsService.updateLocation(user.id, dto);
+    // Call logistics service to emit real-time WebSocket event
+    return this.collectorLogisticsService.updateLocation(user.id, dto);
   }
 
   @Patch("status")
@@ -77,5 +88,61 @@ export class CollectorsController {
     @Body() dto: ToggleStatusDto,
   ) {
     return this.collectorsService.toggleOnlineStatus(user.id, dto);
+  }
+
+  // --- SPRINT 7 LOGISTICS & PAYOUTS ENDPOINTS ---
+
+  @Get("route")
+  @ApiOperation({
+    summary: "Get optimized daily route and polyline navigation waypoints",
+  })
+  async getAssignedRoute(@CurrentUser() user: any) {
+    return this.collectorLogisticsService.getAssignedRoute(user.id);
+  }
+
+  @Post("jobs/:id/arrive")
+  @ApiOperation({
+    summary:
+      "Mark collector as arrived at pickup stop and trigger customer alert",
+  })
+  async arriveAtStop(@CurrentUser() user: any, @Param("id") pickupId: string) {
+    return this.collectorLogisticsService.arriveAtStop(user.id, pickupId);
+  }
+
+  @Post("jobs/:id/complete")
+  @ApiOperation({
+    summary:
+      "Complete pickup job via QR code scan and Haversine GPS geofence verification",
+  })
+  async completePickupJob(
+    @CurrentUser() user: any,
+    @Param("id") pickupId: string,
+    @Body() dto: CompleteJobDto,
+  ) {
+    return this.collectorLogisticsService.completePickupJob(
+      user.id,
+      pickupId,
+      dto,
+    );
+  }
+
+  @Get("payouts/summary")
+  @ApiOperation({
+    summary:
+      "Get earnings summary, cash balance, and instant payout eligibility",
+  })
+  async getEarningsSummary(@CurrentUser() user: any) {
+    return this.collectorPayoutsService.getEarningsSummary(user.id);
+  }
+
+  @Post("payouts/instant")
+  @ApiOperation({
+    summary: "Request instant cash withdrawal to debit card via Stripe Connect",
+  })
+  async requestInstantPayout(
+    @CurrentUser() user: any,
+    @Body() dto: InstantPayoutDto,
+  ) {
+    return this.collectorPayoutsService.requestInstantPayout(user.id, dto);
   }
 }

@@ -47,6 +47,24 @@ const SubscriptionPage = lazy(() =>
   })),
 );
 
+const HubPage = lazy(() =>
+  import('@/features/hub/pages/HubPage').then((module) => ({
+    default: module.HubPage,
+  })),
+);
+
+const NotificationsPage = lazy(() =>
+  import('@/features/hub/pages/NotificationsPage').then((module) => ({
+    default: module.NotificationsPage,
+  })),
+);
+
+const CollectorWorkspacePage = lazy(() =>
+  import('@/features/collector/pages/CollectorWorkspacePage').then((module) => ({
+    default: module.CollectorWorkspacePage,
+  })),
+);
+
 const PageLoadingFallback: React.FC = () => (
   <div className="space-y-6 p-6">
     <div className="flex items-center justify-between">
@@ -76,19 +94,11 @@ export const App: React.FC = () => {
             <Route path="app/wallet" element={<WalletDashboardPage />} />
             <Route path="app/rewards" element={<RewardsStorePage />} />
             <Route path="app/subscriptions" element={<SubscriptionPage />} />
+            <Route path="app/settings" element={<HubPage />} />
+            <Route path="app/profile" element={<HubPage />} />
+            <Route path="app/notifications" element={<NotificationsPage />} />
             <Route path="app/*" element={<HouseholdDashboard />} />
-            <Route
-              path="collector/*"
-              element={
-                <Card className="p-12 text-center max-w-2xl mx-auto my-12 space-y-4">
-                  <Heading level={2}>Collector Workspace</Heading>
-                  <Text variant="muted">
-                    Scheduled for development in Milestone 4. This area will host nearby job feeds,
-                    QR code verification, and turn-by-turn navigation.
-                  </Text>
-                </Card>
-              }
-            />
+            <Route path="collector/*" element={<CollectorWorkspacePage />} />
             <Route
               path="admin/*"
               element={

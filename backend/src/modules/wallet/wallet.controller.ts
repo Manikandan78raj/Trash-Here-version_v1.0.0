@@ -114,8 +114,13 @@ export class WalletController {
   }
 
   @Post("subscriptions")
-  @ApiOperation({ summary: "Enroll in or switch subscription plan (Eco Starter / Eco Pro)" })
-  async subscribe(@CurrentUser() user: any, @Body() dto: CreateSubscriptionDto) {
+  @ApiOperation({
+    summary: "Enroll in or switch subscription plan (Eco Starter / Eco Pro)",
+  })
+  async subscribe(
+    @CurrentUser() user: any,
+    @Body() dto: CreateSubscriptionDto,
+  ) {
     return this.walletService.subscribe(user.id, dto);
   }
 
@@ -136,19 +141,29 @@ export class WalletController {
 
   @Post("checkout")
   @ApiOperation({ summary: "Process payment checkout via Stripe Simulation" })
-  async processCheckout(@CurrentUser() user: any, @Body() dto: ProcessCheckoutDto) {
+  async processCheckout(
+    @CurrentUser() user: any,
+    @Body() dto: ProcessCheckoutDto,
+  ) {
     return this.walletService.processCheckout(user.id, dto);
   }
 
   @Post("refund")
-  @ApiOperation({ summary: "Process transaction refund and credit wallet balance" })
+  @ApiOperation({
+    summary: "Process transaction refund and credit wallet balance",
+  })
   async processRefund(@CurrentUser() user: any, @Body() dto: ProcessRefundDto) {
     return this.walletService.processRefund(user.id, dto);
   }
 
   @Post("referral/claim")
-  @ApiOperation({ summary: "Claim referral code bonus (+200 pts, +$5.00 cash)" })
-  async claimReferralBonus(@CurrentUser() user: any, @Body() dto: ClaimReferralDto) {
+  @ApiOperation({
+    summary: "Claim referral code bonus (+200 pts, +$5.00 cash)",
+  })
+  async claimReferralBonus(
+    @CurrentUser() user: any,
+    @Body() dto: ClaimReferralDto,
+  ) {
     return this.walletService.claimReferralBonus(user.id, dto);
   }
 }
