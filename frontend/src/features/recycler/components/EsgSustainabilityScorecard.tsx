@@ -3,8 +3,7 @@ import {
   useRecyclerEsgReports,
   useRecyclerManifests,
   useGenerateEsgReport,
-  EsgReportDto,
-  PdfManifestDto,
+  type PdfManifestDto,
 } from '../api/recycler.api';
 import { Globe, Leaf, Zap, Droplets, FileText, Download, ShieldCheck, Plus } from 'lucide-react';
 

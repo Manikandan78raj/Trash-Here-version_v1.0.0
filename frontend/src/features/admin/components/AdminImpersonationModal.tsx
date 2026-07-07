@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAdminStartImpersonation } from '../api/admin.api';
-import { ShieldAlert, UserCheck, Lock, AlertOctagon } from 'lucide-react';
+import { ShieldAlert, UserCheck, AlertOctagon } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;

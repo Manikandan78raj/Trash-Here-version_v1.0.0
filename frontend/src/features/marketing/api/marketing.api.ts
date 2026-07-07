@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/common/api/client';
 import { toast } from '@/common/notifications/toast';
 
@@ -93,7 +93,7 @@ export const useSubmitContact = () => {
     },
     onSuccess: (data: any) => {
       if (data.status === 'SPAM') {
-        toast.warning('Inquiry flagged for administrative review.');
+        toast.info('Inquiry flagged for administrative review.');
       } else {
         toast.success(data.message || 'Thank you! Your message has been sent to our enterprise team.');
       }

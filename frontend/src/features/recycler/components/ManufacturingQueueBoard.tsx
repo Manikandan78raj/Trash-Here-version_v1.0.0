@@ -3,9 +3,9 @@ import {
   useRecyclerQueue,
   useStartProcessing,
   useCompleteProcessing,
-  ProcessingQueueItemDto,
+  type ProcessingQueueItemDto,
 } from '../api/recycler.api';
-import { Cog, Play, CheckCircle, AlertCircle, Cpu, RefreshCw } from 'lucide-react';
+import { Cog, Play, CheckCircle, Cpu } from 'lucide-react';
 
 export const ManufacturingQueueBoard: React.FC = () => {
   const { data: queue = [], isLoading } = useRecyclerQueue();

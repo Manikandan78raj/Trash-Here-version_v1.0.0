@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAdminAuditLogs } from '../api/admin.api';
 import { AdminImpersonationModal } from './AdminImpersonationModal';
-import { ShieldAlert, ShieldCheck, Terminal, AlertTriangle, UserCheck, Search, Filter } from 'lucide-react';
+import { ShieldCheck, Terminal, UserCheck, Filter } from 'lucide-react';
 
 export const AdminAuditLogPage: React.FC = () => {
   const { data: logs, isLoading } = useAdminAuditLogs();

@@ -16,6 +16,7 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { SettingsModule } from "./modules/settings/settings.module";
 import { RecyclerModule } from "./modules/recycler/recycler.module";
 import { MarketingModule } from "./modules/marketing/marketing.module";
+import { AiModule } from "./modules/ai/ai.module";
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MarketingModule } from "./modules/marketing/marketing.module";
     SettingsModule,
     RecyclerModule,
     MarketingModule,
+    AiModule,
   ],
   controllers: [],
   providers: [

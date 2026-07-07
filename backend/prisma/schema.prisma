@@ -237,6 +237,7 @@ model User {
   gdprExports      GdprExport[]
   impersonationsPerformed AdminImpersonationLog[] @relation("AdminImpersonations")
   impersonationsReceived  AdminImpersonationLog[] @relation("TargetImpersonations")
+  aiUploadedImages        AiImageUpload[]
 
   @@index([roleId])
 }
@@ -376,6 +377,7 @@ model WasteCategory {
   pickupItems          PickupItem[]
   materialBatches      MaterialBatch[]
   warehouseInventories WarehouseInventory[]
+  aiPredictions        AiPrediction[]
 }
 
 // 9. Transaction Model
@@ -686,6 +688,7 @@ model IncomingLoad {
   qualityInspection QualityInspection?
   materialBatches  MaterialBatch[]
   pdfManifests     PdfManifest[]
+  aiUploadedImages AiImageUpload[]
 
   @@index([recyclerId, status])
   @@index([collectorId])
@@ -1080,4 +1083,155 @@ model PublicAnalyticsEvent {
 
   @@index([eventName, route])
   @@index([timestamp])
+}
+
+// ============================================================================
+// SPRINT 11 AI WASTE DETECTION ENGINE MODELS
+// ============================================================================
+
+enum AiJobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum AiModelType {
+  YOLO_V8
+  OPENAI_GPT4O_VISION
+  GEMINI_1_5_PRO_VISION
+  CUSTOM_RESNET
+  MOCK_VISION
+  HYBRID_VISION
+}
+
+enum AiRecommendationType {
+  DIRECT_RECYCLE
+  REQUIRES_RINSING
+  REQUIRES_DISASSEMBLY
+  CONTAMINATED_DISPOSE
+  HAZARDOUS_SPECIAL_HANDLE
+}
+
+// 43. AiModelVersion Model (AI Model Registry & Metadata)
+model AiModelVersion {
+  id             String      @id @default(uuid())
+  versionName    String      @unique // e.g. "yolov8-waste-v2.4", "gpt-4o-2026-05"
+  modelType      AiModelType
+  description    String?
+  isActive       Boolean     @default(true)
+  precisionScore Float       @default(0.94) // Mean Average Precision (mAP)
+  recallScore    Float       @default(0.91)
+  latencyMsAvg   Int         @default(450)
+  endpointUrl    String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  processingJobs AiProcessingJob[]
+
+  @@index([modelType, isActive])
+}
+
+// 44. AiImageUpload Model (Storage Reference & Image Metadata)
+model AiImageUpload {
+  id             String        @id @default(uuid())
+  userId         String?       // User who uploaded (or Collector/Recycler)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  loadId         String?       // Optional link to IncomingLoad (Recycler scale intake)
+  load           IncomingLoad? @relation(fields: [loadId], references: [id], onDelete: SetNull)
+  fileUrl        String        // S3 / R2 / Cloudinary secure URL
+  storageKey     String        @unique // Bucket object key
+  fileSizeBytes  Int
+  mimeType       String        @default("image/jpeg")
+  widthPx        Int?
+  heightPx       Int?
+  sha256Hash     String        // Tamper-proof cryptographic hash of image bytes
+  createdAt      DateTime      @default(now())
+
+  processingJobs AiProcessingJob[]
+  predictions    AiPrediction[]
+
+  @@index([userId])
+  @@index([loadId])
+  @@index([sha256Hash])
+}
+
+// 45. AiProcessingJob Model (BullMQ Async Queue & Worker Tracking)
+model AiProcessingJob {
+  id             String          @id @default(uuid())
+  jobId          String          @unique // BullMQ Redis Job ID
+  imageId        String
+  image          AiImageUpload   @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  modelVersionId String?
+  modelVersion   AiModelVersion? @relation(fields: [modelVersionId], references: [id], onDelete: SetNull)
+  status         AiJobStatus     @default(QUEUED)
+  attempts       Int             @default(0)
+  errorMessage   String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  processingMs   Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  predictions    AiPrediction[]
+
+  @@index([status, createdAt])
+  @@index([imageId])
+  @@index([jobId])
+}
+
+// 46. AiPrediction Model (Inference Synthesis & Recommendation)
+model AiPrediction {
+  id                 String               @id @default(uuid())
+  jobId              String
+  job                AiProcessingJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  imageId            String
+  image              AiImageUpload        @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  primaryCategoryId  String?
+  primaryCategory    WasteCategory?       @relation(fields: [primaryCategoryId], references: [id], onDelete: SetNull)
+  isContaminated           Boolean              @default(false)
+  contaminationRate        Float                @default(0.0) // Estimated % contamination
+  detectionConfidence      Float                @default(0.0)
+  classificationConfidence Float                @default(0.0)
+  recommendationConfidence Float                @default(0.0)
+  overallConfidence        Float                @default(0.0) // 0.0 to 1.0 confidence score
+  providerName             String               @default("mock-vision")
+  modelVersion             String               @default("1.0.0")
+  processingLatencyMs      Int                  @default(0)
+  processingCostUsd        Float?
+  recommendationType       AiRecommendationType @default(DIRECT_RECYCLE)
+  recommendationText       String               // Actionable recycling instructions
+  estimatedWeightKg        Float                @default(0.5)
+  co2SavedKg               Float                @default(0.92) // EPA WARM coefficient calculation
+  greenPointsEarned        Int                  @default(15)   // Estimated reward points
+  rawPayload               String?              // Full JSON response string from AI provider
+  createdAt                DateTime             @default(now())
+
+  detectedObjects    AiDetectedObject[]
+
+  @@index([jobId])
+  @@index([imageId])
+  @@index([primaryCategoryId, isContaminated])
+  @@index([overallConfidence])
+}
+
+// 47. AiDetectedObject Model (Bounding Box Localization & Object Classification)
+model AiDetectedObject {
+  id               String        @id @default(uuid())
+  predictionId     String
+  prediction       AiPrediction  @relation(fields: [predictionId], references: [id], onDelete: Cascade)
+  label            String        // e.g. "PET_BOTTLE", "ALUMINUM_CAN", "CARDBOARD_BOX", "HDPE_JUG", "FOOD_WASTE_CONTAMINANT"
+  confidenceScore  Float         // 0.0 to 1.0
+  xMin             Float         // Bounding box top-left X (normalized 0.0 to 1.0)
+  yMin             Float         // Bounding box top-left Y
+  xMax             Float         // Bounding box bottom-right X
+  yMax             Float         // Bounding box bottom-right Y
+  materialType     String        // e.g. "PLASTIC_PET", "METAL_ALUMINUM", "PAPER_CARDBOARD", "ORGANIC"
+  isContaminant    Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+
+  @@index([predictionId])
+  @@index([label, confidenceScore])
+  @@index([isContaminant])
 }

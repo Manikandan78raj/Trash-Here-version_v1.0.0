@@ -3,10 +3,10 @@ import {
   useRecyclerInventory,
   useRecyclerBatches,
   useCreateBatch,
-  WarehouseInventoryDto,
-  MaterialBatchDto,
+  type WarehouseInventoryDto,
+  type MaterialBatchDto,
 } from '../api/recycler.api';
-import { Package, Layers, Plus, CheckCircle2, Box, ArrowUpRight } from 'lucide-react';
+import { Package, Layers, Plus, CheckCircle2, Box } from 'lucide-react';
 
 export const WarehouseInventoryMatrix: React.FC = () => {
   const { data: inventory = [], isLoading: isInvLoading } = useRecyclerInventory();

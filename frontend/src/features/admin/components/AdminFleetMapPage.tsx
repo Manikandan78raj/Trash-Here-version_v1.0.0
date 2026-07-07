@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAdminFleetMap, useAdminReassignRoute } from '../api/admin.api';
-import { MapPin, Navigation, Truck, RefreshCw, AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Navigation, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export const AdminFleetMapPage: React.FC = () => {
   const { data: fleetData, isLoading } = useAdminFleetMap();

@@ -6,9 +6,9 @@ import {
   useRecordInspection,
   useRecordWeighOut,
   useIssueManifest,
-  IncomingLoadDto,
+  type IncomingLoadDto,
 } from '../api/recycler.api';
-import { Scale, Truck, ShieldCheck, AlertTriangle, FileText, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { Scale, Truck, ShieldCheck, AlertTriangle, FileText, CheckCircle2, XCircle } from 'lucide-react';
 
 export const WeighbridgeIntakeCard: React.FC = () => {
   const { data: loads = [], isLoading } = useRecyclerLoads();

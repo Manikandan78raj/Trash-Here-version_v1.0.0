@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAdminConfigs, useAdminUpdateConfig, SystemConfigDto } from '../api/admin.api';
-import { Settings, Sliders, Edit2, Check, X, ShieldAlert } from 'lucide-react';
+import { useAdminConfigs, useAdminUpdateConfig, type SystemConfigDto } from '../api/admin.api';
+import { Sliders, Edit2, Check, X } from 'lucide-react';
 
 export const AdminConfigPage: React.FC = () => {
   const { data: configs, isLoading } = useAdminConfigs();

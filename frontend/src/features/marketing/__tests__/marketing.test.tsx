@@ -5,7 +5,7 @@ import React from 'react';
 
 // Use a Proxy to dynamically mock any Framer Motion HTML element (div, article, span, section, etc.)
 const createMotionComponent = (tag: string) => {
-  return React.forwardRef(({ children, className, onClick, href, type, ...props }: any, ref: any) =>
+  return React.forwardRef(({ children, className, onClick, href, type }: any, ref: any) =>
     React.createElement(tag, { className, onClick, href, type, ref }, children)
   );
 };

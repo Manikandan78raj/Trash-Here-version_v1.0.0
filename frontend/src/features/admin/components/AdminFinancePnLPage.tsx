@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAdminPnL, useAdminReconcileLedgers } from '../api/admin.api';
-import { DollarSign, TrendingUp, CreditCard, ArrowUpRight, ArrowDownRight, RefreshCw, ShieldCheck } from 'lucide-react';
+import { DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export const AdminFinancePnLPage: React.FC = () => {
   const { data: pnl, isLoading } = useAdminPnL();
