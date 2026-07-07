@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AppLayout } from '@/common/layouts/AppLayout';
 import { ErrorBoundary } from '@/common/routing/ErrorBoundary';
-import { Heading, Text, Card, Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui';
 
 // Lazy load named exports for optimal code splitting & bundle performance
 const DesignSystemShowcase = lazy(() =>
@@ -62,6 +62,24 @@ const NotificationsPage = lazy(() =>
 const CollectorWorkspacePage = lazy(() =>
   import('@/features/collector/pages/CollectorWorkspacePage').then((module) => ({
     default: module.CollectorWorkspacePage,
+  })),
+);
+
+const RecyclerWorkspacePage = lazy(() =>
+  import('@/features/recycler/pages/RecyclerWorkspacePage').then((module) => ({
+    default: module.RecyclerWorkspacePage,
+  })),
+);
+
+const AdminWorkspacePage = lazy(() =>
+  import('@/features/admin/pages/AdminWorkspacePage').then((module) => ({
+    default: module.AdminWorkspacePage,
+  })),
+);
+
+const AiWorkspacePage = lazy(() =>
+  import('@/features/ai/pages/AiWorkspacePage').then((module) => ({
+    default: module.AiWorkspacePage,
   })),
 );
 
@@ -161,16 +179,28 @@ export const App: React.FC = () => {
           />
 
           <Route
+            path="/recycler/*"
+            element={
+              <AppLayout>
+                <RecyclerWorkspacePage />
+              </AppLayout>
+            }
+          />
+
+          <Route
             path="/admin/*"
             element={
               <AppLayout>
-                <Card className="p-12 text-center max-w-2xl mx-auto my-12 space-y-4">
-                  <Heading level={2}>Enterprise Admin Dashboard</Heading>
-                  <Text variant="muted">
-                    Scheduled for development in Milestone 5. This area will host system revenue
-                    analytics, user tables, and waste pricing management.
-                  </Text>
-                </Card>
+                <AdminWorkspacePage />
+              </AppLayout>
+            }
+          />
+
+          <Route
+            path="/ai/*"
+            element={
+              <AppLayout>
+                <AiWorkspacePage />
               </AppLayout>
             }
           />

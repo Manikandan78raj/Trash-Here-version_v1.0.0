@@ -4,7 +4,7 @@ import { Menu, Sun, Moon, Laptop, User } from 'lucide-react';
 import { useTheme } from '@/common/theme/useTheme';
 import { useAuth } from '@/common/auth/useAuth';
 import { Button } from './Button';
-import { NotificationBell } from '@/features/hub';
+import { NotificationBell } from '@/features/hub/components/NotificationBell';
 
 export interface NavbarProps {
   onToggleSidebar?: () => void;

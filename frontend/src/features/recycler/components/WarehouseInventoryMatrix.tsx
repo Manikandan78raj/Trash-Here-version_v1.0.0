@@ -7,6 +7,7 @@ import {
   type MaterialBatchDto,
 } from '../api/recycler.api';
 import { Package, Layers, Plus, CheckCircle2, Box } from 'lucide-react';
+import { VirtualizedTable } from '../../../common/components';
 
 export const WarehouseInventoryMatrix: React.FC = () => {
   const { data: inventory = [], isLoading: isInvLoading } = useRecyclerInventory();
@@ -116,43 +117,52 @@ export const WarehouseInventoryMatrix: React.FC = () => {
             <p className="text-xs text-slate-500 mt-1">Click "Create Lot Batch" to log accepted waste into inventory.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  <th className="py-3 px-4">Lot Batch Number</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Weight (kg)</th>
-                  <th className="py-3 px-4">Purity %</th>
-                  <th className="py-3 px-4">Bay Location</th>
-                  <th className="py-3 px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50 text-sm">
-                {batches.map((batch: MaterialBatchDto) => (
-                  <tr key={batch.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-4 px-4 font-mono font-bold text-white">{batch.batchNumber}</td>
-                    <td className="py-4 px-4 text-slate-300 font-medium">
-                      {batch.category?.name || batch.categoryId}
-                    </td>
-                    <td className="py-4 px-4 font-mono text-[#D7FF43] font-bold">
-                      {batch.weightKg.toLocaleString()} kg
-                    </td>
-                    <td className="py-4 px-4 font-mono text-emerald-400">
-                      {batch.purityPercent}%
-                    </td>
-                    <td className="py-4 px-4 font-mono text-slate-400">{batch.warehouseLocation || 'BAY-A1'}</td>
-                    <td className="py-4 px-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                        {batch.status === 'READY_FOR_SALE' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mr-1" />}
-                        {batch.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <VirtualizedTable
+            data={batches}
+            height="450px"
+            rowHeight={56}
+            columns={[
+              {
+                header: 'Lot Batch Number',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="font-mono font-bold text-white">{batch.batchNumber}</span>
+                ),
+              },
+              {
+                header: 'Category',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="text-slate-300 font-medium">{batch.category?.name || batch.categoryId}</span>
+                ),
+              },
+              {
+                header: 'Weight (kg)',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="font-mono text-[#D7FF43] font-bold">{batch.weightKg.toLocaleString()} kg</span>
+                ),
+              },
+              {
+                header: 'Purity %',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="font-mono text-emerald-400">{batch.purityPercent}%</span>
+                ),
+              },
+              {
+                header: 'Bay Location',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="font-mono text-slate-400">{batch.warehouseLocation || 'BAY-A1'}</span>
+                ),
+              },
+              {
+                header: 'Status',
+                accessor: (batch: MaterialBatchDto) => (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                    {batch.status === 'READY_FOR_SALE' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mr-1" />}
+                    {batch.status}
+                  </span>
+                ),
+              },
+            ]}
+          />
         )}
       </div>
 

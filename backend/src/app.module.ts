@@ -17,6 +17,7 @@ import { SettingsModule } from "./modules/settings/settings.module";
 import { RecyclerModule } from "./modules/recycler/recycler.module";
 import { MarketingModule } from "./modules/marketing/marketing.module";
 import { AiModule } from "./modules/ai/ai.module";
+import { RedisCacheModule } from "./common/cache/redis-cache.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AiModule } from "./modules/ai/ai.module";
         limit: 100,
       },
     ]),
+    RedisCacheModule,
     PrismaModule,
     AuthModule,
     UsersModule,

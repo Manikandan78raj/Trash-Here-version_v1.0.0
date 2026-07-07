@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Navbar } from '@/components/ui/Navbar';
 import { Sidebar } from '@/components/ui/Sidebar';
-import { socketService } from '@/features/hub';
+import { socketService } from '@/features/hub/services/socket.service';
 
 interface AppLayoutProps {
   children?: React.ReactNode;

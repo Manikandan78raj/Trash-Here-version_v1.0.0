@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Optional, NotFoundException, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
+import { RedisCacheService } from '../../../common/cache/redis-cache.service';
+import { Cacheable, CacheEvict } from '../../../common/cache/cache.decorators';
 import {
   SubmitContactDto,
   SubscribeNewsletterDto,
@@ -21,7 +23,10 @@ export class MarketingService {
     'prince of nigeria',
   ];
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() public readonly cacheService?: RedisCacheService,
+  ) {}
 
   /**
    * 1. Submit Contact Inquiry with Rate Limiting & Spam Protection
@@ -121,6 +126,7 @@ export class MarketingService {
   /**
    * 3. Get Published Blog Posts with Optional Filtering
    */
+  @Cacheable({ keyPrefix: 'marketing:blog', ttl: 3600 })
   async getBlogPosts(category?: string, tag?: string) {
     const whereClause: any = { isPublished: true };
     if (category && category !== 'ALL') {
@@ -145,6 +151,7 @@ export class MarketingService {
   /**
    * 4. Get Blog Post by Slug
    */
+  @Cacheable({ keyPrefix: 'marketing:blog', ttl: 3600 })
   async getBlogPostBySlug(slug: string) {
     const post = await this.prisma.blogPost.findFirst({
       where: { slug, isPublished: true },
@@ -163,6 +170,7 @@ export class MarketingService {
   /**
    * 5. Create Blog Post (Admin / Editorial)
    */
+  @CacheEvict({ keyPrefix: 'marketing:blog', pattern: true })
   async createBlogPost(dto: CreateBlogPostDto) {
     const existing = await this.prisma.blogPost.findUnique({
       where: { slug: dto.slug },
@@ -200,6 +208,7 @@ export class MarketingService {
   /**
    * 6. Get Career Openings
    */
+  @Cacheable({ keyPrefix: 'marketing:careers', ttl: 3600 })
   async getCareerJobs(department?: string) {
     const whereClause: any = { isPublished: true };
     if (department && department !== 'ALL') {
@@ -221,6 +230,7 @@ export class MarketingService {
   /**
    * 7. Get Career Job by Slug
    */
+  @Cacheable({ keyPrefix: 'marketing:careers', ttl: 3600 })
   async getCareerJobBySlug(slug: string) {
     const job = await this.prisma.careerJob.findFirst({
       where: { slug, isPublished: true },
@@ -239,6 +249,7 @@ export class MarketingService {
   /**
    * 8. Create Career Job (HR Admin)
    */
+  @CacheEvict({ keyPrefix: 'marketing:careers', pattern: true })
   async createCareerJob(dto: CreateCareerJobDto) {
     const existing = await this.prisma.careerJob.findUnique({
       where: { slug: dto.slug },
@@ -316,6 +327,7 @@ export class MarketingService {
   /**
    * 10. Get SEO Metadata by Route
    */
+  @Cacheable({ keyPrefix: 'marketing:seo', ttl: 3600 })
   async getSeoMetadata(route: string) {
     const metadata = await this.prisma.seoMetadata.findUnique({
       where: { route },
@@ -347,6 +359,7 @@ export class MarketingService {
   /**
    * 11. Upsert SEO Metadata (SEO Specialist Admin)
    */
+  @CacheEvict({ keyPrefix: 'marketing:seo', pattern: true })
   async upsertSeoMetadata(dto: UpsertSeoMetadataDto) {
     const metadata = await this.prisma.seoMetadata.upsert({
       where: { route: dto.route },

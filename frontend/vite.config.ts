@@ -1,10 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+      open: false,
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -36,7 +45,8 @@ export default defineConfig({
             id.includes('node_modules/lucide-react') ||
             id.includes('node_modules/sonner') ||
             id.includes('node_modules/clsx') ||
-            id.includes('node_modules/tailwind-merge')
+            id.includes('node_modules/tailwind-merge') ||
+            id.includes('node_modules/@radix-ui')
           ) {
             return 'ui-vendor';
           }
@@ -55,3 +65,4 @@ export default defineConfig({
     },
   },
 });
+

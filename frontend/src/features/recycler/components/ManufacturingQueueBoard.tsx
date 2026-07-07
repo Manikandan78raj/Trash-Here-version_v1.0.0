@@ -6,11 +6,20 @@ import {
   type ProcessingQueueItemDto,
 } from '../api/recycler.api';
 import { Cog, Play, CheckCircle, Cpu } from 'lucide-react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 export const ManufacturingQueueBoard: React.FC = () => {
   const { data: queue = [], isLoading } = useRecyclerQueue();
   const startMutation = useStartProcessing();
   const completeMutation = useCompleteProcessing();
+
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: Math.ceil(queue.length / 3),
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 280,
+    overscan: 5,
+  });
 
   const [showStartModal, setShowStartModal] = useState(false);
   const [batchId, setBatchId] = useState('batch-uuid-1');
@@ -84,65 +93,105 @@ export const ManufacturingQueueBoard: React.FC = () => {
             <p className="text-xs text-slate-500 mt-1">Click "Start Machine Line" to assign lot stock to shredding or washing units.</p>
           </div>
         ) : (
-          queue.map((item: ProcessingQueueItemDto) => (
+          <div
+            ref={parentRef}
+            className="col-span-full max-h-[650px] overflow-y-auto pr-2"
+            style={{ position: 'relative' }}
+          >
             <div
-              key={item.id}
-              className="p-6 rounded-[30px] bg-slate-900/70 backdrop-blur-md border border-slate-800/80 hover:border-slate-700 transition-all shadow-xl flex flex-col justify-between space-y-4"
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: '100%',
+                position: 'relative',
+              }}
             >
-              <div>
-                <div className="flex justify-between items-start mb-3">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-[#D7FF43]/10 text-[#D7FF43] border border-[#D7FF43]/20">
-                    <Cpu className="w-3.5 h-3.5 mr-1" />
-                    {item.machineId}
-                  </span>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                      item.status === 'COMPLETED'
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : item.status === 'IN_PROGRESS'
-                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse'
-                        : 'bg-slate-800 text-slate-300'
-                    }`}
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const startIdx = virtualRow.index * 3;
+                const rowItems = queue.slice(startIdx, startIdx + 3);
+
+                return (
+                  <div
+                    key={virtualRow.index}
+                    data-index={virtualRow.index}
+                    ref={rowVirtualizer.measureElement}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6"
                   >
-                    {item.status}
-                  </span>
-                </div>
-                <h4 className="text-lg font-bold text-white tracking-tight">{item.processStage}</h4>
-                <p className="text-xs text-slate-400 font-mono mt-1">
-                  Lot: <span className="text-slate-200">{item.batch?.batchNumber || item.batchId}</span>
-                </p>
-              </div>
+                    {rowItems.map((item: ProcessingQueueItemDto, colIdx: number) => {
+                      const itemIndex = startIdx + colIdx;
+                      return (
+                        <div
+                          key={item.id}
+                          data-testid="queue-item"
+                          data-index={itemIndex}
+                          className="p-6 rounded-[30px] bg-slate-900/70 backdrop-blur-md border border-slate-800/80 hover:border-slate-700 transition-all shadow-xl flex flex-col justify-between space-y-4"
+                        >
+                          <div>
+                            <div className="flex justify-between items-start mb-3">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-[#D7FF43]/10 text-[#D7FF43] border border-[#D7FF43]/20">
+                                <Cpu className="w-3.5 h-3.5 mr-1" />
+                                {item.machineId}
+                              </span>
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                                  item.status === 'COMPLETED'
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                    : item.status === 'IN_PROGRESS'
+                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse'
+                                    : 'bg-slate-800 text-slate-300'
+                                }`}
+                              >
+                                {item.status}
+                              </span>
+                            </div>
+                            <h4 className="text-lg font-bold text-white tracking-tight">{item.processStage}</h4>
+                            <p className="text-xs text-slate-400 font-mono mt-1">
+                              Lot: <span className="text-slate-200">{item.batch?.batchNumber || item.batchId}</span>
+                            </p>
+                          </div>
 
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/60 space-y-2 text-xs font-mono">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Input Weight:</span>
-                  <span className="text-white font-bold">{item.inputWeightKg.toLocaleString()} kg</span>
-                </div>
-                {item.outputWeightKg !== undefined && item.outputWeightKg > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Output Yield:</span>
-                    <span className="text-emerald-400 font-bold">{item.outputWeightKg.toLocaleString()} kg</span>
-                  </div>
-                )}
-                {item.wasteLossKg !== undefined && item.wasteLossKg > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Waste Loss / Evap:</span>
-                    <span className="text-rose-400 font-bold">{item.wasteLossKg.toLocaleString()} kg</span>
-                  </div>
-                )}
-              </div>
+                          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/60 space-y-2 text-xs font-mono">
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Input Weight:</span>
+                              <span className="text-white font-bold">{item.inputWeightKg.toLocaleString()} kg</span>
+                            </div>
+                            {item.outputWeightKg !== undefined && item.outputWeightKg > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Output Yield:</span>
+                                <span className="text-emerald-400 font-bold">{item.outputWeightKg.toLocaleString()} kg</span>
+                              </div>
+                            )}
+                            {item.wasteLossKg !== undefined && item.wasteLossKg > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Waste Loss / Evap:</span>
+                                <span className="text-rose-400 font-bold">{item.wasteLossKg.toLocaleString()} kg</span>
+                              </div>
+                            )}
+                          </div>
 
-              {item.status === 'IN_PROGRESS' && (
-                <button
-                  onClick={() => setCompletingQueueId(item.id)}
-                  className="w-full py-2.5 rounded-2xl bg-[#D7FF43] hover:bg-[#c5ec36] text-slate-950 font-bold text-xs tracking-wider uppercase transition-all shadow flex items-center justify-center space-x-1.5 active:scale-95"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Complete Run & Record Yield</span>
-                </button>
-              )}
+                          {item.status === 'IN_PROGRESS' && (
+                            <button
+                              onClick={() => setCompletingQueueId(item.id)}
+                              className="w-full py-2.5 rounded-2xl bg-[#D7FF43] hover:bg-[#c5ec36] text-slate-950 font-bold text-xs tracking-wider uppercase transition-all shadow flex items-center justify-center space-x-1.5 active:scale-95"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                              <span>Complete Run & Record Yield</span>
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
-          ))
+          </div>
         )}
       </div>
 

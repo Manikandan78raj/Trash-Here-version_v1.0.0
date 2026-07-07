@@ -19,6 +19,7 @@ import { usePredictionHistory, useRealtimePrediction, useRetryJob } from '../hoo
 import { LivePredictionOverlay } from './LivePredictionOverlay';
 import { ContaminationAlertCard } from './ContaminationAlertCard';
 import type { AiPrediction } from '../types/ai.types';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface WasteDetectionDashboardProps {
   onOpenScanner: () => void;
@@ -34,6 +35,14 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
 
   const { data: predictions = [], isLoading, refetch } = usePredictionHistory(30, 0);
   const retryJobMutation = useRetryJob();
+
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: predictions.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 75,
+    overscan: 5,
+  });
 
   const [selectedPrediction, setSelectedPrediction] = useState<AiPrediction | null>(null);
   const [failedJobId, setFailedJobId] = useState<string | null>(null);
@@ -302,58 +311,85 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
                 <RefreshCw className="w-6 h-6 text-[#D7FF43] animate-spin" />
               </div>
             ) : predictions.length > 0 ? (
-              <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
-                {predictions.map((pred) => {
-                  const isSelected = selectedPrediction?.id === pred.id;
-                  const isContaminated = pred.isContaminated;
+              <div
+                ref={parentRef}
+                className="max-h-[500px] overflow-y-auto pr-1"
+                style={{ position: 'relative' }}
+              >
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize()}px`,
+                    width: '100%',
+                    position: 'relative',
+                  }}
+                >
+                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                    const pred = predictions[virtualRow.index];
+                    const isSelected = selectedPrediction?.id === pred.id;
+                    const isContaminated = pred.isContaminated;
 
-                  return (
-                    <motion.div
-                      key={pred.id}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => setSelectedPrediction(pred)}
-                      className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-zinc-900 text-white dark:bg-zinc-800 border-[#D7FF43] shadow-md'
-                          : 'bg-zinc-50 dark:bg-zinc-800/40 border-zinc-200/60 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-800 dark:text-zinc-200'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div
-                          className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
-                            isContaminated
-                              ? 'bg-red-500/10 text-red-500'
-                              : 'bg-[#D7FF43]/20 text-[#97c400] dark:text-[#D7FF43]'
+                    return (
+                      <div
+                        key={pred.id}
+                        data-index={virtualRow.index}
+                        data-testid="scan-history-item"
+                        ref={rowVirtualizer.measureElement}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                        className="pb-2.5"
+                      >
+                        <motion.div
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => setSelectedPrediction(pred)}
+                          className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                            isSelected
+                              ? 'bg-zinc-900 text-white dark:bg-zinc-800 border-[#D7FF43] shadow-md'
+                              : 'bg-zinc-50 dark:bg-zinc-800/40 border-zinc-200/60 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-800 dark:text-zinc-200'
                           }`}
                         >
-                          {isContaminated ? (
-                            <AlertCircle className="w-4 h-4" />
-                          ) : (
-                            <CheckCircle2 className="w-4 h-4" />
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs font-bold truncate">
-                            {pred.recommendationText || 'Waste Detection Analysis'}
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
+                                isContaminated
+                                  ? 'bg-red-500/10 text-red-500'
+                                  : 'bg-[#D7FF43]/20 text-[#97c400] dark:text-[#D7FF43]'
+                              }`}
+                            >
+                              {isContaminated ? (
+                                <AlertCircle className="w-4 h-4" />
+                              ) : (
+                                <CheckCircle2 className="w-4 h-4" />
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold truncate">
+                                {pred.recommendationText || 'Waste Detection Analysis'}
+                              </div>
+                              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-0.5">
+                                <span>{new Date(pred.createdAt).toLocaleDateString()}</span>
+                                <span>•</span>
+                                <span className={isContaminated ? 'text-red-500 font-semibold' : 'text-emerald-500 font-semibold'}>
+                                  {pred.contaminationRate}% Contam
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-0.5">
-                            <span>{new Date(pred.createdAt).toLocaleDateString()}</span>
-                            <span>•</span>
-                            <span className={isContaminated ? 'text-red-500 font-semibold' : 'text-emerald-500 font-semibold'}>
-                              {pred.contaminationRate}% Contam
-                            </span>
-                          </div>
-                        </div>
+                          <ChevronRight
+                            className={`w-4 h-4 shrink-0 transition-transform ${
+                              isSelected ? 'text-[#D7FF43] translate-x-0.5' : 'text-zinc-400'
+                            }`}
+                          />
+                        </motion.div>
                       </div>
-                      <ChevronRight
-                        className={`w-4 h-4 shrink-0 transition-transform ${
-                          isSelected ? 'text-[#D7FF43] translate-x-0.5' : 'text-zinc-400'
-                        }`}
-                      />
-                    </motion.div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <div className="text-center py-8 text-xs text-zinc-500">

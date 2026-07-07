@@ -8,10 +8,10 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole, LoadStatus, BatchStatus, ProcessingStatus } from '@prisma/client';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RoleType, LoadStatus, BatchStatus, ProcessingStatus } from '@prisma/client';
 import { RecyclerIntakeService } from './services/recycler-intake.service';
 import { RecyclerInventoryService } from './services/recycler-inventory.service';
 import { RecyclerProcessingService } from './services/recycler-processing.service';
@@ -30,7 +30,7 @@ import {
 
 @Controller('recycler')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.RECYCLER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(RoleType.RECYCLER, RoleType.ADMIN, RoleType.SUPER_ADMIN)
 export class RecyclerController {
   constructor(
     private readonly intakeService: RecyclerIntakeService,

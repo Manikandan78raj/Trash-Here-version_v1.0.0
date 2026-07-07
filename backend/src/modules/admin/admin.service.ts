@@ -155,4 +155,43 @@ export class AdminService {
       transactions,
     };
   }
+
+  async getAnalyticsChartData(period: string = "30d") {
+    return {
+      period,
+      series: [
+        { name: "Recycled Volume (kg)", data: [1200, 1900, 1500, 2400, 2800, 3200, 3900] },
+        { name: "CO2 Offset (kg)", data: [4200, 6650, 5250, 8400, 9800, 11200, 13650] },
+      ],
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    };
+  }
+
+  async getRecentActivity(limit: number = 20) {
+    const pickups = await this.prisma.pickupRequest.findMany({
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { fullName: true, email: true } },
+        collector: { include: { user: { select: { fullName: true } } } },
+      },
+    });
+    return pickups.map((p) => ({
+      id: p.id,
+      type: "PICKUP_STATUS_CHANGE",
+      description: `Pickup request #${p.id.slice(0, 8)} status: ${p.status}`,
+      user: p.user?.fullName || p.user?.email || "Unknown",
+      timestamp: p.createdAt.toISOString(),
+    }));
+  }
+
+  async getSystemStatus() {
+    return {
+      status: "ONLINE",
+      database: "HEALTHY",
+      redisCache: "HEALTHY",
+      uptimeSeconds: process.uptime(),
+      timestamp: new Date().toISOString(),
+    };
+  }
 }

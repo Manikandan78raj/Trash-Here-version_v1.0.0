@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { ValidationPipe, Logger } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "helmet";
+import * as compression from "compression";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter";
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor";
@@ -10,8 +11,9 @@ async function bootstrap() {
   const logger = new Logger("TrashHereEnterprise");
   const app = await NestFactory.create(AppModule);
 
-  // 1. Security & Helmet Middleware
+  // 1. Security, Compression & Helmet Middleware
   app.use(helmet());
+  app.use((compression as any)({ threshold: 1024 })); // Compress responses > 1KB (Gzip/Brotli)
   app.enableCors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",

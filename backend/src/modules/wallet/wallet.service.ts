@@ -1,10 +1,13 @@
 import {
   Injectable,
+  Optional,
   NotFoundException,
   BadRequestException,
   Logger,
 } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { RedisCacheService } from "../../common/cache/redis-cache.service";
+import { Cacheable, CacheEvict } from "../../common/cache/cache.decorators";
 import {
   RedeemRewardDto,
   WithdrawCashDto,
@@ -22,7 +25,10 @@ import { TransactionType, TransactionStatus } from "@prisma/client";
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Optional() public readonly cacheService?: RedisCacheService,
+  ) {}
 
   async getWallet(userId: string) {
     let wallet = await this.prisma.wallet.findUnique({ where: { userId } });
@@ -40,24 +46,28 @@ export class WalletService {
     return wallet;
   }
 
+  @Cacheable({ keyPrefix: "wallet:dashboard", ttl: 60 })
   async getWalletDashboard(userId: string) {
     const wallet = await this.getWallet(userId);
-    const activeSubscription = await this.prisma.subscription.findFirst({
-      where: { userId, status: "ACTIVE" },
-    });
-    const recentTransactions = await this.prisma.transaction.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    });
-    const activeVouchers = await this.prisma.userReward.findMany({
-      where: { userId, status: "ACTIVE" },
-      include: { reward: true },
-    });
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { ecoScore: true, carbonSavedKg: true, referralCode: true },
-    });
+    const [activeSubscription, recentTransactions, activeVouchers, user] =
+      await Promise.all([
+        this.prisma.subscription.findFirst({
+          where: { userId, status: "ACTIVE" },
+        }),
+        this.prisma.transaction.findMany({
+          where: { userId },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        }),
+        this.prisma.userReward.findMany({
+          where: { userId, status: "ACTIVE" },
+          include: { reward: true },
+        }),
+        this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { ecoScore: true, carbonSavedKg: true, referralCode: true },
+        }),
+      ]);
 
     return {
       wallet,
@@ -72,6 +82,7 @@ export class WalletService {
     };
   }
 
+  @Cacheable({ keyPrefix: "wallet:rewards", ttl: 3600 })
   async getRewards() {
     return this.prisma.reward.findMany({
       where: { isActive: true },
@@ -79,6 +90,7 @@ export class WalletService {
     });
   }
 
+  @CacheEvict({ keyPrefix: "wallet:dashboard", pattern: true })
   async redeemReward(userId: string, dto: RedeemRewardDto) {
     const wallet = await this.getWallet(userId);
     const reward = await this.prisma.reward.findUnique({
