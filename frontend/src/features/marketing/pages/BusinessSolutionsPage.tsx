@@ -42,7 +42,8 @@ export const BusinessSolutionsPage: React.FC = () => {
             Decarbonize Commercial Waste Operations
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Purpose-built infrastructure for property managers, retail chains, and municipal sustainability directors.
+            Purpose-built infrastructure for property managers, retail chains, and municipal
+            sustainability directors.
           </p>
         </div>
 
@@ -80,9 +81,12 @@ export const BusinessSolutionsPage: React.FC = () => {
 
         {/* Enterprise CTA Banner */}
         <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Need a Custom Municipal Pilot?</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Need a Custom Municipal Pilot?
+          </h2>
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Our engineering team deploys dedicated edge IoT telemetry hardware and custom webhook integrations within 14 days.
+            Our engineering team deploys dedicated edge IoT telemetry hardware and custom webhook
+            integrations within 14 days.
           </p>
           <div className="pt-4">
             <Link

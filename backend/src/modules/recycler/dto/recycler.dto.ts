@@ -1,5 +1,15 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, IsArray, ValidateNested, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  IsArray,
+  ValidateNested,
+  Min,
+  Max,
+} from "class-validator";
+import { Type } from "class-transformer";
 import {
   IntakeSourceType,
   InspectionGrade,
@@ -8,7 +18,7 @@ import {
   ContaminantAction,
   ProcessingStage,
   ManifestType,
-} from '@prisma/client';
+} from "@prisma/client";
 
 export class CheckInLoadDto {
   @IsString()

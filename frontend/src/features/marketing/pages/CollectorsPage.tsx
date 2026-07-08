@@ -39,7 +39,8 @@ export const CollectorsPage: React.FC = () => {
             Drive, Collect, and Earn Instantly
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Whether you operate a single pickup truck or a commercial fleet of 50 residential compactors, Trash Here maximizes your hourly yield.
+            Whether you operate a single pickup truck or a commercial fleet of 50 residential
+            compactors, Trash Here maximizes your hourly yield.
           </p>
         </div>
 
@@ -63,9 +64,12 @@ export const CollectorsPage: React.FC = () => {
         </div>
 
         <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Ready to Join the Fleet?</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Ready to Join the Fleet?
+          </h2>
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Access the Collector Workspace to upload vehicle credentials and start receiving dispatch orders today.
+            Access the Collector Workspace to upload vehicle credentials and start receiving
+            dispatch orders today.
           </p>
           <div className="pt-4">
             <Link

@@ -104,8 +104,18 @@ export const CareerDetailPage: React.FC = () => {
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://trashhere.com' },
-            { '@type': 'ListItem', position: 2, name: 'Careers', item: 'https://trashhere.com/careers' },
-            { '@type': 'ListItem', position: 3, name: job.title, item: `https://trashhere.com/careers/${job.slug}` },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Careers',
+              item: 'https://trashhere.com/careers',
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: job.title,
+              item: `https://trashhere.com/careers/${job.slug}`,
+            },
           ],
         }}
       />
@@ -115,9 +125,13 @@ export const CareerDetailPage: React.FC = () => {
         <div className="lg:col-span-7 space-y-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              <Link to="/" className="hover:text-white">Home</Link>
+              <Link to="/" className="hover:text-white">
+                Home
+              </Link>
               <span>/</span>
-              <Link to="/careers" className="hover:text-white">Careers</Link>
+              <Link to="/careers" className="hover:text-white">
+                Careers
+              </Link>
               <span>/</span>
               <span className="text-[#D7FF43]">{job.department}</span>
             </div>
@@ -169,7 +183,9 @@ export const CareerDetailPage: React.FC = () => {
         >
           <div className="space-y-1">
             <h3 className="text-xl font-bold text-white">Apply for this Position</h3>
-            <p className="text-xs text-slate-400">Submit your credentials directly to our hiring team.</p>
+            <p className="text-xs text-slate-400">
+              Submit your credentials directly to our hiring team.
+            </p>
           </div>
 
           <form onSubmit={handleApply} className="space-y-4">
@@ -186,7 +202,9 @@ export const CareerDetailPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address *</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Email Address *
+              </label>
               <input
                 type="email"
                 required
@@ -198,7 +216,9 @@ export const CareerDetailPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number *</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Phone Number *
+              </label>
               <input
                 type="tel"
                 required
@@ -210,7 +230,9 @@ export const CareerDetailPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Resume / CV URL *</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Resume / CV URL *
+              </label>
               <input
                 type="url"
                 required
@@ -223,7 +245,9 @@ export const CareerDetailPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">LinkedIn URL</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  LinkedIn URL
+                </label>
                 <input
                   type="url"
                   value={linkedinUrl}
@@ -233,7 +257,9 @@ export const CareerDetailPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Portfolio / GitHub</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Portfolio / GitHub
+                </label>
                 <input
                   type="url"
                   value={portfolioUrl}
@@ -245,7 +271,9 @@ export const CareerDetailPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Cover Letter / Note</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Cover Letter / Note
+              </label>
               <textarea
                 rows={3}
                 value={coverLetter}

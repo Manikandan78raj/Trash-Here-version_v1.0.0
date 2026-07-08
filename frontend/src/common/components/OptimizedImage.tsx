@@ -45,10 +45,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   // Generate responsive srcSet for WebP/AVIF assets if responsive flag enabled
   const generatedSrcSet =
-    srcSet ||
-    (responsive
-      ? `${src} 400w, ${src} 800w, ${src} 1200w, ${src} 1600w`
-      : undefined);
+    srcSet || (responsive ? `${src} 400w, ${src} 800w, ${src} 1200w, ${src} 1600w` : undefined);
 
   return (
     <img

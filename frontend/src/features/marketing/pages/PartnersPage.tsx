@@ -5,10 +5,30 @@ import { SeoHead } from '../components/SeoHead';
 
 export const PartnersPage: React.FC = () => {
   const partners = [
-    { name: 'City of Seattle Public Works', type: 'Municipal Government', desc: 'Integrated algorithmic polyline dispatch across 120 residential recycling collection routes.', logo: '🏙️' },
-    { name: 'Bay Area Eco-Recovery Hub', type: 'Certified MRF Partner', desc: 'Deployed edge IoT weighbridge sensors on two 50-ton truck scales, processing 400 tons daily.', logo: '♻️' },
-    { name: 'Stripe Climate Coalition', type: 'Financial & Carbon Partner', desc: 'Direct API integration for instant collector payouts and verified Scope 3 carbon credit retirements.', logo: '🌐' },
-    { name: 'Global Reforestation Initiative', type: 'Green Points Redemption Partner', desc: 'Citizens have donated over 500,000 Green Points to fund urban canopy planting across North America.', logo: '🌲' },
+    {
+      name: 'City of Seattle Public Works',
+      type: 'Municipal Government',
+      desc: 'Integrated algorithmic polyline dispatch across 120 residential recycling collection routes.',
+      logo: '🏙️',
+    },
+    {
+      name: 'Bay Area Eco-Recovery Hub',
+      type: 'Certified MRF Partner',
+      desc: 'Deployed edge IoT weighbridge sensors on two 50-ton truck scales, processing 400 tons daily.',
+      logo: '♻️',
+    },
+    {
+      name: 'Stripe Climate Coalition',
+      type: 'Financial & Carbon Partner',
+      desc: 'Direct API integration for instant collector payouts and verified Scope 3 carbon credit retirements.',
+      logo: '🌐',
+    },
+    {
+      name: 'Global Reforestation Initiative',
+      type: 'Green Points Redemption Partner',
+      desc: 'Citizens have donated over 500,000 Green Points to fund urban canopy planting across North America.',
+      logo: '🌲',
+    },
   ];
 
   return (
@@ -28,7 +48,8 @@ export const PartnersPage: React.FC = () => {
             Our Ecosystem Partners
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            We collaborate with leading municipalities, enterprise recyclers, and climate tech pioneers to build open waste infrastructure.
+            We collaborate with leading municipalities, enterprise recyclers, and climate tech
+            pioneers to build open waste infrastructure.
           </p>
         </div>
 
@@ -46,7 +67,9 @@ export const PartnersPage: React.FC = () => {
                 {item.logo}
               </div>
               <div className="space-y-2">
-                <span className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">{item.type}</span>
+                <span className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">
+                  {item.type}
+                </span>
                 <h2 className="text-xl font-bold text-white">{item.name}</h2>
                 <p className="text-sm text-slate-300 leading-relaxed">{item.desc}</p>
               </div>
@@ -57,7 +80,8 @@ export const PartnersPage: React.FC = () => {
         <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6">
           <h2 className="text-3xl font-extrabold text-white">Become an Ecosystem Partner</h2>
           <p className="text-sm text-slate-300 max-w-xl mx-auto">
-            Integrate your municipality, recycling facility, or carbon accounting software with our public REST API and webhooks.
+            Integrate your municipality, recycling facility, or carbon accounting software with our
+            public REST API and webhooks.
           </p>
           <div className="pt-2">
             <Link

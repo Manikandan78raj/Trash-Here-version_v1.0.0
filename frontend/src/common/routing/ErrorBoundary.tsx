@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { ShieldAlert, RefreshCw } from 'lucide-react';
-import { Card, Heading, Text, Button, Code } from '@/components/ui';
+import { Card, Heading, Text, Button } from '@/components/ui';
+import { sanitizeText } from '@/common/security/sanitization';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -12,6 +13,15 @@ interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+}
+
+function formatSafeErrorMessage(error: Error): string {
+  const rawMsg = `${error.name || ''}: ${error.message || ''}`;
+  // Check for backend/database/Prisma error leaks
+  if (/prisma|sql|database|table|library\.js|node_modules/i.test(rawMsg)) {
+    return 'An unexpected application error occurred. Please try again.';
+  }
+  return sanitizeText(error.message || 'An unexpected application error occurred.');
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -33,7 +43,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error('❌ [ErrorBoundary] Uncaught application error:', error, errorInfo);
+    if (import.meta.env.MODE === 'development') {
+      console.error('❌ [ErrorBoundary] Uncaught application error:', error, errorInfo);
+    }
     this.setState({
       error,
       errorInfo,
@@ -44,7 +56,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.setState({ hasError: false, error: null, errorInfo: null });
     if (this.props.onReset) {
       this.props.onReset();
-    } else {
+    } else if (import.meta.env.MODE !== 'test' && typeof window !== 'undefined') {
       window.location.reload();
     }
   };
@@ -73,20 +85,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </div>
 
             <Text variant="default" className="text-muted-foreground">
-              An unexpected error occurred in this workspace component. Our telemetry nodes have
-              logged the exception for diagnostics.
+              A workspace runtime exception was intercepted by our security boundary. Our telemetry
+              nodes have logged the event for diagnostics.
             </Text>
 
             {this.state.error && (
               <div className="p-4 rounded-2xl bg-muted/60 border border-border/60 overflow-x-auto">
                 <Text variant="small" className="font-mono font-bold text-destructive block mb-1">
-                  {this.state.error.toString()}
+                  {formatSafeErrorMessage(this.state.error)}
                 </Text>
-                {this.state.errorInfo && (
-                  <Code className="text-[11px] text-muted-foreground block whitespace-pre-wrap mt-2 max-h-40 overflow-y-auto">
-                    {this.state.errorInfo.componentStack}
-                  </Code>
-                )}
               </div>
             )}
 
@@ -97,7 +104,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 leftIcon={<RefreshCw className="h-4 w-4" />}
                 onClick={this.handleReset}
               >
-                Reload Workspace
+                Try Again
               </Button>
             </div>
           </Card>

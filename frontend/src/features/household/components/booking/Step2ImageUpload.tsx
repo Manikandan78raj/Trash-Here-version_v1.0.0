@@ -13,6 +13,7 @@ import {
 import { Card, Heading, Text, Button, Badge } from '@/components/ui';
 import { toast } from '@/common/notifications/toast';
 import { uploadToCloudinary } from '@/common/services/cloudinary.service';
+import { validateFileUpload } from '@/common/security/upload-validator';
 
 export interface BookingImageState {
   id: string;
@@ -68,6 +69,14 @@ export const Step2ImageUpload: React.FC<Step2ImageUploadProps> = ({
       // Validate size
       if (file.size > MAX_SIZE_MB * 1024 * 1024) {
         toast.error(`File "${file.name}" exceeds the ${MAX_SIZE_MB}MB maximum size limit.`);
+        continue;
+      }
+
+      const validation = await validateFileUpload(file, {
+        maxSizeBytes: MAX_SIZE_MB * 1024 * 1024,
+      });
+      if (!validation.isValid) {
+        toast.error(`File "${file.name}" failed security check: ${validation.error}`);
         continue;
       }
 

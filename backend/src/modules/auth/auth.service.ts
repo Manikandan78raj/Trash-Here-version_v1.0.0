@@ -3,12 +3,16 @@ import {
   UnauthorizedException,
   BadRequestException,
   ConflictException,
+  HttpException,
+  HttpStatus,
   Logger,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcryptjs";
+import * as crypto from "crypto";
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { RedisCacheService } from "../../common/cache/redis-cache.service";
 import {
   LoginDto,
   RegisterDto,
@@ -25,6 +29,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private redisCacheService: RedisCacheService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -37,13 +42,50 @@ export class AuthService {
       throw new UnauthorizedException("Invalid email or password");
     }
 
+    if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+      throw new HttpException(
+        "Account temporarily locked due to too many failed login attempts. Try again later.",
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
       user.passwordHash,
     );
     if (!isPasswordValid) {
+      const newAttempts = (user.failedLoginAttempts || 0) + 1;
+      const lockoutUntil =
+        newAttempts >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null;
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          failedLoginAttempts: { increment: 1 },
+          ...(lockoutUntil ? { lockoutUntil } : {}),
+        },
+      });
+
+      if (newAttempts >= 5) {
+        this.logger.warn(
+          `🚨 [Security Alert] Account locked for 15 minutes due to 5 consecutive failed logins: ${user.email}`,
+        );
+        throw new HttpException(
+          "Account locked due to 5 consecutive failed login attempts. Try again in 15 minutes.",
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+
       throw new UnauthorizedException("Invalid email or password");
     }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        failedLoginAttempts: 0,
+        lockoutUntil: null,
+      },
+    });
 
     const { passwordHash, ...userData } = user;
     const tokens = await this.generateTokens(
@@ -78,7 +120,7 @@ export class AuthService {
       });
     }
 
-    const passwordHash = await bcrypt.hash(registerDto.password, 10);
+    const passwordHash = await bcrypt.hash(registerDto.password, 12);
 
     const newUser = await this.prisma.user.create({
       data: {
@@ -111,6 +153,63 @@ export class AuthService {
     return {
       user: userData,
       ...tokens,
+    };
+  }
+
+  async refreshToken(userId: string, refreshToken: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { role: true },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException("User not found");
+    }
+
+    const incomingHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    if (!user.refreshTokenHash || user.refreshTokenHash !== incomingHash) {
+      this.logger.error(
+        `🚨 [Security Alert] Refresh token replay attack detected for userId: ${userId}. Revoking token family!`,
+      );
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { refreshTokenHash: null },
+      });
+      throw new UnauthorizedException(
+        "Security alert: Token replay detected. Please login again.",
+      );
+    }
+
+    const tokens = await this.generateTokens(
+      user.id,
+      user.email,
+      user.role.name,
+    );
+
+    return tokens;
+  }
+
+  async logout(userId: string, accessToken: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshTokenHash: null },
+    });
+
+    if (accessToken) {
+      await this.redisCacheService.set(
+        `auth:blocklist:${accessToken}`,
+        "revoked",
+        900,
+      );
+    }
+
+    return {
+      success: true,
+      message: "Logged out successfully",
     };
   }
 
@@ -183,7 +282,7 @@ export class AuthService {
       secret:
         this.configService.get<string>("JWT_SECRET") ||
         "super-secret-trash-here-enterprise-jwt-key-2026",
-      expiresIn: "7d",
+      expiresIn: "15m",
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
@@ -193,10 +292,20 @@ export class AuthService {
       expiresIn: "30d",
     });
 
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshTokenHash: tokenHash },
+    });
+
     return {
       accessToken,
       refreshToken,
-      expiresIn: 604800, // 7 days in seconds
+      expiresIn: 900, // 15 minutes in seconds
     };
   }
 }

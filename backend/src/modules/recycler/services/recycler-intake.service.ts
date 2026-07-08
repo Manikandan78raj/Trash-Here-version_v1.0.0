@@ -3,16 +3,16 @@ import {
   NotFoundException,
   BadRequestException,
   Logger,
-} from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { MockDigitalScaleProvider } from '../providers/mock-digital-scale.provider';
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { MockDigitalScaleProvider } from "../providers/mock-digital-scale.provider";
 import {
   CheckInLoadDto,
   RecordWeighInDto,
   RecordInspectionDto,
   RecordWeighOutDto,
-} from '../dto/recycler.dto';
-import { LoadStatus, InspectionGrade } from '@prisma/client';
+} from "../dto/recycler.dto";
+import { LoadStatus, InspectionGrade } from "@prisma/client";
 
 @Injectable()
 export class RecyclerIntakeService {
@@ -28,7 +28,9 @@ export class RecyclerIntakeService {
       where: { userId },
     });
     if (!profile) {
-      throw new NotFoundException('Recycler profile not found for current user.');
+      throw new NotFoundException(
+        "Recycler profile not found for current user.",
+      );
     }
     return profile;
   }
@@ -37,7 +39,9 @@ export class RecyclerIntakeService {
     const recycler = await this.getRecyclerProfile(userId);
 
     const manifestNumber = `LD-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
-    this.logger.log(`Facility [${recycler.facilityCode}] checking in vehicle [${dto.truckPlate}] under manifest [${manifestNumber}]`);
+    this.logger.log(
+      `Facility [${recycler.facilityCode}] checking in vehicle [${dto.truckPlate}] under manifest [${manifestNumber}]`,
+    );
 
     const load = await this.prisma.incomingLoad.create({
       data: {
@@ -45,9 +49,11 @@ export class RecyclerIntakeService {
         collectorId: dto.collectorId || null,
         truckPlate: dto.truckPlate.toUpperCase(),
         driverName: dto.driverName,
-        sourceType: dto.sourceType || 'COLLECTOR_FLEET',
+        sourceType: dto.sourceType || "COLLECTOR_FLEET",
         manifestNumber,
-        scheduledArrival: dto.scheduledArrival ? new Date(dto.scheduledArrival) : new Date(),
+        scheduledArrival: dto.scheduledArrival
+          ? new Date(dto.scheduledArrival)
+          : new Date(),
         status: LoadStatus.ARRIVED,
       },
     });
@@ -55,7 +61,7 @@ export class RecyclerIntakeService {
     return {
       success: true,
       statusCode: 201,
-      message: 'Vehicle checked in successfully.',
+      message: "Vehicle checked in successfully.",
       data: load,
       timestamp: new Date().toISOString(),
     };
@@ -68,20 +74,27 @@ export class RecyclerIntakeService {
     });
 
     if (!load || load.recyclerId !== recycler.id) {
-      throw new NotFoundException('Incoming load not found in this facility.');
+      throw new NotFoundException("Incoming load not found in this facility.");
     }
 
     if (load.status !== LoadStatus.ARRIVED) {
-      throw new BadRequestException(`Load must be in ARRIVED status to weigh in. Current status: ${load.status}`);
+      throw new BadRequestException(
+        `Load must be in ARRIVED status to weigh in. Current status: ${load.status}`,
+      );
     }
 
-    const scaleReading = await this.digitalScaleProvider.getScaleReading(dto.scaleId);
+    const scaleReading = await this.digitalScaleProvider.getScaleReading(
+      dto.scaleId,
+    );
     if (!scaleReading.isStable) {
-      throw new BadRequestException('Scale reading unstable. Please ensure vehicle is completely stationary.');
+      throw new BadRequestException(
+        "Scale reading unstable. Please ensure vehicle is completely stationary.",
+      );
     }
 
     const digitalSealPayload = `${loadId}:${scaleReading.weightKg}:${scaleReading.timestamp}`;
-    const digitalSeal = this.digitalScaleProvider.generateDigitalSeal(digitalSealPayload);
+    const digitalSeal =
+      this.digitalScaleProvider.generateDigitalSeal(digitalSealPayload);
 
     const [scaleRecord, updatedLoad] = await this.prisma.$transaction([
       this.prisma.scaleRecord.create({
@@ -103,29 +116,37 @@ export class RecyclerIntakeService {
       }),
     ]);
 
-    this.logger.log(`Weigh-in recorded for load [${load.manifestNumber}]: Gross Weight = ${scaleReading.weightKg} kg`);
+    this.logger.log(
+      `Weigh-in recorded for load [${load.manifestNumber}]: Gross Weight = ${scaleReading.weightKg} kg`,
+    );
 
     return {
       success: true,
       statusCode: 200,
-      message: 'Weigh-in recorded successfully.',
+      message: "Weigh-in recorded successfully.",
       data: { scaleRecord, loadStatus: updatedLoad.status },
       timestamp: new Date().toISOString(),
     };
   }
 
-  async recordInspection(userId: string, loadId: string, dto: RecordInspectionDto) {
+  async recordInspection(
+    userId: string,
+    loadId: string,
+    dto: RecordInspectionDto,
+  ) {
     const recycler = await this.getRecyclerProfile(userId);
     const load = await this.prisma.incomingLoad.findUnique({
       where: { id: loadId },
     });
 
     if (!load || load.recyclerId !== recycler.id) {
-      throw new NotFoundException('Incoming load not found in this facility.');
+      throw new NotFoundException("Incoming load not found in this facility.");
     }
 
     if (load.status !== LoadStatus.WEIGHING_IN) {
-      throw new BadRequestException(`Load must be in WEIGHING_IN status to inspect. Current status: ${load.status}`);
+      throw new BadRequestException(
+        `Load must be in WEIGHING_IN status to inspect. Current status: ${load.status}`,
+      );
     }
 
     const inspection = await this.prisma.qualityInspection.create({
@@ -140,9 +161,9 @@ export class RecyclerIntakeService {
         contaminationFlags: {
           create: (dto.contaminants || []).map((c) => ({
             contaminantType: c.contaminantType,
-            severity: c.severity || 'MEDIUM',
+            severity: c.severity || "MEDIUM",
             estimatedWeightKg: c.estimatedWeightKg,
-            actionTaken: c.actionTaken || 'SORTED_OUT',
+            actionTaken: c.actionTaken || "SORTED_OUT",
             photoUrl: c.photoUrl || null,
           })),
         },
@@ -160,12 +181,14 @@ export class RecyclerIntakeService {
       data: { status: newStatus },
     });
 
-    this.logger.log(`Inspection recorded for load [${load.manifestNumber}]: Grade = ${dto.overallGrade}`);
+    this.logger.log(
+      `Inspection recorded for load [${load.manifestNumber}]: Grade = ${dto.overallGrade}`,
+    );
 
     return {
       success: true,
       statusCode: 201,
-      message: 'Quality inspection recorded successfully.',
+      message: "Quality inspection recorded successfully.",
       data: { inspection, loadStatus: updatedLoad.status },
       timestamp: new Date().toISOString(),
     };
@@ -179,27 +202,41 @@ export class RecyclerIntakeService {
     });
 
     if (!load || load.recyclerId !== recycler.id) {
-      throw new NotFoundException('Incoming load not found in this facility.');
+      throw new NotFoundException("Incoming load not found in this facility.");
     }
 
     if (!load.scaleRecord) {
-      throw new BadRequestException('Cannot weigh out without a prior weigh-in record.');
+      throw new BadRequestException(
+        "Cannot weigh out without a prior weigh-in record.",
+      );
     }
 
     if (load.status === LoadStatus.REJECTED) {
-      throw new BadRequestException('Load has been rejected during inspection.');
+      throw new BadRequestException(
+        "Load has been rejected during inspection.",
+      );
     }
 
-    const scaleReading = await this.digitalScaleProvider.getScaleReading(dto.scaleId);
+    const scaleReading = await this.digitalScaleProvider.getScaleReading(
+      dto.scaleId,
+    );
     // For tare weight, ensure it's less than gross weight (if simulated reading happens to be higher, cap tare weight)
-    const tareWeightKg = Math.min(scaleReading.weightKg, Math.floor(load.scaleRecord.grossWeightKg * 0.35));
+    const tareWeightKg = Math.min(
+      scaleReading.weightKg,
+      Math.floor(load.scaleRecord.grossWeightKg * 0.35),
+    );
     const netWeightKg = load.scaleRecord.grossWeightKg - tareWeightKg;
 
     const digitalSealPayload = `${loadId}:${load.scaleRecord.grossWeightKg}:${tareWeightKg}:${netWeightKg}`;
-    const digitalSeal = this.digitalScaleProvider.generateDigitalSeal(digitalSealPayload);
+    const digitalSeal =
+      this.digitalScaleProvider.generateDigitalSeal(digitalSealPayload);
 
-    const isContaminated = load.qualityInspection?.overallGrade === InspectionGrade.GRADE_C_HEAVY_SORT;
-    const finalStatus = isContaminated ? LoadStatus.CONTAMINATED : LoadStatus.ACCEPTED;
+    const isContaminated =
+      load.qualityInspection?.overallGrade ===
+      InspectionGrade.GRADE_C_HEAVY_SORT;
+    const finalStatus = isContaminated
+      ? LoadStatus.CONTAMINATED
+      : LoadStatus.ACCEPTED;
 
     const [updatedScaleRecord, updatedLoad] = await this.prisma.$transaction([
       this.prisma.scaleRecord.update({
@@ -220,12 +257,14 @@ export class RecyclerIntakeService {
       }),
     ]);
 
-    this.logger.log(`Weigh-out recorded for load [${load.manifestNumber}]: Net Weight = ${netWeightKg} kg (${finalStatus})`);
+    this.logger.log(
+      `Weigh-out recorded for load [${load.manifestNumber}]: Net Weight = ${netWeightKg} kg (${finalStatus})`,
+    );
 
     return {
       success: true,
       statusCode: 200,
-      message: 'Weigh-out and net weight verification completed.',
+      message: "Weigh-out and net weight verification completed.",
       data: { scaleRecord: updatedScaleRecord, loadStatus: updatedLoad.status },
       timestamp: new Date().toISOString(),
     };
@@ -244,13 +283,13 @@ export class RecyclerIntakeService {
         scaleRecord: true,
         qualityInspection: { include: { contaminationFlags: true } },
       },
-      orderBy: { actualArrival: 'desc' },
+      orderBy: { actualArrival: "desc" },
     });
 
     return {
       success: true,
       statusCode: 200,
-      message: 'Facility loads retrieved successfully.',
+      message: "Facility loads retrieved successfully.",
       data: loads,
       timestamp: new Date().toISOString(),
     };

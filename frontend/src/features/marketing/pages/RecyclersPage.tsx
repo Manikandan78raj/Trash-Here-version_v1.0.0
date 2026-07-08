@@ -39,7 +39,8 @@ export const RecyclersPage: React.FC = () => {
             Automate Your Material Recovery Facility
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            We transform Material Recovery Facilities (MRFs) and scrap yards into digital climate infrastructure nodes with edge IoT scale hardware.
+            We transform Material Recovery Facilities (MRFs) and scrap yards into digital climate
+            infrastructure nodes with edge IoT scale hardware.
           </p>
         </div>
 
@@ -63,9 +64,12 @@ export const RecyclersPage: React.FC = () => {
         </div>
 
         <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Access the Recycler Portal</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Access the Recycler Portal
+          </h2>
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Manage incoming weighbridge queues, verify vehicle arrivals, and issue digital intake certificates.
+            Manage incoming weighbridge queues, verify vehicle arrivals, and issue digital intake
+            certificates.
           </p>
           <div className="pt-4 flex justify-center gap-4">
             <Link

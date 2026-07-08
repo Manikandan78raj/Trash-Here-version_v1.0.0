@@ -22,8 +22,12 @@ export const CookiesPolicyPage: React.FC = () => {
 
       <div className="max-w-4xl mx-auto space-y-12">
         <div className="space-y-4 border-b border-slate-800 pb-8">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Cookies Policy & Preferences</h1>
-          <p className="text-sm text-slate-400">Control how we use cookies and local storage on your device.</p>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight">
+            Cookies Policy & Preferences
+          </h1>
+          <p className="text-sm text-slate-400">
+            Control how we use cookies and local storage on your device.
+          </p>
         </div>
 
         {/* Preference Center Card */}
@@ -34,7 +38,10 @@ export const CookiesPolicyPage: React.FC = () => {
             <div className="flex items-center justify-between py-4 border-b border-slate-800/80">
               <div>
                 <h3 className="font-bold text-white">Strictly Necessary Cookies</h3>
-                <p className="text-xs text-slate-400 mt-1">Required for authentication, security tokens, and JWT session persistence. Cannot be disabled.</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Required for authentication, security tokens, and JWT session persistence. Cannot
+                  be disabled.
+                </p>
               </div>
               <span className="text-xs font-bold text-[#D7FF43] bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800">
                 Always Active
@@ -44,7 +51,10 @@ export const CookiesPolicyPage: React.FC = () => {
             <div className="flex items-center justify-between py-4 border-b border-slate-800/80">
               <div>
                 <h3 className="font-bold text-white">Analytics & Performance Telemetry</h3>
-                <p className="text-xs text-slate-400 mt-1">Allows us to measure Eco Calculator usage and page load speeds to optimize Core Web Vitals.</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Allows us to measure Eco Calculator usage and page load speeds to optimize Core
+                  Web Vitals.
+                </p>
               </div>
               <input
                 type="checkbox"
@@ -57,7 +67,10 @@ export const CookiesPolicyPage: React.FC = () => {
             <div className="flex items-center justify-between py-4">
               <div>
                 <h3 className="font-bold text-white">Marketing & Attribution Cookies</h3>
-                <p className="text-xs text-slate-400 mt-1">Used to track newsletter signups and measure campaign effectiveness across partner networks.</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Used to track newsletter signups and measure campaign effectiveness across partner
+                  networks.
+                </p>
               </div>
               <input
                 type="checkbox"
@@ -82,7 +95,9 @@ export const CookiesPolicyPage: React.FC = () => {
         <div className="prose prose-invert max-w-none text-slate-300 space-y-6 leading-relaxed">
           <h2 className="text-2xl font-bold text-white">What are cookies?</h2>
           <p>
-            Cookies are small text files stored in your web browser that enable our platform to recognize your session, remember your Eco Calculator volume settings, and ensure secure JWT communication with our API gateways.
+            Cookies are small text files stored in your web browser that enable our platform to
+            recognize your session, remember your Eco Calculator volume settings, and ensure secure
+            JWT communication with our API gateways.
           </p>
         </div>
       </div>

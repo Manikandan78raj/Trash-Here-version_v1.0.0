@@ -57,7 +57,8 @@ export const FaqPage: React.FC = () => {
             Frequently Asked Questions
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Everything you need to know about our climate infrastructure, rewards wallet, and fleet dispatching.
+            Everything you need to know about our climate infrastructure, rewards wallet, and fleet
+            dispatching.
           </p>
         </div>
 
@@ -75,8 +76,12 @@ export const FaqPage: React.FC = () => {
                   className="w-full p-6 sm:p-8 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-[#D7FF43] rounded-3xl"
                   aria-expanded={isOpen}
                 >
-                  <span className="text-lg sm:text-xl font-bold text-white tracking-tight">{faq.q}</span>
-                  <span className={`text-2xl text-[#D7FF43] transition-transform ${isOpen ? 'rotate-45' : ''}`}>
+                  <span className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                    {faq.q}
+                  </span>
+                  <span
+                    className={`text-2xl text-[#D7FF43] transition-transform ${isOpen ? 'rotate-45' : ''}`}
+                  >
                     +
                   </span>
                 </button>

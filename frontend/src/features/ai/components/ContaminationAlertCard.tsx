@@ -23,10 +23,33 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
   } = prediction;
 
   const getSeverity = () => {
-    if (contaminationRate <= 5) return { label: 'Clean & Ready', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20', icon: CheckCircle, badge: 'Low Severity' };
-    if (contaminationRate <= 15) return { label: 'Moderate Contamination', color: 'text-amber-500 bg-amber-500/10 border-amber-500/20', icon: Info, badge: 'Moderate Severity' };
-    if (contaminationRate <= 40) return { label: 'High Contamination', color: 'text-orange-500 bg-orange-500/10 border-orange-500/20', icon: AlertTriangle, badge: 'High Severity' };
-    return { label: 'Severe Contamination', color: 'text-red-500 bg-red-500/10 border-red-500/20', icon: ShieldAlert, badge: 'Severe Severity' };
+    if (contaminationRate <= 5)
+      return {
+        label: 'Clean & Ready',
+        color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
+        icon: CheckCircle,
+        badge: 'Low Severity',
+      };
+    if (contaminationRate <= 15)
+      return {
+        label: 'Moderate Contamination',
+        color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+        icon: Info,
+        badge: 'Moderate Severity',
+      };
+    if (contaminationRate <= 40)
+      return {
+        label: 'High Contamination',
+        color: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
+        icon: AlertTriangle,
+        badge: 'High Severity',
+      };
+    return {
+      label: 'Severe Contamination',
+      color: 'text-red-500 bg-red-500/10 border-red-500/20',
+      icon: ShieldAlert,
+      badge: 'Severe Severity',
+    };
   };
 
   const severity = getSeverity();
@@ -49,7 +72,9 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
     >
       {/* Header Badge */}
       <div className="flex items-center justify-between mb-4">
-        <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${severity.color}`}>
+        <div
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${severity.color}`}
+        >
           <IconComponent className="w-4 h-4 shrink-0" />
           <span>{severity.label}</span>
         </div>
@@ -57,9 +82,13 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
           <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
             Conf: {Math.round(overallConfidence * 100)}%
           </span>
-          <span className={`px-2.5 py-0.5 text-[11px] font-medium rounded-md ${
-            isContaminated ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-          }`}>
+          <span
+            className={`px-2.5 py-0.5 text-[11px] font-medium rounded-md ${
+              isContaminated
+                ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+            }`}
+          >
             {severity.badge}
           </span>
         </div>
@@ -67,9 +96,11 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
 
       {/* Main Contamination % Metric */}
       <div className="flex items-baseline gap-2 mb-6">
-        <span className={`text-4xl font-extrabold tracking-tight ${
-          isContaminated ? 'text-red-600 dark:text-red-400' : 'text-zinc-900 dark:text-white'
-        }`}>
+        <span
+          className={`text-4xl font-extrabold tracking-tight ${
+            isContaminated ? 'text-red-600 dark:text-red-400' : 'text-zinc-900 dark:text-white'
+          }`}
+        >
           {contaminationRate}%
         </span>
         <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
@@ -97,9 +128,7 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
             <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
               +{greenPointsEarned} Pts
             </div>
-            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-              Green Points Reward
-            </div>
+            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">Green Points Reward</div>
           </div>
         </div>
 
@@ -111,9 +140,7 @@ export const ContaminationAlertCard: React.FC<ContaminationAlertCardProps> = ({
             <div className="text-sm font-bold text-zinc-900 dark:text-white">
               {co2SavedKg} kg CO₂
             </div>
-            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
-              EPA WARM Savings
-            </div>
+            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">EPA WARM Savings</div>
           </div>
         </div>
       </div>

@@ -160,8 +160,14 @@ export class AdminService {
     return {
       period,
       series: [
-        { name: "Recycled Volume (kg)", data: [1200, 1900, 1500, 2400, 2800, 3200, 3900] },
-        { name: "CO2 Offset (kg)", data: [4200, 6650, 5250, 8400, 9800, 11200, 13650] },
+        {
+          name: "Recycled Volume (kg)",
+          data: [1200, 1900, 1500, 2400, 2800, 3200, 3900],
+        },
+        {
+          name: "CO2 Offset (kg)",
+          data: [4200, 6650, 5250, 8400, 9800, 11200, 13650],
+        },
       ],
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     };

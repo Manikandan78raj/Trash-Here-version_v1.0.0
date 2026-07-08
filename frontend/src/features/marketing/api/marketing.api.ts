@@ -95,7 +95,9 @@ export const useSubmitContact = () => {
       if (data.status === 'SPAM') {
         toast.info('Inquiry flagged for administrative review.');
       } else {
-        toast.success(data.message || 'Thank you! Your message has been sent to our enterprise team.');
+        toast.success(
+          data.message || 'Thank you! Your message has been sent to our enterprise team.',
+        );
       }
     },
     onError: (err: any) => {
@@ -199,7 +201,9 @@ export const useGetSeoMetadata = (route: string) => {
   return useQuery({
     queryKey: ['public-seo-metadata', route],
     queryFn: async () => {
-      const response = await apiClient.get(`/api/v1/public/seo/metadata?route=${encodeURIComponent(route)}`);
+      const response = await apiClient.get(
+        `/api/v1/public/seo/metadata?route=${encodeURIComponent(route)}`,
+      );
       return response.data as { success: boolean; data: SeoMetadata };
     },
     staleTime: 1000 * 60 * 15, // 15 minutes

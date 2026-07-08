@@ -19,9 +19,18 @@ export const WarehouseInventoryMatrix: React.FC = () => {
   const [weightKg, setWeightKg] = useState(5000);
   const [warehouseLocation, setWarehouseLocation] = useState('BAY-A1');
 
-  const totalStockKg = inventory.reduce((sum: number, item: WarehouseInventoryDto) => sum + item.totalWeightKg, 0);
-  const availableStockKg = inventory.reduce((sum: number, item: WarehouseInventoryDto) => sum + item.availableWeightKg, 0);
-  const allocatedStockKg = inventory.reduce((sum: number, item: WarehouseInventoryDto) => sum + item.allocatedWeightKg, 0);
+  const totalStockKg = inventory.reduce(
+    (sum: number, item: WarehouseInventoryDto) => sum + item.totalWeightKg,
+    0,
+  );
+  const availableStockKg = inventory.reduce(
+    (sum: number, item: WarehouseInventoryDto) => sum + item.availableWeightKg,
+    0,
+  );
+  const allocatedStockKg = inventory.reduce(
+    (sum: number, item: WarehouseInventoryDto) => sum + item.allocatedWeightKg,
+    0,
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +50,9 @@ export const WarehouseInventoryMatrix: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl relative overflow-hidden">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Facility Stock</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Total Facility Stock
+            </span>
             <div className="p-2.5 rounded-xl bg-[#D7FF43]/10 text-[#D7FF43]">
               <Package className="w-5 h-5" />
             </div>
@@ -50,13 +61,16 @@ export const WarehouseInventoryMatrix: React.FC = () => {
             {isInvLoading ? '...' : `${(totalStockKg / 1000).toFixed(1)} Tons`}
           </div>
           <p className="text-xs text-slate-400 mt-2">
-            <span className="text-[#D7FF43] font-bold">{totalStockKg.toLocaleString()} kg</span> raw intake + processed stock
+            <span className="text-[#D7FF43] font-bold">{totalStockKg.toLocaleString()} kg</span> raw
+            intake + processed stock
           </p>
         </div>
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl relative overflow-hidden">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Available For Processing</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Available For Processing
+            </span>
             <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
               <Layers className="w-5 h-5" />
             </div>
@@ -71,7 +85,9 @@ export const WarehouseInventoryMatrix: React.FC = () => {
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl relative overflow-hidden">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Allocated To Machines</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Allocated To Machines
+            </span>
             <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400">
               <Box className="w-5 h-5" />
             </div>
@@ -113,8 +129,12 @@ export const WarehouseInventoryMatrix: React.FC = () => {
         ) : batches.length === 0 ? (
           <div className="text-center py-12 rounded-2xl bg-slate-950/40 border border-slate-800/50">
             <Package className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400 font-medium">No material lot batches registered in warehouse.</p>
-            <p className="text-xs text-slate-500 mt-1">Click "Create Lot Batch" to log accepted waste into inventory.</p>
+            <p className="text-slate-400 font-medium">
+              No material lot batches registered in warehouse.
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Click "Create Lot Batch" to log accepted waste into inventory.
+            </p>
           </div>
         ) : (
           <VirtualizedTable
@@ -131,13 +151,17 @@ export const WarehouseInventoryMatrix: React.FC = () => {
               {
                 header: 'Category',
                 accessor: (batch: MaterialBatchDto) => (
-                  <span className="text-slate-300 font-medium">{batch.category?.name || batch.categoryId}</span>
+                  <span className="text-slate-300 font-medium">
+                    {batch.category?.name || batch.categoryId}
+                  </span>
                 ),
               },
               {
                 header: 'Weight (kg)',
                 accessor: (batch: MaterialBatchDto) => (
-                  <span className="font-mono text-[#D7FF43] font-bold">{batch.weightKg.toLocaleString()} kg</span>
+                  <span className="font-mono text-[#D7FF43] font-bold">
+                    {batch.weightKg.toLocaleString()} kg
+                  </span>
                 ),
               },
               {
@@ -149,14 +173,18 @@ export const WarehouseInventoryMatrix: React.FC = () => {
               {
                 header: 'Bay Location',
                 accessor: (batch: MaterialBatchDto) => (
-                  <span className="font-mono text-slate-400">{batch.warehouseLocation || 'BAY-A1'}</span>
+                  <span className="font-mono text-slate-400">
+                    {batch.warehouseLocation || 'BAY-A1'}
+                  </span>
                 ),
               },
               {
                 header: 'Status',
                 accessor: (batch: MaterialBatchDto) => (
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                    {batch.status === 'READY_FOR_SALE' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mr-1" />}
+                    {batch.status === 'READY_FOR_SALE' && (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mr-1" />
+                    )}
                     {batch.status}
                   </span>
                 ),
@@ -184,7 +212,9 @@ export const WarehouseInventoryMatrix: React.FC = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Waste Category ID</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Waste Category ID
+                </label>
                 <input
                   type="text"
                   required
@@ -195,7 +225,9 @@ export const WarehouseInventoryMatrix: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Weight (kg)</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Weight (kg)
+                </label>
                 <input
                   type="number"
                   step="1"
@@ -207,7 +239,9 @@ export const WarehouseInventoryMatrix: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Warehouse Bay Location</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Warehouse Bay Location
+                </label>
                 <input
                   type="text"
                   required

@@ -56,7 +56,8 @@ export const EcoCalculatorPage: React.FC = () => {
             Eco Impact Calculator
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            See exactly how much landfill waste your household or enterprise will divert, the carbon emissions you eliminate, and your Green Points cash reward potential.
+            See exactly how much landfill waste your household or enterprise will divert, the carbon
+            emissions you eliminate, and your Green Points cash reward potential.
           </p>
         </div>
 
@@ -123,7 +124,9 @@ export const EcoCalculatorPage: React.FC = () => {
             </div>
 
             <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 text-xs text-slate-400 leading-relaxed">
-              💡 <strong className="text-slate-200">How we compute:</strong> Calculations utilize EPA WARM (Waste Reduction Model) emission coefficients: 1.85 kg CO₂e avoided per pound of recycled organics and rigid plastics.
+              💡 <strong className="text-slate-200">How we compute:</strong> Calculations utilize
+              EPA WARM (Waste Reduction Model) emission coefficients: 1.85 kg CO₂e avoided per pound
+              of recycled organics and rigid plastics.
             </div>
           </motion.div>
 
@@ -142,25 +145,37 @@ export const EcoCalculatorPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 space-y-1">
                 <p className="text-xs text-slate-400 font-medium">Landfill Diversion</p>
-                <p className="text-2xl sm:text-3xl font-black text-white">{divertedLbsPerYear.toLocaleString()} <span className="text-sm font-normal text-slate-400">lbs</span></p>
-                <p className="text-xs text-emerald-400 font-semibold">{metricTonsYear} Metric Tons</p>
+                <p className="text-2xl sm:text-3xl font-black text-white">
+                  {divertedLbsPerYear.toLocaleString()}{' '}
+                  <span className="text-sm font-normal text-slate-400">lbs</span>
+                </p>
+                <p className="text-xs text-emerald-400 font-semibold">
+                  {metricTonsYear} Metric Tons
+                </p>
               </div>
 
               <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 space-y-1">
                 <p className="text-xs text-slate-400 font-medium">CO₂ Emissions Saved</p>
-                <p className="text-2xl sm:text-3xl font-black text-white">{co2SavedKg.toLocaleString()} <span className="text-sm font-normal text-slate-400">kg</span></p>
+                <p className="text-2xl sm:text-3xl font-black text-white">
+                  {co2SavedKg.toLocaleString()}{' '}
+                  <span className="text-sm font-normal text-slate-400">kg</span>
+                </p>
                 <p className="text-xs text-emerald-400 font-semibold">EPA WARM Standard</p>
               </div>
 
               <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 space-y-1">
                 <p className="text-xs text-slate-400 font-medium">Equivalent Trees Planted</p>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-400">🌳 {treesPlanted.toLocaleString()}</p>
+                <p className="text-2xl sm:text-3xl font-black text-emerald-400">
+                  🌳 {treesPlanted.toLocaleString()}
+                </p>
                 <p className="text-xs text-slate-400 font-medium">10-Year Urban Canopy</p>
               </div>
 
               <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 space-y-1">
                 <p className="text-xs text-slate-400 font-medium">Green Points Earned</p>
-                <p className="text-2xl sm:text-3xl font-black text-[#D7FF43]">{greenPointsYear.toLocaleString()}</p>
+                <p className="text-2xl sm:text-3xl font-black text-[#D7FF43]">
+                  {greenPointsYear.toLocaleString()}
+                </p>
                 <p className="text-xs text-slate-400 font-semibold">~${cashValueUsd} USD Value</p>
               </div>
             </div>
@@ -168,7 +183,7 @@ export const EcoCalculatorPage: React.FC = () => {
             <div className="pt-4">
               <button
                 type="button"
-                onClick={() => window.location.href = '/app'}
+                onClick={() => (window.location.href = '/app')}
                 className="w-full bg-[#D7FF43] text-slate-950 font-bold py-4 rounded-2xl hover:bg-[#c2eb31] transition-all shadow-xl shadow-[#D7FF43]/20 text-center block focus:outline-none focus:ring-2 focus:ring-white"
               >
                 Claim Your Green Points Portal →

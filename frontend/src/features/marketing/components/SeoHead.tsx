@@ -41,7 +41,9 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
 
     // Helper to update or create meta tags
     const setMetaTag = (attrName: 'name' | 'property', attrValue: string, content: string) => {
-      let element = document.head.querySelector(`meta[${attrName}="${attrValue}"]`) as HTMLMetaElement;
+      let element = document.head.querySelector(
+        `meta[${attrName}="${attrValue}"]`,
+      ) as HTMLMetaElement;
       if (!element) {
         element = document.createElement('meta');
         element.setAttribute(attrName, attrValue);
@@ -69,11 +71,13 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
     setMetaTag('name', 'description', finalDesc);
 
     // 3. Canonical URL
-    const finalCanonical = customCanonical || metadata?.canonicalUrl || `https://trashhere.com${currentRoute}`;
+    const finalCanonical =
+      customCanonical || metadata?.canonicalUrl || `https://trashhere.com${currentRoute}`;
     setCanonicalLink(finalCanonical);
 
     // 4. OpenGraph
-    const finalOgImage = customOgImage || metadata?.ogImage || 'https://trashhere.com/assets/og-default.jpg';
+    const finalOgImage =
+      customOgImage || metadata?.ogImage || 'https://trashhere.com/assets/og-default.jpg';
     const finalOgType = customOgType || metadata?.ogType || 'website';
     setMetaTag('property', 'og:title', finalTitle);
     setMetaTag('property', 'og:description', finalDesc);
@@ -91,7 +95,8 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
     setMetaTag('name', 'twitter:site', '@TrashHereHQ');
 
     // 6. JSON-LD Schema
-    const finalJsonLd = customJsonLd || (metadata?.jsonLdSchema ? JSON.parse(metadata.jsonLdSchema) : null);
+    const finalJsonLd =
+      customJsonLd || (metadata?.jsonLdSchema ? JSON.parse(metadata.jsonLdSchema) : null);
     if (finalJsonLd) {
       let script = document.getElementById('json-ld-schema') as HTMLScriptElement;
       if (!script) {
@@ -100,7 +105,8 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
         script.type = 'application/ld+json';
         document.head.appendChild(script);
       }
-      script.textContent = typeof finalJsonLd === 'string' ? finalJsonLd : JSON.stringify(finalJsonLd);
+      script.textContent =
+        typeof finalJsonLd === 'string' ? finalJsonLd : JSON.stringify(finalJsonLd);
     }
 
     // 7. Breadcrumb JSON-LD

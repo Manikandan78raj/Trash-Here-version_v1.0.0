@@ -7,12 +7,16 @@ import App from '../App';
 
 // Mock AppLayout to avoid complex auth & navigation tree rendering in routing test
 vi.mock('@/common/layouts/AppLayout', () => ({
-  AppLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="app-layout">{children}</div>,
+  AppLayout: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="app-layout">{children}</div>
+  ),
 }));
 
 // Mock feature workspace pages to verify route-level code splitting & lazy loading
 vi.mock('@/features/recycler/pages/RecyclerWorkspacePage', () => ({
-  RecyclerWorkspacePage: () => <div data-testid="recycler-workspace">Recycler Workspace Loaded</div>,
+  RecyclerWorkspacePage: () => (
+    <div data-testid="recycler-workspace">Recycler Workspace Loaded</div>
+  ),
 }));
 
 vi.mock('@/features/admin/pages/AdminWorkspacePage', () => ({
@@ -24,7 +28,9 @@ vi.mock('@/features/ai/pages/AiWorkspacePage', () => ({
 }));
 
 vi.mock('@/features/collector/pages/CollectorWorkspacePage', () => ({
-  CollectorWorkspacePage: () => <div data-testid="collector-workspace">Collector Workspace Loaded</div>,
+  CollectorWorkspacePage: () => (
+    <div data-testid="collector-workspace">Collector Workspace Loaded</div>
+  ),
 }));
 
 const createTestQueryClient = () =>
@@ -41,7 +47,7 @@ const renderWithProviders = (initialRoute: string) => {
       <MemoryRouter initialEntries={[initialRoute]}>
         <App />
       </MemoryRouter>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 };
 

@@ -235,6 +235,8 @@ describe('RecyclerWorkspacePage & Portal TDD Suite', () => {
     expect(screen.getByText('96.4%')).toBeInTheDocument();
     expect(screen.getByText('241.0t')).toBeInTheDocument();
     expect(screen.getByText('MAN-2026-9988')).toBeInTheDocument();
-    expect(screen.getByText(/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855/i),
+    ).toBeInTheDocument();
   });
 });

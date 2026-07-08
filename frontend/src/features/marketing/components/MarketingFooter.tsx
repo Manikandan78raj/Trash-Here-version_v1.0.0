@@ -69,7 +69,8 @@ export const MarketingFooter: React.FC = () => {
               <span className="text-xl font-bold tracking-tight text-white">Trash Here</span>
             </Link>
             <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-              Venture-scale climate infrastructure empowering households, collectors, and enterprise recyclers to digitize waste logistics and generate SHA-256 carbon offset manifests.
+              Venture-scale climate infrastructure empowering households, collectors, and enterprise
+              recyclers to digitize waste logistics and generate SHA-256 carbon offset manifests.
             </p>
             <div className="flex space-x-4 pt-2">
               <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 font-medium">
@@ -82,9 +83,12 @@ export const MarketingFooter: React.FC = () => {
           </div>
 
           <div className="lg:col-span-3 bg-slate-900/60 rounded-3xl p-6 sm:p-8 border border-slate-800">
-            <h3 className="text-lg font-bold text-white mb-2">Subscribe to our Climate Tech Dispatch</h3>
+            <h3 className="text-lg font-bold text-white mb-2">
+              Subscribe to our Climate Tech Dispatch
+            </h3>
             <p className="text-sm text-slate-400 mb-6">
-              Get weekly updates on municipal recycling rates, algorithmic polyline routing advancements, and Green Points economic trends.
+              Get weekly updates on municipal recycling rates, algorithmic polyline routing
+              advancements, and Green Points economic trends.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
               <input
@@ -111,7 +115,9 @@ export const MarketingFooter: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-b border-slate-800/80">
           {footerSections.map((section) => (
             <div key={section.title} className="space-y-4">
-              <h4 className="text-sm font-semibold text-white uppercase tracking-wider">{section.title}</h4>
+              <h4 className="text-sm font-semibold text-white uppercase tracking-wider">
+                {section.title}
+              </h4>
               <ul className="space-y-2.5 text-sm">
                 {section.links.map((link) => (
                   <li key={link.label}>

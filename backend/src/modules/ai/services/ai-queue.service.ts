@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { AiJobStatus } from '@prisma/client';
+import { Injectable, Logger } from "@nestjs/common";
+import { AiJobStatus } from "@prisma/client";
 import {
   IAiQueueProvider,
   AiQueueJobPayload,
   AiQueueJobOptions,
-} from '../interfaces/ai.interface';
+} from "../interfaces/ai.interface";
 
 interface StoredJob {
   id: string;
@@ -37,8 +37,10 @@ export class AiQueueService implements IAiQueueProvider {
     payload: AiQueueJobPayload,
     options: AiQueueJobOptions = { attempts: 3 },
   ): Promise<string> {
-    const jobId = payload.jobId || `job-bullmq-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
-    
+    const jobId =
+      payload.jobId ||
+      `job-bullmq-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
     const storedJob: StoredJob = {
       id: jobId,
       name: jobName,
@@ -64,7 +66,9 @@ export class AiQueueService implements IAiQueueProvider {
   processJobs(
     handler: (job: { id: string; data: AiQueueJobPayload }) => Promise<void>,
   ): void {
-    this.logger.log(`[AiQueueService] Registered BullMQ worker consumer handler.`);
+    this.logger.log(
+      `[AiQueueService] Registered BullMQ worker consumer handler.`,
+    );
     this.consumerHandler = handler;
 
     // Process any jobs currently waiting in queue
@@ -93,8 +97,10 @@ export class AiQueueService implements IAiQueueProvider {
       this.metrics.active = Math.max(0, this.metrics.active - 1);
       this.metrics.completed++;
     } catch (error: any) {
-      this.logger.error(`[AiQueueService] Job ${jobId} failed attempt ${job.attemptsMade}: ${error?.message}`);
-      
+      this.logger.error(
+        `[AiQueueService] Job ${jobId} failed attempt ${job.attemptsMade}: ${error?.message}`,
+      );
+
       const maxAttempts = job.options.attempts || 1;
       if (job.attemptsMade < maxAttempts) {
         // Schedule retry with backoff
@@ -108,7 +114,9 @@ export class AiQueueService implements IAiQueueProvider {
         this.metrics.active = Math.max(0, this.metrics.active - 1);
         this.metrics.failed++;
         this.metrics.dlqCount++; // Moved to Dead Letter Queue
-        this.logger.warn(`[AiQueueService] Job ${jobId} exhausted all ${maxAttempts} attempts. Moved to DLQ.`);
+        this.logger.warn(
+          `[AiQueueService] Job ${jobId} exhausted all ${maxAttempts} attempts. Moved to DLQ.`,
+        );
       }
     }
   }

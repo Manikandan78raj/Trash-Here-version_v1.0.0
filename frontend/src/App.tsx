@@ -84,29 +84,71 @@ const AiWorkspacePage = lazy(() =>
 );
 
 // Marketing & SEO Hub Lazy Loading
-const PublicLayout = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PublicLayout })));
+const PublicLayout = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.PublicLayout })),
+);
 const HomePage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.HomePage })));
-const AboutPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.AboutPage })));
-const FeaturesPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.FeaturesPage })));
-const HowItWorksPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.HowItWorksPage })));
-const EcoCalculatorPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.EcoCalculatorPage })));
-const PricingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PricingPage })));
-const BusinessSolutionsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BusinessSolutionsPage })));
-const CollectorsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CollectorsPage })));
-const RecyclersPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.RecyclersPage })));
-const PartnersPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PartnersPage })));
-const TestimonialsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.TestimonialsPage })));
+const AboutPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.AboutPage })),
+);
+const FeaturesPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.FeaturesPage })),
+);
+const HowItWorksPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.HowItWorksPage })),
+);
+const EcoCalculatorPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.EcoCalculatorPage })),
+);
+const PricingPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.PricingPage })),
+);
+const BusinessSolutionsPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.BusinessSolutionsPage })),
+);
+const CollectorsPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.CollectorsPage })),
+);
+const RecyclersPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.RecyclersPage })),
+);
+const PartnersPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.PartnersPage })),
+);
+const TestimonialsPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.TestimonialsPage })),
+);
 const FaqPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.FaqPage })));
-const BlogListingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BlogListingPage })));
-const BlogDetailPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.BlogDetailPage })));
-const CareersListingPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CareersListingPage })));
-const CareerDetailPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CareerDetailPage })));
-const ContactPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.ContactPage })));
-const InvestorRelationsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.InvestorRelationsPage })));
-const PrivacyPolicyPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.PrivacyPolicyPage })));
-const TermsConditionsPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.TermsConditionsPage })));
-const CookiesPolicyPage = lazy(() => import('@/features/marketing').then((m) => ({ default: m.CookiesPolicyPage })));
-const Custom404Page = lazy(() => import('@/features/marketing').then((m) => ({ default: m.Custom404Page })));
+const BlogListingPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.BlogListingPage })),
+);
+const BlogDetailPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.BlogDetailPage })),
+);
+const CareersListingPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.CareersListingPage })),
+);
+const CareerDetailPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.CareerDetailPage })),
+);
+const ContactPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.ContactPage })),
+);
+const InvestorRelationsPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.InvestorRelationsPage })),
+);
+const PrivacyPolicyPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.PrivacyPolicyPage })),
+);
+const TermsConditionsPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.TermsConditionsPage })),
+);
+const CookiesPolicyPage = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.CookiesPolicyPage })),
+);
+const Custom404Page = lazy(() =>
+  import('@/features/marketing').then((m) => ({ default: m.Custom404Page })),
+);
 
 const PageLoadingFallback: React.FC = () => (
   <div className="space-y-6 p-6 min-h-screen bg-slate-950 text-slate-100">
@@ -213,4 +255,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-

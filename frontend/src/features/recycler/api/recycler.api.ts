@@ -47,7 +47,15 @@ export interface IncomingLoadDto {
   driverName: string;
   sourceType: string;
   manifestNumber: string;
-  status: 'ARRIVED' | 'WEIGHING_IN' | 'INSPECTING' | 'UNLOADING' | 'WEIGHING_OUT' | 'ACCEPTED' | 'REJECTED' | 'CONTAMINATED';
+  status:
+    | 'ARRIVED'
+    | 'WEIGHING_IN'
+    | 'INSPECTING'
+    | 'UNLOADING'
+    | 'WEIGHING_OUT'
+    | 'ACCEPTED'
+    | 'REJECTED'
+    | 'CONTAMINATED';
   scheduledArrival: string;
   actualArrival: string;
   departedAt?: string;
@@ -158,7 +166,10 @@ export const useCheckInLoad = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: { truckPlate: string; driverName: string; sourceType?: string }) => {
-      const response = await apiClient.post<{ data: IncomingLoadDto }>('/recycler/intake/check-in', data);
+      const response = await apiClient.post<{ data: IncomingLoadDto }>(
+        '/recycler/intake/check-in',
+        data,
+      );
       return response.data.data;
     },
     onSuccess: () => {
@@ -196,7 +207,12 @@ export const useRecordInspection = () => {
       data,
     }: {
       loadId: string;
-      data: { overallGrade: string; moisturePercent: number; contaminationRate: number; notes?: string };
+      data: {
+        overallGrade: string;
+        moisturePercent: number;
+        contaminationRate: number;
+        notes?: string;
+      };
     }) => {
       const response = await apiClient.post(`/recycler/intake/${loadId}/inspect`, data);
       return response.data.data;
@@ -233,7 +249,9 @@ export const useRecyclerInventory = () => {
   return useQuery({
     queryKey: ['recycler-inventory'],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: WarehouseInventoryDto[] }>('/recycler/inventory');
+      const response = await apiClient.get<{ data: WarehouseInventoryDto[] }>(
+        '/recycler/inventory',
+      );
       return response.data.data;
     },
   });
@@ -243,7 +261,9 @@ export const useRecyclerBatches = (status?: string) => {
   return useQuery({
     queryKey: ['recycler-batches', status],
     queryFn: async () => {
-      const url = status ? `/recycler/inventory/batches?status=${status}` : '/recycler/inventory/batches';
+      const url = status
+        ? `/recycler/inventory/batches?status=${status}`
+        : '/recycler/inventory/batches';
       const response = await apiClient.get<{ data: MaterialBatchDto[] }>(url);
       return response.data.data;
     },
@@ -253,7 +273,12 @@ export const useRecyclerBatches = (status?: string) => {
 export const useCreateBatch = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { categoryId: string; weightKg: number; warehouseLocation?: string; loadId?: string }) => {
+    mutationFn: async (data: {
+      categoryId: string;
+      weightKg: number;
+      warehouseLocation?: string;
+      loadId?: string;
+    }) => {
       const response = await apiClient.post<{ data: any }>('/recycler/inventory/batches', data);
       return response.data.data;
     },
@@ -272,7 +297,9 @@ export const useRecyclerQueue = (status?: string) => {
   return useQuery({
     queryKey: ['recycler-queue', status],
     queryFn: async () => {
-      const url = status ? `/recycler/processing/queue?status=${status}` : '/recycler/processing/queue';
+      const url = status
+        ? `/recycler/processing/queue?status=${status}`
+        : '/recycler/processing/queue';
       const response = await apiClient.get<{ data: ProcessingQueueItemDto[] }>(url);
       return response.data.data;
     },
@@ -283,7 +310,12 @@ export const useRecyclerQueue = (status?: string) => {
 export const useStartProcessing = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { batchId: string; machineId: string; processStage: string; inputWeightKg: number }) => {
+    mutationFn: async (data: {
+      batchId: string;
+      machineId: string;
+      processStage: string;
+      inputWeightKg: number;
+    }) => {
       const response = await apiClient.post('/recycler/processing/start', data);
       return response.data.data;
     },
@@ -302,7 +334,13 @@ export const useStartProcessing = () => {
 export const useCompleteProcessing = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ queueId, data }: { queueId: string; data: { outputWeightKg: number; wasteLossKg: number } }) => {
+    mutationFn: async ({
+      queueId,
+      data,
+    }: {
+      queueId: string;
+      data: { outputWeightKg: number; wasteLossKg: number };
+    }) => {
       const response = await apiClient.post(`/recycler/processing/${queueId}/complete`, data);
       return response.data.data;
     },
@@ -359,8 +397,16 @@ export const useGenerateEsgReport = () => {
 export const useIssueManifest = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { loadId?: string; esgReportId?: string; manifestType: string; issuedTo: string }) => {
-      const response = await apiClient.post<{ data: PdfManifestDto }>('/recycler/esg/manifests/issue', data);
+    mutationFn: async (data: {
+      loadId?: string;
+      esgReportId?: string;
+      manifestType: string;
+      issuedTo: string;
+    }) => {
+      const response = await apiClient.post<{ data: PdfManifestDto }>(
+        '/recycler/esg/manifests/issue',
+        data,
+      );
       return response.data.data;
     },
     onSuccess: () => {

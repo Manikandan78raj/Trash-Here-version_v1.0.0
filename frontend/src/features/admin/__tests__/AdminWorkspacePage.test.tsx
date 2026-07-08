@@ -189,7 +189,7 @@ describe('AdminWorkspacePage & Tabs TDD Suite', () => {
         newCollectorId: 'col-fleet-2',
         reason: 'Driver requested emergency break',
       },
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -243,7 +243,9 @@ describe('AdminWorkspacePage & Tabs TDD Suite', () => {
     fireEvent.click(impersonateBtn);
 
     const inputUserId = screen.getByPlaceholderText(/e.g. usr-household-123/i);
-    const inputReason = screen.getByPlaceholderText(/e.g. Ticket #4012 - Debugging wallet balance/i);
+    const inputReason = screen.getByPlaceholderText(
+      /e.g. Ticket #4012 - Debugging wallet balance/i,
+    );
 
     fireEvent.change(inputUserId, { target: { value: 'usr-household-123' } });
     fireEvent.change(inputReason, { target: { value: 'Ticket #4012 - Debugging wallet balance' } });
@@ -256,7 +258,7 @@ describe('AdminWorkspacePage & Tabs TDD Suite', () => {
         targetUserId: 'usr-household-123',
         reason: 'Ticket #4012 - Debugging wallet balance',
       },
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -284,7 +286,7 @@ describe('AdminWorkspacePage & Tabs TDD Suite', () => {
         value: '5.49',
         description: 'Base fee charged to users for scheduled pickups',
       },
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 });

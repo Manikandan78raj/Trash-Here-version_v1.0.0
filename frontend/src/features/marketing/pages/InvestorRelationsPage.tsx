@@ -28,7 +28,8 @@ export const InvestorRelationsPage: React.FC = () => {
             Venture-Scale Climate Economics
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            We are building the high-margin, software-defined operating system for the $1.5 trillion global waste and recycling industry.
+            We are building the high-margin, software-defined operating system for the $1.5 trillion
+            global waste and recycling industry.
           </p>
         </div>
 
@@ -43,18 +44,27 @@ export const InvestorRelationsPage: React.FC = () => {
               transition={{ delay: idx * 0.1, duration: 0.4 }}
               className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-2 backdrop-blur-md shadow-xl"
             >
-              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight">{item.value}</p>
-              <p className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">{item.growth}</p>
-              <p className="text-xs text-slate-400 font-medium pt-2 border-t border-slate-800/80">{item.label}</p>
+              <p className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                {item.value}
+              </p>
+              <p className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">
+                {item.growth}
+              </p>
+              <p className="text-xs text-slate-400 font-medium pt-2 border-t border-slate-800/80">
+                {item.label}
+              </p>
             </motion.div>
           ))}
         </div>
 
         {/* Investment Deck Request Banner */}
         <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Request Investor Memorandum & Deck</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Request Investor Memorandum & Deck
+          </h2>
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Accredited venture investors and strategic family offices can request our confidential Series A data room and audited financials.
+            Accredited venture investors and strategic family offices can request our confidential
+            Series A data room and audited financials.
           </p>
           <div className="pt-4">
             <Link

@@ -93,6 +93,27 @@ export class WalletService {
   @CacheEvict({ keyPrefix: "wallet:dashboard", pattern: true })
   async redeemReward(userId: string, dto: RedeemRewardDto) {
     const wallet = await this.getWallet(userId);
+
+    if (dto.idempotencyKey) {
+      const existingTx = await (this.prisma.transaction as any).findFirst({
+        where: { idempotencyKey: dto.idempotencyKey },
+      });
+      if (existingTx) {
+        this.logger.warn(
+          `Idempotency replay detected for key: ${dto.idempotencyKey}`,
+        );
+        return {
+          success: true,
+          message: "Transaction already processed (idempotency replay).",
+          couponCode: "REPLAYED-CODE",
+          discountValue: "",
+          partnerName: "",
+          remainingPoints: wallet.pointsBalance,
+          transaction: existingTx,
+        };
+      }
+    }
+
     const reward = await this.prisma.reward.findUnique({
       where: { id: dto.rewardId },
     });
@@ -132,7 +153,7 @@ export class WalletService {
         },
       });
 
-      const transaction = await tx.transaction.create({
+      const transaction = await (tx.transaction as any).create({
         data: {
           userId,
           walletId: wallet.id,
@@ -140,6 +161,7 @@ export class WalletService {
           pointsAmount: -reward.pointsCost,
           type: TransactionType.REWARD_REDEMPTION,
           status: TransactionStatus.COMPLETED,
+          idempotencyKey: dto.idempotencyKey || null,
           description: `Redeemed voucher: ${reward.title} (${reward.discountValue})`,
         },
       });
@@ -182,6 +204,51 @@ export class WalletService {
   async withdrawCash(userId: string, dto: WithdrawCashDto) {
     const wallet = await this.getWallet(userId);
 
+    if (dto.idempotencyKey) {
+      const existingTx = await (this.prisma.transaction as any).findFirst({
+        where: { idempotencyKey: dto.idempotencyKey },
+      });
+      if (existingTx) {
+        this.logger.warn(
+          `Idempotency replay detected for key: ${dto.idempotencyKey}`,
+        );
+        return {
+          success: true,
+          message: "Transaction already processed (idempotency replay).",
+          stripeTransferId:
+            existingTx.stripePaymentId || "tr_simulated_replayed",
+          remainingCashBalance: wallet.cashBalance,
+          transaction: existingTx,
+        };
+      }
+    }
+
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentWithdrawals = await this.prisma.transaction.findMany({
+      where: {
+        userId,
+        type: TransactionType.PAYOUT,
+        status: TransactionStatus.COMPLETED,
+        createdAt: { gte: twentyFourHoursAgo },
+      },
+    });
+
+    if (recentWithdrawals.length >= 5) {
+      throw new BadRequestException(
+        "Security Alert: Daily withdrawal velocity limit exceeded (max 5 withdrawals per 24 hours).",
+      );
+    }
+
+    const totalWithdrawnToday = recentWithdrawals.reduce(
+      (sum, tx) => sum + Math.abs(tx.amount),
+      0,
+    );
+    if (totalWithdrawnToday + dto.amount > 1000) {
+      throw new BadRequestException(
+        "Security Alert: Daily cash withdrawal limit exceeded ($1000.00 max per 24 hours).",
+      );
+    }
+
     if (wallet.cashBalance < dto.amount) {
       throw new BadRequestException(
         `Insufficient cash balance. Available balance: $${wallet.cashBalance.toFixed(2)}, Requested: $${dto.amount.toFixed(2)}`,
@@ -196,7 +263,7 @@ export class WalletService {
 
       const stripeTransferId = `tr_simulated_${Date.now()}`;
 
-      const transaction = await tx.transaction.create({
+      const transaction = await (tx.transaction as any).create({
         data: {
           userId,
           walletId: wallet.id,
@@ -204,6 +271,7 @@ export class WalletService {
           type: TransactionType.PAYOUT,
           status: TransactionStatus.COMPLETED,
           stripePaymentId: stripeTransferId,
+          idempotencyKey: dto.idempotencyKey || null,
           description: `Stripe Instant Payout withdrawal to bank account ($${dto.amount.toFixed(2)})`,
         },
       });

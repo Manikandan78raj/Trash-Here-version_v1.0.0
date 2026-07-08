@@ -34,6 +34,8 @@ export interface GeneratedPdfResult {
 }
 
 export interface IPdfGeneratorProvider {
-  generateManifestPdf(templateData: ManifestTemplateDto): Promise<GeneratedPdfResult>;
+  generateManifestPdf(
+    templateData: ManifestTemplateDto,
+  ): Promise<GeneratedPdfResult>;
   generateEsgReportPdf(reportData: any): Promise<GeneratedPdfResult>;
 }

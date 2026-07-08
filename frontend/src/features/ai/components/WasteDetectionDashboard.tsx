@@ -133,7 +133,9 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
             disabled={retryJobMutation.isPending}
             className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-zinc-950 bg-[#D7FF43] rounded-xl hover:bg-[#c2eb30] transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${retryJobMutation.isPending ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${retryJobMutation.isPending ? 'animate-spin' : ''}`}
+            />
             <span>Retry Failed Job</span>
           </button>
         </motion.div>
@@ -234,7 +236,8 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
                 <LivePredictionOverlay
                   imageUrl={
                     selectedPrediction.rawPayload
-                      ? JSON.parse(selectedPrediction.rawPayload).imageUrl || 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1200&q=80'
+                      ? JSON.parse(selectedPrediction.rawPayload).imageUrl ||
+                        'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1200&q=80'
                       : 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1200&q=80'
                   }
                   detectedObjects={selectedPrediction.detectedObjects || []}
@@ -292,7 +295,9 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
                 })}
               </div>
             ) : (
-              <p className="text-xs text-zinc-500 text-center py-4">No material data recorded yet.</p>
+              <p className="text-xs text-zinc-500 text-center py-4">
+                No material data recorded yet.
+              </p>
             )}
           </div>
 
@@ -303,7 +308,9 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
                 <History className="w-4 h-4 text-[#D7FF43]" />
                 <span>Scan History Timeline</span>
               </h3>
-              <span className="text-xs font-semibold text-zinc-500">{predictions.length} Scans</span>
+              <span className="text-xs font-semibold text-zinc-500">
+                {predictions.length} Scans
+              </span>
             </div>
 
             {isLoading ? (
@@ -374,7 +381,13 @@ export const WasteDetectionDashboard: React.FC<WasteDetectionDashboardProps> = (
                               <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-0.5">
                                 <span>{new Date(pred.createdAt).toLocaleDateString()}</span>
                                 <span>•</span>
-                                <span className={isContaminated ? 'text-red-500 font-semibold' : 'text-emerald-500 font-semibold'}>
+                                <span
+                                  className={
+                                    isContaminated
+                                      ? 'text-red-500 font-semibold'
+                                      : 'text-emerald-500 font-semibold'
+                                  }
+                                >
                                   {pred.contaminationRate}% Contam
                                 </span>
                               </div>

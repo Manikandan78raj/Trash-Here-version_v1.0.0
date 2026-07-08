@@ -3,10 +3,10 @@ import {
   NotFoundException,
   BadRequestException,
   Logger,
-} from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { CreateMaterialBatchDto } from '../dto/recycler.dto';
-import { BatchStatus } from '@prisma/client';
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { CreateMaterialBatchDto } from "../dto/recycler.dto";
+import { BatchStatus } from "@prisma/client";
 
 @Injectable()
 export class RecyclerInventoryService {
@@ -19,7 +19,9 @@ export class RecyclerInventoryService {
       where: { userId },
     });
     if (!profile) {
-      throw new NotFoundException('Recycler profile not found for current user.');
+      throw new NotFoundException(
+        "Recycler profile not found for current user.",
+      );
     }
     return profile;
   }
@@ -31,7 +33,9 @@ export class RecyclerInventoryService {
       where: { id: dto.categoryId },
     });
     if (!category) {
-      throw new NotFoundException(`Waste category [${dto.categoryId}] not found.`);
+      throw new NotFoundException(
+        `Waste category [${dto.categoryId}] not found.`,
+      );
     }
 
     if (dto.loadId) {
@@ -39,12 +43,16 @@ export class RecyclerInventoryService {
         where: { id: dto.loadId },
       });
       if (!load || load.recyclerId !== recycler.id) {
-        throw new NotFoundException('Incoming load not found in this facility.');
+        throw new NotFoundException(
+          "Incoming load not found in this facility.",
+        );
       }
     }
 
     const batchNumber = `BAT-${new Date().getFullYear()}-${category.slug.toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    this.logger.log(`Creating material lot batch [${batchNumber}] for category [${category.name}]: ${dto.weightKg} kg`);
+    this.logger.log(
+      `Creating material lot batch [${batchNumber}] for category [${category.name}]: ${dto.weightKg} kg`,
+    );
 
     const [batch, inventory] = await this.prisma.$transaction([
       this.prisma.materialBatch.create({
@@ -56,7 +64,7 @@ export class RecyclerInventoryService {
           weightKg: dto.weightKg,
           purityPercent: 98.5,
           status: BatchStatus.RAW_INTAKE,
-          warehouseLocation: dto.warehouseLocation || 'BAY-A1',
+          warehouseLocation: dto.warehouseLocation || "BAY-A1",
         },
         include: { category: true },
       }),
@@ -87,7 +95,7 @@ export class RecyclerInventoryService {
     return {
       success: true,
       statusCode: 201,
-      message: 'Material batch created and inventory updated successfully.',
+      message: "Material batch created and inventory updated successfully.",
       data: { batch, inventory },
       timestamp: new Date().toISOString(),
     };
@@ -98,13 +106,13 @@ export class RecyclerInventoryService {
     const inventory = await this.prisma.warehouseInventory.findMany({
       where: { recyclerId: recycler.id },
       include: { category: true },
-      orderBy: { totalWeightKg: 'desc' },
+      orderBy: { totalWeightKg: "desc" },
     });
 
     return {
       success: true,
       statusCode: 200,
-      message: 'Warehouse inventory retrieved successfully.',
+      message: "Warehouse inventory retrieved successfully.",
       data: inventory,
       timestamp: new Date().toISOString(),
     };
@@ -120,13 +128,13 @@ export class RecyclerInventoryService {
     const batches = await this.prisma.materialBatch.findMany({
       where: whereClause,
       include: { category: true, load: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return {
       success: true,
       statusCode: 200,
-      message: 'Material batches retrieved successfully.',
+      message: "Material batches retrieved successfully.",
       data: batches,
       timestamp: new Date().toISOString(),
     };

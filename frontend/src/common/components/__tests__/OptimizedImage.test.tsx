@@ -20,7 +20,15 @@ describe('OptimizedImage Component (TDD Suite)', () => {
   });
 
   it('should generate responsive srcSet when srcSet is provided or responsive is true', () => {
-    render(<OptimizedImage src="/photo.webp" alt="Responsive Photo" responsive width={800} height={600} />);
+    render(
+      <OptimizedImage
+        src="/photo.webp"
+        alt="Responsive Photo"
+        responsive
+        width={800}
+        height={600}
+      />,
+    );
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('srcset');
   });

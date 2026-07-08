@@ -22,6 +22,15 @@ export class RedeemRewardDto {
   @IsString()
   @IsNotEmpty()
   rewardId: string;
+
+  @ApiPropertyOptional({
+    example: "idem_reward_12345",
+    description:
+      "Unique idempotency key to prevent duplicate reward redemption",
+  })
+  @IsOptional()
+  @IsString()
+  idempotencyKey?: string;
 }
 
 export class WithdrawCashDto {
@@ -32,6 +41,15 @@ export class WithdrawCashDto {
   @IsNumber()
   @Min(10)
   amount: number;
+
+  @ApiPropertyOptional({
+    example: "idem_withdraw_12345",
+    description:
+      "Unique idempotency key to prevent duplicate withdrawal processing",
+  })
+  @IsOptional()
+  @IsString()
+  idempotencyKey?: string;
 }
 
 export class CreateSubscriptionDto {

@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { AiRecommendationType } from '@prisma/client';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { AiRecommendationType } from "@prisma/client";
 import {
   IAiDetectionProvider,
   AiDetectionResponse,
-} from '../interfaces/ai.interface';
+} from "../interfaces/ai.interface";
 
 @Injectable()
 export class GeminiVisionProvider implements IAiDetectionProvider {
@@ -13,7 +13,7 @@ export class GeminiVisionProvider implements IAiDetectionProvider {
 
   constructor(private readonly configService: ConfigService) {
     this.apiKey =
-      this.configService?.get<string>('GEMINI_API_KEY') || 'mock-gemini-key';
+      this.configService?.get<string>("GEMINI_API_KEY") || "mock-gemini-key";
   }
 
   async detectWaste(
@@ -28,28 +28,28 @@ export class GeminiVisionProvider implements IAiDetectionProvider {
     const processingTimeMs = Date.now() - start + 640;
 
     return {
-      modelName: 'gemini-1.5-pro-vision',
+      modelName: "gemini-1.5-pro-vision",
       processingTimeMs,
       overallConfidence: 0.93,
-      primaryMaterialCategory: 'HDPE Jug',
+      primaryMaterialCategory: "HDPE Jug",
       isContaminated: false,
       contaminationPercentage: 1.0,
       recommendationType: AiRecommendationType.DIRECT_RECYCLE,
       actionableInstructions:
-        'High-density polyethylene milk jug. Rinse lightly, reattach cap, and recycle in rigid plastics container.',
+        "High-density polyethylene milk jug. Rinse lightly, reattach cap, and recycle in rigid plastics container.",
       estimatedWeightKg: 0.2,
       co2SavedKg: 0.6,
       greenPointsEarned: 10,
       detectedObjects: [
         {
-          label: 'HDPE_JUG',
+          label: "HDPE_JUG",
           confidence: 0.95,
           boundingBox: { xMin: 0.15, yMin: 0.15, xMax: 0.85, yMax: 0.85 },
-          materialType: 'PLASTIC_HDPE',
+          materialType: "PLASTIC_HDPE",
           isContaminant: false,
         },
       ],
-      rawVendorPayload: { model: 'gemini-1.5-pro', url: imageUrl },
+      rawVendorPayload: { model: "gemini-1.5-pro", url: imageUrl },
     };
   }
 
@@ -60,7 +60,7 @@ export class GeminiVisionProvider implements IAiDetectionProvider {
   }> {
     return {
       isHealthy: true,
-      modelVersion: '1.5.0-pro',
+      modelVersion: "1.5.0-pro",
       latencyMs: 640,
     };
   }

@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { PnLSnapshot, IAdminFinanceProvider } from '../interfaces/admin.interface';
-import { TransactionType, TransactionStatus } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import {
+  PnLSnapshot,
+  IAdminFinanceProvider,
+} from "../interfaces/admin.interface";
+import { TransactionType, TransactionStatus } from "@prisma/client";
 
 @Injectable()
 export class AdminFinanceService implements IAdminFinanceProvider {
@@ -17,7 +20,7 @@ export class AdminFinanceService implements IAdminFinanceProvider {
 
     const soldBatches = await this.prisma.materialBatch.findMany({
       where: {
-        status: 'SOLD',
+        status: "SOLD",
       },
       include: { category: true },
     });
@@ -39,12 +42,13 @@ export class AdminFinanceService implements IAdminFinanceProvider {
 
     let recyclerInvoicesUsd = 0;
     for (const batch of soldBatches) {
-      const price = batch.category?.pricePerKg || 0.50;
+      const price = batch.category?.pricePerKg || 0.5;
       recyclerInvoicesUsd += batch.weightKg * price;
     }
 
     const grossRevenueUsd = stripePaymentsUsd + recyclerInvoicesUsd;
-    const netMarginUsd = grossRevenueUsd - collectorPayoutsUsd - rewardsLiabilitiesUsd;
+    const netMarginUsd =
+      grossRevenueUsd - collectorPayoutsUsd - rewardsLiabilitiesUsd;
 
     return {
       period: `${startDate.toISOString().slice(0, 10)} to ${endDate.toISOString().slice(0, 10)}`,
@@ -59,7 +63,11 @@ export class AdminFinanceService implements IAdminFinanceProvider {
     };
   }
 
-  async reconcileLedgers(): Promise<{ success: boolean; discrepanciesFound: number; details: string[] }> {
+  async reconcileLedgers(): Promise<{
+    success: boolean;
+    discrepanciesFound: number;
+    details: string[];
+  }> {
     const wallets = await this.prisma.wallet.findMany();
     const transactions = await this.prisma.transaction.findMany({
       where: { status: TransactionStatus.COMPLETED },
@@ -89,7 +97,9 @@ export class AdminFinanceService implements IAdminFinanceProvider {
       const agg = userTxMap.get(wallet.userId) || { cash: 0, points: 0 };
       if (Math.abs(wallet.cashBalance - agg.cash) > 0.01) {
         discrepanciesFound++;
-        details.push(`Wallet ${wallet.id} (User ${wallet.userId}) cash balance ${wallet.cashBalance} deviates from transaction net ${agg.cash}`);
+        details.push(
+          `Wallet ${wallet.id} (User ${wallet.userId}) cash balance ${wallet.cashBalance} deviates from transaction net ${agg.cash}`,
+        );
       }
     }
 

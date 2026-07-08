@@ -27,12 +27,16 @@ export const BlogListingPage: React.FC = () => {
             The Trash Here Blog
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Engineering breakthroughs, environmental data science, and corporate updates from our climate infrastructure team.
+            Engineering breakthroughs, environmental data science, and corporate updates from our
+            climate infrastructure team.
           </p>
         </div>
 
         {/* Category Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-800/80 pb-6" role="tablist">
+        <div
+          className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-800/80 pb-6"
+          role="tablist"
+        >
           {categories.map((cat) => (
             <button
               key={cat}
@@ -54,7 +58,10 @@ export const BlogListingPage: React.FC = () => {
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4 animate-pulse">
+              <div
+                key={n}
+                className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4 animate-pulse"
+              >
                 <div className="w-full h-48 bg-slate-800 rounded-2xl" />
                 <div className="h-6 bg-slate-800 rounded w-3/4" />
                 <div className="h-4 bg-slate-800 rounded w-full" />
@@ -73,7 +80,9 @@ export const BlogListingPage: React.FC = () => {
         {!isLoading && !isError && (!blogResponse?.data || blogResponse.data.length === 0) && (
           <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
             <p className="text-xl font-bold text-white">No articles found in this category yet.</p>
-            <p className="text-sm text-slate-400">Our editorial team is actively publishing new research. Please check back soon!</p>
+            <p className="text-sm text-slate-400">
+              Our editorial team is actively publishing new research. Please check back soon!
+            </p>
           </div>
         )}
 
@@ -112,7 +121,9 @@ export const BlogListingPage: React.FC = () => {
                         {post.title}
                       </Link>
                     </h2>
-                    <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed">{post.excerpt}</p>
+                    <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed">
+                      {post.excerpt}
+                    </p>
                   </div>
                 </div>
 

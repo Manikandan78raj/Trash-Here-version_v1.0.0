@@ -1,9 +1,4 @@
-export type AiJobStatus =
-  | 'QUEUED'
-  | 'PROCESSING'
-  | 'COMPLETED'
-  | 'FAILED'
-  | 'CANCELLED';
+export type AiJobStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 
 export type AiModelType =
   | 'YOLO_V8'

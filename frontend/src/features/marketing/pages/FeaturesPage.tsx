@@ -51,7 +51,8 @@ export const FeaturesPage: React.FC = () => {
             Engineered for Industrial Reliability
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            From edge IoT sensors on 50-ton weighbridges to real-time WebSocket fleet tracking, discover the technology powering our venture-scale platform.
+            From edge IoT sensors on 50-ton weighbridges to real-time WebSocket fleet tracking,
+            discover the technology powering our venture-scale platform.
           </p>
         </div>
 
@@ -71,12 +72,19 @@ export const FeaturesPage: React.FC = () => {
                 <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-3xl shadow-inner">
                   {block.icon}
                 </div>
-                <p className="text-xs font-bold text-[#D7FF43] tracking-wider uppercase">{block.subtitle}</p>
-                <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">{block.title}</h2>
+                <p className="text-xs font-bold text-[#D7FF43] tracking-wider uppercase">
+                  {block.subtitle}
+                </p>
+                <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                  {block.title}
+                </h2>
                 <p className="text-base text-slate-300 leading-relaxed">{block.desc}</p>
                 <div className="pt-4 flex flex-wrap gap-3">
                   {block.metrics.map((m) => (
-                    <span key={m} className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200">
+                    <span
+                      key={m}
+                      className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200"
+                    >
                       ⚡ {m}
                     </span>
                   ))}

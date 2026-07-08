@@ -32,7 +32,17 @@ describe('Recycler Tables Virtualization Suite (TDD)', () => {
           [
             {
               target,
-              contentRect: { width: 1000, height: 500, top: 0, left: 0, bottom: 500, right: 1000, x: 0, y: 0, toJSON: () => {} },
+              contentRect: {
+                width: 1000,
+                height: 500,
+                top: 0,
+                left: 0,
+                bottom: 500,
+                right: 1000,
+                x: 0,
+                y: 0,
+                toJSON: () => {},
+              },
               borderBoxSize: [{ inlineSize: 1000, blockSize: 500 }],
               contentBoxSize: [{ inlineSize: 1000, blockSize: 500 }],
             } as any,
@@ -45,8 +55,14 @@ describe('Recycler Tables Virtualization Suite (TDD)', () => {
     }
     window.ResizeObserver = MockResizeObserver as any;
 
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, value: 500 });
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', { configurable: true, value: 50000 });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      value: 500,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: 50000,
+    });
     Element.prototype.getBoundingClientRect = () => ({
       width: 1000,
       height: 500,
@@ -72,8 +88,14 @@ describe('Recycler Tables Virtualization Suite (TDD)', () => {
       status: 'READY_FOR_SALE',
     }));
 
-    vi.mocked(recyclerApi.useRecyclerInventory).mockReturnValue({ data: [], isLoading: false } as any);
-    vi.mocked(recyclerApi.useRecyclerBatches).mockReturnValue({ data: mockBatches, isLoading: false } as any);
+    vi.mocked(recyclerApi.useRecyclerInventory).mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as any);
+    vi.mocked(recyclerApi.useRecyclerBatches).mockReturnValue({
+      data: mockBatches,
+      isLoading: false,
+    } as any);
 
     const { container } = render(
       <QueryClientProvider client={queryClient}>
@@ -103,7 +125,10 @@ describe('Recycler Tables Virtualization Suite (TDD)', () => {
       startTime: new Date().toISOString(),
     }));
 
-    vi.mocked(recyclerApi.useRecyclerQueue).mockReturnValue({ data: mockQueue, isLoading: false } as any);
+    vi.mocked(recyclerApi.useRecyclerQueue).mockReturnValue({
+      data: mockQueue,
+      isLoading: false,
+    } as any);
 
     const { container } = render(
       <QueryClientProvider client={queryClient}>

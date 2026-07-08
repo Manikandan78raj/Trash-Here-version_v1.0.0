@@ -23,7 +23,7 @@ export const AdminFleetMapPage: React.FC = () => {
           setNewCollectorId('');
           setReason('');
         },
-      }
+      },
     );
   };
 
@@ -47,7 +47,8 @@ export const AdminFleetMapPage: React.FC = () => {
             </h2>
           </div>
           <p className="text-xs text-slate-400 font-mono">
-            Algorithmic marketplace routing • Euclidean ETA scoring • Automated 30s TTL offer expiration
+            Algorithmic marketplace routing • Euclidean ETA scoring • Automated 30s TTL offer
+            expiration
           </p>
         </div>
 
@@ -65,15 +66,21 @@ export const AdminFleetMapPage: React.FC = () => {
       {/* Dispatch Statistics Matrix */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Unassigned Jobs</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Unassigned Jobs
+          </div>
           <div className="text-3xl font-extrabold text-amber-400 mt-2 font-mono">
             {fleetData?.unassignedJobsCount || 0}
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Pending algorithmic dispatch matching</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Pending algorithmic dispatch matching
+          </div>
         </div>
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">In Progress</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            In Progress
+          </div>
           <div className="text-3xl font-extrabold text-[#D7FF43] mt-2 font-mono">
             {fleetData?.inProgressJobsCount || 0}
           </div>
@@ -81,11 +88,15 @@ export const AdminFleetMapPage: React.FC = () => {
         </div>
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Completed Today</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Completed Today
+          </div>
           <div className="text-3xl font-extrabold text-emerald-400 mt-2 font-mono">
             {fleetData?.completedTodayCount || 0}
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Verified weighbridge / drop-off deliveries</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Verified weighbridge / drop-off deliveries
+          </div>
         </div>
       </div>
 
@@ -100,7 +111,8 @@ export const AdminFleetMapPage: React.FC = () => {
             </div>
             <h3 className="text-lg font-bold text-white">Live Fleet Telemetry Map</h3>
             <p className="text-xs text-slate-400">
-              Interactive GPS tracking enabled for 100% of active vehicles. Polylines indicate real-time routing to residential pick-up coordinates.
+              Interactive GPS tracking enabled for 100% of active vehicles. Polylines indicate
+              real-time routing to residential pick-up coordinates.
             </p>
             <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -139,7 +151,9 @@ export const AdminFleetMapPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60 text-xs">
                   <div>
                     <span className="text-slate-500 block text-[10px]">VEHICLE</span>
-                    <span className="text-slate-300 font-mono font-semibold">{col.vehiclePlate}</span>
+                    <span className="text-slate-300 font-mono font-semibold">
+                      {col.vehiclePlate}
+                    </span>
                   </div>
                   <div>
                     <span className="text-slate-500 block text-[10px]">RATING</span>
@@ -170,7 +184,8 @@ export const AdminFleetMapPage: React.FC = () => {
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed">
-              Dispatcher override allows reassigning an active pickup request to a new collector when emergencies or vehicle breakdowns occur.
+              Dispatcher override allows reassigning an active pickup request to a new collector
+              when emergencies or vehicle breakdowns occur.
             </p>
 
             <form onSubmit={handleConfirmReassignment} className="space-y-4">

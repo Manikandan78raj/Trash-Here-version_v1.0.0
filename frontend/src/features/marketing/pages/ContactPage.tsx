@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SeoHead } from '../components/SeoHead';
 import { useSubmitContact } from '../api/marketing.api';
+import { sanitizeText } from '@/common/security/sanitization';
 
 export const ContactPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -17,12 +18,12 @@ export const ContactPage: React.FC = () => {
     e.preventDefault();
     contactMutation.mutate(
       {
-        name,
-        email,
-        phone,
-        company,
-        subject,
-        message,
+        name: sanitizeText(name),
+        email: sanitizeText(email),
+        phone: sanitizeText(phone),
+        company: sanitizeText(company),
+        subject: sanitizeText(subject),
+        message: sanitizeText(message),
         source: 'contact_page',
       },
       {
@@ -54,7 +55,8 @@ export const ContactPage: React.FC = () => {
             Let's Build Sustainable Cities Together
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Have questions about SHA-256 carbon manifests, municipal dispatch contracts, or API telemetry? Our solutions team is here to help.
+            Have questions about SHA-256 carbon manifests, municipal dispatch contracts, or API
+            telemetry? Our solutions team is here to help.
           </p>
         </div>
 
@@ -68,36 +70,53 @@ export const ContactPage: React.FC = () => {
             <div className="space-y-3">
               <h2 className="text-2xl font-bold text-white">Global Headquarters</h2>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Trash Here Technologies Inc.<br />
-                100 Climate Tech Way, Suite 400<br />
+                Trash Here Technologies Inc.
+                <br />
+                100 Climate Tech Way, Suite 400
+                <br />
                 San Francisco, CA 94105, USA
               </p>
             </div>
 
             <div className="space-y-4 pt-6 border-t border-slate-800/80 text-sm">
               <div className="flex items-center space-x-3">
-                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">📧</span>
+                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">
+                  📧
+                </span>
                 <div>
                   <p className="text-xs text-slate-500 font-semibold">Enterprise Sales</p>
-                  <a href="mailto:enterprise@trashhere.com" className="text-white font-medium hover:text-[#D7FF43]">
+                  <a
+                    href="mailto:enterprise@trashhere.com"
+                    className="text-white font-medium hover:text-[#D7FF43]"
+                  >
                     enterprise@trashhere.com
                   </a>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">🛠️</span>
+                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">
+                  🛠️
+                </span>
                 <div>
                   <p className="text-xs text-slate-500 font-semibold">API & Telemetry Support</p>
-                  <a href="mailto:api-support@trashhere.com" className="text-white font-medium hover:text-[#D7FF43]">
+                  <a
+                    href="mailto:api-support@trashhere.com"
+                    className="text-white font-medium hover:text-[#D7FF43]"
+                  >
                     api-support@trashhere.com
                   </a>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">📰</span>
+                <span className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg">
+                  📰
+                </span>
                 <div>
                   <p className="text-xs text-slate-500 font-semibold">Press & Media Inquiries</p>
-                  <a href="mailto:press@trashhere.com" className="text-white font-medium hover:text-[#D7FF43]">
+                  <a
+                    href="mailto:press@trashhere.com"
+                    className="text-white font-medium hover:text-[#D7FF43]"
+                  >
                     press@trashhere.com
                   </a>
                 </div>
@@ -105,7 +124,9 @@ export const ContactPage: React.FC = () => {
             </div>
 
             <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 text-xs text-slate-400 leading-relaxed">
-              ⚡ <strong className="text-slate-200">Spam & Rate Protection Active:</strong> All inquiries are screened by our automated keyword classifier and rate-limited to 5 submissions per minute per IP.
+              ⚡ <strong className="text-slate-200">Spam & Rate Protection Active:</strong> All
+              inquiries are screened by our automated keyword classifier and rate-limited to 5
+              submissions per minute per IP.
             </div>
           </motion.div>
 
@@ -120,7 +141,9 @@ export const ContactPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Your Name *</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Your Name *
+                  </label>
                   <input
                     type="text"
                     required
@@ -131,7 +154,9 @@ export const ContactPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address *</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Email Address *
+                  </label>
                   <input
                     type="email"
                     required
@@ -145,7 +170,9 @@ export const ContactPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Phone Number</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     value={phone}
@@ -155,7 +182,9 @@ export const ContactPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Company / Municipality</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Company / Municipality
+                  </label>
                   <input
                     type="text"
                     value={company}
@@ -167,21 +196,31 @@ export const ContactPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Inquiry Subject *</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Inquiry Subject *
+                </label>
                 <select
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#D7FF43]"
                 >
-                  <option value="Enterprise Fleet Integration">Enterprise Fleet & Municipal Dispatch</option>
-                  <option value="Weighbridge IoT Telemetry">Weighbridge IoT Telemetry & Scale Integration</option>
-                  <option value="ESG Manifests & Audit">SHA-256 ESG Manifests & Corporate Auditing</option>
+                  <option value="Enterprise Fleet Integration">
+                    Enterprise Fleet & Municipal Dispatch
+                  </option>
+                  <option value="Weighbridge IoT Telemetry">
+                    Weighbridge IoT Telemetry & Scale Integration
+                  </option>
+                  <option value="ESG Manifests & Audit">
+                    SHA-256 ESG Manifests & Corporate Auditing
+                  </option>
                   <option value="General Support">General Platform & Green Points Support</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Message *</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Message *
+                </label>
                 <textarea
                   required
                   rows={5}

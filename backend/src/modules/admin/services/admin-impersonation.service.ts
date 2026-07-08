@@ -1,17 +1,26 @@
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AdminAuditService } from './admin-audit.service';
-import { StartImpersonationDto } from '../dto/admin.dto';
-import { RoleType } from '@prisma/client';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { AdminAuditService } from "./admin-audit.service";
+import { StartImpersonationDto } from "../dto/admin.dto";
+import { RoleType } from "@prisma/client";
 
 @Injectable()
 export class AdminImpersonationService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly auditService: AdminAuditService
+    private readonly auditService: AdminAuditService,
   ) {}
 
-  async startImpersonation(adminId: string, dto: StartImpersonationDto, ipAddress?: string, userAgent?: string) {
+  async startImpersonation(
+    adminId: string,
+    dto: StartImpersonationDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     const targetUser = await this.prisma.user.findUnique({
       where: { id: dto.targetUserId },
       include: { role: true },
@@ -21,7 +30,7 @@ export class AdminImpersonationService {
     }
 
     if (targetUser.role?.name === RoleType.SUPER_ADMIN) {
-      throw new ForbiddenException('Cannot impersonate a SUPER_ADMIN account');
+      throw new ForbiddenException("Cannot impersonate a SUPER_ADMIN account");
     }
 
     const log = await this.prisma.adminImpersonationLog.create({
@@ -29,18 +38,18 @@ export class AdminImpersonationService {
         adminId,
         targetUserId: dto.targetUserId,
         reason: dto.reason,
-        ipAddress: ipAddress || '127.0.0.1',
-        userAgent: userAgent || 'Unknown',
+        ipAddress: ipAddress || "127.0.0.1",
+        userAgent: userAgent || "Unknown",
       },
     });
 
     await this.auditService.recordAudit({
       userId: adminId,
-      action: 'IMPERSONATION_START',
-      entity: 'User',
+      action: "IMPERSONATION_START",
+      entity: "User",
       entityId: dto.targetUserId,
-      ipAddress: ipAddress || '127.0.0.1',
-      userAgent: userAgent || 'Unknown',
+      ipAddress: ipAddress || "127.0.0.1",
+      userAgent: userAgent || "Unknown",
       details: `Impersonation log ID: ${log.id}. Reason: ${dto.reason}`,
     });
 
@@ -64,7 +73,9 @@ export class AdminImpersonationService {
       where: { id: impersonationLogId },
     });
     if (!log) {
-      throw new NotFoundException(`Impersonation log ${impersonationLogId} not found`);
+      throw new NotFoundException(
+        `Impersonation log ${impersonationLogId} not found`,
+      );
     }
 
     const updated = await this.prisma.adminImpersonationLog.update({
@@ -74,8 +85,8 @@ export class AdminImpersonationService {
 
     await this.auditService.recordAudit({
       userId: log.adminId,
-      action: 'IMPERSONATION_END',
-      entity: 'AdminImpersonationLog',
+      action: "IMPERSONATION_END",
+      entity: "AdminImpersonationLog",
       entityId: log.id,
       details: `Session terminated for target ${log.targetUserId}`,
     });

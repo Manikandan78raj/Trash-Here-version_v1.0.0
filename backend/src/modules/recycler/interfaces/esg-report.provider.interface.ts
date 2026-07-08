@@ -12,10 +12,16 @@ export interface EsgSummaryDto {
   co2OffsetKg: number;
   energySavedKwh: number;
   waterSavedLiters: number;
-  complianceStatus: 'COMPLIANT' | 'UNDER_REVIEW' | 'NON_COMPLIANT';
+  complianceStatus: "COMPLIANT" | "UNDER_REVIEW" | "NON_COMPLIANT";
 }
 
 export interface IEsgReportProvider {
-  calculateCarbonOffset(categorySlug: string, netWeightKg: number): CarbonOffsetCalculation;
-  calculateDiversionRate(totalIntakeKg: number, totalRecycledKg: number): number;
+  calculateCarbonOffset(
+    categorySlug: string,
+    netWeightKg: number,
+  ): CarbonOffsetCalculation;
+  calculateDiversionRate(
+    totalIntakeKg: number,
+    totalRecycledKg: number,
+  ): number;
 }

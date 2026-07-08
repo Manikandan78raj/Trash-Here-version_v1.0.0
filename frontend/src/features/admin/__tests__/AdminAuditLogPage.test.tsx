@@ -27,7 +27,17 @@ describe('AdminAuditLogPage Virtualization Suite (TDD)', () => {
           [
             {
               target,
-              contentRect: { width: 1000, height: 600, top: 0, left: 0, bottom: 600, right: 1000, x: 0, y: 0, toJSON: () => {} },
+              contentRect: {
+                width: 1000,
+                height: 600,
+                top: 0,
+                left: 0,
+                bottom: 600,
+                right: 1000,
+                x: 0,
+                y: 0,
+                toJSON: () => {},
+              },
               borderBoxSize: [{ inlineSize: 1000, blockSize: 600 }],
               contentBoxSize: [{ inlineSize: 1000, blockSize: 600 }],
             } as any,
@@ -40,8 +50,14 @@ describe('AdminAuditLogPage Virtualization Suite (TDD)', () => {
     }
     window.ResizeObserver = MockResizeObserver as any;
 
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, value: 600 });
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', { configurable: true, value: 60000 });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      value: 600,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: 60000,
+    });
     Element.prototype.getBoundingClientRect = () => ({
       width: 1000,
       height: 600,
@@ -86,7 +102,9 @@ describe('AdminAuditLogPage Virtualization Suite (TDD)', () => {
     });
 
     // Check that we virtualized the rows: out of 500 logs, only a fraction should be in the DOM
-    const logItems = container.querySelectorAll('[data-testid="audit-log-row"], tbody tr, [data-index]');
+    const logItems = container.querySelectorAll(
+      '[data-testid="audit-log-row"], tbody tr, [data-index]',
+    );
     expect(logItems.length).toBeGreaterThan(0);
     expect(logItems.length).toBeLessThan(50);
   });

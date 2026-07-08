@@ -9,10 +9,11 @@ export const AdminAuditLogPage: React.FC = () => {
   const [showImpersonateModal, setShowImpersonateModal] = useState(false);
   const [filterSeverity, setFilterSeverity] = useState<string>('ALL');
 
-  const filteredLogs = logs?.filter((log) => {
-    if (filterSeverity === 'ALL') return true;
-    return log.severity === filterSeverity;
-  }) || [];
+  const filteredLogs =
+    logs?.filter((log) => {
+      if (filterSeverity === 'ALL') return true;
+      return log.severity === filterSeverity;
+    }) || [];
 
   const parentRef = React.useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({
@@ -55,7 +56,8 @@ export const AdminAuditLogPage: React.FC = () => {
             </h2>
           </div>
           <p className="text-xs text-slate-400 font-mono">
-            SOC 2 Type II / GDPR compliance trail • SHA-256 cryptographic logging • Zero-deletion retention
+            SOC 2 Type II / GDPR compliance trail • SHA-256 cryptographic logging • Zero-deletion
+            retention
           </p>
         </div>
 
@@ -73,7 +75,9 @@ export const AdminAuditLogPage: React.FC = () => {
       {/* Filter Toolbar */}
       <div className="flex items-center space-x-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80">
         <Filter className="w-4 h-4 text-slate-400" />
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-300">Severity Filter:</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+          Severity Filter:
+        </span>
         <div className="flex space-x-2">
           {['ALL', 'INFO', 'WARNING', 'HIGH', 'CRITICAL'].map((sev) => (
             <button
@@ -129,20 +133,27 @@ export const AdminAuditLogPage: React.FC = () => {
                   <div className="p-5 rounded-[25px] bg-slate-900/70 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center space-x-3">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase font-mono ${getSeverityBadge(log.severity)}`}>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase font-mono ${getSeverityBadge(log.severity)}`}
+                        >
                           {log.severity}
                         </span>
                         <span className="text-sm font-bold text-white tracking-wide font-mono">
                           {log.action}
                         </span>
                         <span className="text-xs text-slate-400">
-                          on <strong className="text-slate-200">{log.entity}</strong> ({log.entityId})
+                          on <strong className="text-slate-200">{log.entity}</strong> (
+                          {log.entityId})
                         </span>
                       </div>
 
                       <div className="text-xs text-slate-400 font-mono flex flex-wrap items-center gap-x-4 gap-y-1">
-                        <span>Actor: <strong className="text-slate-300">{log.actorId}</strong></span>
-                        <span>IP: <strong className="text-slate-300">{log.ipAddress}</strong></span>
+                        <span>
+                          Actor: <strong className="text-slate-300">{log.actorId}</strong>
+                        </span>
+                        <span>
+                          IP: <strong className="text-slate-300">{log.ipAddress}</strong>
+                        </span>
                         <span className="text-slate-500 truncate max-w-xs">{log.userAgent}</span>
                       </div>
 
@@ -150,7 +161,11 @@ export const AdminAuditLogPage: React.FC = () => {
                         <div className="mt-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono flex items-center space-x-2 text-slate-300">
                           <Terminal className="w-3.5 h-3.5 text-[#D7FF43]" />
                           <span>
-                            Diff: <span className="text-rose-400 line-through mr-2">{log.oldValue || 'none'}</span> ➔{' '}
+                            Diff:{' '}
+                            <span className="text-rose-400 line-through mr-2">
+                              {log.oldValue || 'none'}
+                            </span>{' '}
+                            ➔{' '}
                             <span className="text-emerald-400 ml-2">{log.newValue || 'none'}</span>
                           </span>
                         </div>

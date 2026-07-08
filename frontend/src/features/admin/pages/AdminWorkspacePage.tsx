@@ -29,7 +29,8 @@ export const AdminWorkspacePage: React.FC = () => {
             Trash Here <span className="text-[#D7FF43]">Enterprise Admin Dashboard</span>
           </h1>
           <p className="text-sm text-slate-400 max-w-2xl">
-            Centralized fleet logistics marketplace, Stripe P&L double-entry ledger reconciliation, immutable security auditing, and hot-reload platform configuration.
+            Centralized fleet logistics marketplace, Stripe P&L double-entry ledger reconciliation,
+            immutable security auditing, and hot-reload platform configuration.
           </p>
         </div>
 
@@ -45,7 +46,10 @@ export const AdminWorkspacePage: React.FC = () => {
       </div>
 
       {/* Workspace Navigation Tabs */}
-      <div role="tablist" className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800/80 w-fit">
+      <div
+        role="tablist"
+        className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800/80 w-fit"
+      >
         <button
           role="tab"
           onClick={() => setActiveTab('fleet')}

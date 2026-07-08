@@ -6,7 +6,9 @@ import { EsgSustainabilityScorecard } from '../components/EsgSustainabilityScore
 import { Truck, Package, Cpu, Globe, ShieldCheck, Activity } from 'lucide-react';
 
 export const RecyclerWorkspacePage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'intake' | 'inventory' | 'manufacturing' | 'esg'>('intake');
+  const [activeTab, setActiveTab] = useState<'intake' | 'inventory' | 'manufacturing' | 'esg'>(
+    'intake',
+  );
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 space-y-8 font-sans">
@@ -29,7 +31,8 @@ export const RecyclerWorkspacePage: React.FC = () => {
             Trash Here <span className="text-[#D7FF43]">Recycler Hub</span>
           </h1>
           <p className="text-sm text-slate-400 max-w-2xl">
-            Integrated weighbridge telemetry, FIFO material lot traceability, shop-floor manufacturing queues, and tamper-proof SHA-256 ESG audit manifests.
+            Integrated weighbridge telemetry, FIFO material lot traceability, shop-floor
+            manufacturing queues, and tamper-proof SHA-256 ESG audit manifests.
           </p>
         </div>
 

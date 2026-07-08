@@ -1,13 +1,10 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import {
-  AiJobStatus,
-  AiRecommendationType,
-} from '@prisma/client';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AiProviderFactory } from '../providers/ai-provider.factory';
-import { AiQueueService } from './ai-queue.service';
-import { AiGateway } from '../ai.gateway';
-import { AiQueueJobPayload } from '../interfaces/ai.interface';
+import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
+import { AiJobStatus, AiRecommendationType } from "@prisma/client";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { AiProviderFactory } from "../providers/ai-provider.factory";
+import { AiQueueService } from "./ai-queue.service";
+import { AiGateway } from "../ai.gateway";
+import { AiQueueJobPayload } from "../interfaces/ai.interface";
 
 @Injectable()
 export class AiWorkerProcessor implements OnModuleInit {
@@ -22,7 +19,7 @@ export class AiWorkerProcessor implements OnModuleInit {
 
   onModuleInit() {
     this.logger.log(
-      'Initializing AI Worker Processor and registering BullMQ consumer loop...',
+      "Initializing AI Worker Processor and registering BullMQ consumer loop...",
     );
     this.queueService.processJobs(async (job) => {
       await this.processJob(job);
@@ -35,7 +32,7 @@ export class AiWorkerProcessor implements OnModuleInit {
   }): Promise<void> {
     const start = Date.now();
     const { id: jobId, data } = job;
-    const userId = data.userId || 'anonymous';
+    const userId = data.userId || "anonymous";
 
     this.logger.debug(
       `[AiWorkerProcessor] Picked up job ${jobId} for image ${data.storageKey} (model: ${data.modelType})`,
@@ -102,15 +99,20 @@ export class AiWorkerProcessor implements OnModuleInit {
             isContaminated,
             contaminationRate: detectionResult.contaminationPercentage,
             detectionConfidence:
-              detectionResult.detectionConfidence ?? detectionResult.overallConfidence,
+              detectionResult.detectionConfidence ??
+              detectionResult.overallConfidence,
             classificationConfidence:
-              detectionResult.classificationConfidence ?? detectionResult.overallConfidence,
+              detectionResult.classificationConfidence ??
+              detectionResult.overallConfidence,
             recommendationConfidence:
-              detectionResult.recommendationConfidence ?? detectionResult.overallConfidence,
+              detectionResult.recommendationConfidence ??
+              detectionResult.overallConfidence,
             overallConfidence: detectionResult.overallConfidence,
             providerName:
-              detectionResult.providerName || detectionResult.modelName || 'mock-vision',
-            modelVersion: detectionResult.modelVersion || '1.0.0',
+              detectionResult.providerName ||
+              detectionResult.modelName ||
+              "mock-vision",
+            modelVersion: detectionResult.modelVersion || "1.0.0",
             processingLatencyMs:
               detectionResult.processingTimeMs || Date.now() - start,
             processingCostUsd: detectionResult.processingCostUsd ?? null,
@@ -119,9 +121,7 @@ export class AiWorkerProcessor implements OnModuleInit {
             estimatedWeightKg: detectionResult.estimatedWeightKg,
             co2SavedKg,
             greenPointsEarned: points,
-            rawPayload: JSON.stringify(
-              detectionResult.rawVendorPayload || {},
-            ),
+            rawPayload: JSON.stringify(detectionResult.rawVendorPayload || {}),
           },
         });
 
@@ -177,7 +177,7 @@ export class AiWorkerProcessor implements OnModuleInit {
           where: { jobId },
           data: {
             status: AiJobStatus.FAILED,
-            errorMessage: error?.message || 'Unknown processing failure',
+            errorMessage: error?.message || "Unknown processing failure",
             processingMs: Date.now() - start,
           },
         });
@@ -190,7 +190,7 @@ export class AiWorkerProcessor implements OnModuleInit {
       this.gateway.emitJobFailed(
         userId,
         jobId,
-        error?.message || 'Processing error',
+        error?.message || "Processing error",
       );
       throw error; // Re-throw to let queue service handle retry / DLQ
     }

@@ -1,7 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AuditEvent, SecurityAlert, IAdminAuditProvider } from '../interfaces/admin.interface';
-import { AuditFilterDto } from '../dto/admin.dto';
+import { Injectable, Logger } from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import {
+  AuditEvent,
+  SecurityAlert,
+  IAdminAuditProvider,
+} from "../interfaces/admin.interface";
+import { AuditFilterDto } from "../dto/admin.dto";
 
 @Injectable()
 export class AdminAuditService implements IAdminAuditProvider {
@@ -16,8 +20,8 @@ export class AdminAuditService implements IAdminAuditProvider {
         action: event.action,
         entity: event.entity,
         entityId: event.entityId || null,
-        ipAddress: event.ipAddress || '127.0.0.1',
-        userAgent: event.userAgent || 'Unknown',
+        ipAddress: event.ipAddress || "127.0.0.1",
+        userAgent: event.userAgent || "Unknown",
         details: event.details || null,
       },
     });
@@ -34,20 +38,31 @@ export class AdminAuditService implements IAdminAuditProvider {
         where,
         take: filter.limit || 50,
         skip: filter.offset || 0,
-        orderBy: { timestamp: 'desc' },
-        include: { user: { select: { id: true, fullName: true, email: true } } },
+        orderBy: { timestamp: "desc" },
+        include: {
+          user: { select: { id: true, fullName: true, email: true } },
+        },
       }),
       this.prisma.auditLog.count({ where }),
     ]);
 
-    return { data, total, limit: filter.limit || 50, offset: filter.offset || 0 };
+    return {
+      data,
+      total,
+      limit: filter.limit || 50,
+      offset: filter.offset || 0,
+    };
   }
 
   async triggerAlert(alert: SecurityAlert): Promise<boolean> {
-    this.logger.warn(`[SECURITY ALERT - ${alert.severity}] ${alert.title}: ${alert.message}`);
-    if (alert.severity === 'CRITICAL' || alert.severity === 'HIGH') {
+    this.logger.warn(
+      `[SECURITY ALERT - ${alert.severity}] ${alert.title}: ${alert.message}`,
+    );
+    if (alert.severity === "CRITICAL" || alert.severity === "HIGH") {
       // In enterprise production, this triggers PagerDuty / Slack webhook / Email
-      this.logger.error(`🚨 URGENT NOTIFICATION DISPATCHED FOR CRITICAL ALERT: ${alert.title}`);
+      this.logger.error(
+        `🚨 URGENT NOTIFICATION DISPATCHED FOR CRITICAL ALERT: ${alert.title}`,
+      );
     }
     return true;
   }

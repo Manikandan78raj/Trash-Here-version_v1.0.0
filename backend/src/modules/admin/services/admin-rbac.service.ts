@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AssignRoleDto } from '../dto/admin.dto';
-import { RoleType } from '@prisma/client';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { AssignRoleDto } from "../dto/admin.dto";
+import { RoleType } from "@prisma/client";
 
 @Injectable()
 export class AdminRbacService {
@@ -36,7 +36,10 @@ export class AdminRbacService {
     });
   }
 
-  async checkPermission(userId: string, requiredScope: string): Promise<boolean> {
+  async checkPermission(
+    userId: string,
+    requiredScope: string,
+  ): Promise<boolean> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { role: true },
@@ -46,7 +49,10 @@ export class AdminRbacService {
       return false;
     }
 
-    if (user.role.name === RoleType.SUPER_ADMIN || user.role.permissions.includes('*')) {
+    if (
+      user.role.name === RoleType.SUPER_ADMIN ||
+      user.role.permissions.includes("*")
+    ) {
       return true;
     }
 

@@ -21,7 +21,9 @@ export const LivePredictionOverlay: React.FC<LivePredictionOverlayProps> = ({
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 1));
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-zinc-950 shadow-2xl border border-zinc-800/80 ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-3xl bg-zinc-950 shadow-2xl border border-zinc-800/80 ${className}`}
+    >
       {/* Top Toolbar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
         <button
@@ -29,15 +31,27 @@ export const LivePredictionOverlay: React.FC<LivePredictionOverlayProps> = ({
           className="flex items-center gap-1.5 text-xs font-medium text-zinc-300 hover:text-white transition-colors"
           title={showBoxes ? 'Hide Bounding Boxes' : 'Show Bounding Boxes'}
         >
-          {showBoxes ? <Eye className="w-3.5 h-3.5 text-[#D7FF43]" /> : <EyeOff className="w-3.5 h-3.5 text-zinc-500" />}
+          {showBoxes ? (
+            <Eye className="w-3.5 h-3.5 text-[#D7FF43]" />
+          ) : (
+            <EyeOff className="w-3.5 h-3.5 text-zinc-500" />
+          )}
           {showBoxes ? 'Boxes On' : 'Boxes Off'}
         </button>
         <div className="w-px h-3 bg-white/20" />
-        <button onClick={handleZoomOut} className="p-1 text-zinc-300 hover:text-white transition-colors" title="Zoom Out">
+        <button
+          onClick={handleZoomOut}
+          className="p-1 text-zinc-300 hover:text-white transition-colors"
+          title="Zoom Out"
+        >
           <ZoomOut className="w-3.5 h-3.5" />
         </button>
         <span className="text-xs font-mono text-zinc-400">{Math.round(zoomLevel * 100)}%</span>
-        <button onClick={handleZoomIn} className="p-1 text-zinc-300 hover:text-white transition-colors" title="Zoom In">
+        <button
+          onClick={handleZoomIn}
+          className="p-1 text-zinc-300 hover:text-white transition-colors"
+          title="Zoom In"
+        >
           <ZoomIn className="w-3.5 h-3.5" />
         </button>
       </div>

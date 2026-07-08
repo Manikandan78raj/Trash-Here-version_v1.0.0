@@ -22,6 +22,8 @@ import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { toast } from '@/common/notifications/toast';
 import { useProfile, useUpdateProfile, useUploadAvatar } from '../api/hub.api';
+import { sanitizeText } from '@/common/security/sanitization';
+import { validateFileUpload } from '@/common/security/upload-validator';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -78,27 +80,24 @@ export const ProfileTab: React.FC = () => {
 
   const onSubmit = (values: ProfileFormValues) => {
     updateProfileMutation.mutate({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phone: values.phone,
-      bio: values.bio,
+      firstName: sanitizeText(values.firstName),
+      lastName: sanitizeText(values.lastName),
+      phone: sanitizeText(values.phone),
+      bio: sanitizeText(values.bio),
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate MIME type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      toast.error('Invalid file format. Please select JPEG, PNG, or WEBP.');
-      return;
-    }
+    const validation = await validateFileUpload(file, {
+      maxSizeBytes: 5 * 1024 * 1024,
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    });
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size too large. Maximum allowed is 5MB.');
+    if (!validation.isValid) {
+      toast.error(validation.error || 'Invalid file format or security check failed.');
       return;
     }
 

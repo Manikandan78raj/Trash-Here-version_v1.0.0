@@ -47,14 +47,17 @@ export const EsgSustainabilityScorecard: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-xl font-bold text-white tracking-tight">EPA / GHG Protocol ESG Scorecard</h3>
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                EPA / GHG Protocol ESG Scorecard
+              </h3>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1" />
                 COMPLIANT (ISO 14001)
               </span>
             </div>
             <p className="text-sm text-slate-400 mt-1">
-              Automated Lifecycle Assessment (LCA) telemetry & SHA-256 stamped legal audit manifests.
+              Automated Lifecycle Assessment (LCA) telemetry & SHA-256 stamped legal audit
+              manifests.
             </p>
           </div>
         </div>
@@ -71,7 +74,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Landfill Diversion</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Landfill Diversion
+            </span>
             <div className="p-2.5 rounded-xl bg-[#D7FF43]/10 text-[#D7FF43]">
               <Globe className="w-5 h-5" />
             </div>
@@ -86,7 +91,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">CO2 Emissions Offset</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              CO2 Emissions Offset
+            </span>
             <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
               <Leaf className="w-5 h-5" />
             </div>
@@ -95,13 +102,18 @@ export const EsgSustainabilityScorecard: React.FC = () => {
             {isReportsLoading ? '...' : `${(latestReport.co2OffsetKg / 1000).toFixed(1)}t`}
           </div>
           <p className="text-xs text-slate-400 mt-2">
-            <span className="text-emerald-400 font-bold">{latestReport.co2OffsetKg.toLocaleString()} kg</span> CO2 prevented
+            <span className="text-emerald-400 font-bold">
+              {latestReport.co2OffsetKg.toLocaleString()} kg
+            </span>{' '}
+            CO2 prevented
           </p>
         </div>
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Energy Conserved</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Energy Conserved
+            </span>
             <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400">
               <Zap className="w-5 h-5" />
             </div>
@@ -110,13 +122,18 @@ export const EsgSustainabilityScorecard: React.FC = () => {
             {isReportsLoading ? '...' : `${(latestReport.energySavedKwh / 1000).toFixed(1)} MWh`}
           </div>
           <p className="text-xs text-slate-400 mt-2">
-            <span className="text-amber-400 font-bold">{latestReport.energySavedKwh.toLocaleString()} kWh</span> electricity saved
+            <span className="text-amber-400 font-bold">
+              {latestReport.energySavedKwh.toLocaleString()} kWh
+            </span>{' '}
+            electricity saved
           </p>
         </div>
 
         <div className="p-6 rounded-[30px] bg-slate-900/60 backdrop-blur-md border border-slate-800/80 shadow-2xl">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Water Saved</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Water Saved
+            </span>
             <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
               <Droplets className="w-5 h-5" />
             </div>
@@ -125,7 +142,10 @@ export const EsgSustainabilityScorecard: React.FC = () => {
             {isReportsLoading ? '...' : `${(latestReport.waterSavedLiters / 1000).toFixed(1)}k L`}
           </div>
           <p className="text-xs text-slate-400 mt-2">
-            <span className="text-cyan-400 font-bold">{latestReport.waterSavedLiters.toLocaleString()} L</span> water conserved
+            <span className="text-cyan-400 font-bold">
+              {latestReport.waterSavedLiters.toLocaleString()} L
+            </span>{' '}
+            water conserved
           </p>
         </div>
       </div>
@@ -145,7 +165,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
           <div className="text-center py-12 rounded-2xl bg-slate-950/40 border border-slate-800/50">
             <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
             <p className="text-slate-400 font-medium">No PDF manifests generated yet.</p>
-            <p className="text-xs text-slate-500 mt-1">Accept intake loads or generate ESG reports to issue legal PDF manifests.</p>
+            <p className="text-xs text-slate-500 mt-1">
+              Accept intake loads or generate ESG reports to issue legal PDF manifests.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -163,14 +185,19 @@ export const EsgSustainabilityScorecard: React.FC = () => {
               <tbody className="divide-y divide-slate-800/50 text-sm">
                 {manifests.map((man: PdfManifestDto) => (
                   <tr key={man.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-4 px-4 font-mono font-bold text-white">{man.manifestNumber}</td>
+                    <td className="py-4 px-4 font-mono font-bold text-white">
+                      {man.manifestNumber}
+                    </td>
                     <td className="py-4 px-4">
                       <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-[#D7FF43] border border-slate-700">
                         {man.manifestType}
                       </span>
                     </td>
                     <td className="py-4 px-4 text-slate-300">{man.issuedTo}</td>
-                    <td className="py-4 px-4 font-mono text-xs text-slate-400 max-w-xs truncate" title={man.sha256Hash}>
+                    <td
+                      className="py-4 px-4 font-mono text-xs text-slate-400 max-w-xs truncate"
+                      title={man.sha256Hash}
+                    >
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 inline mr-1" />
                       {man.sha256Hash}
                     </td>
@@ -214,7 +241,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
             </div>
             <form onSubmit={handleGenerateSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Reporting Period</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Reporting Period
+                </label>
                 <input
                   type="text"
                   required
@@ -226,7 +255,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Start Date</label>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     required
@@ -236,7 +267,9 @@ export const EsgSustainabilityScorecard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">End Date</label>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     required

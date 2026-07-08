@@ -3,12 +3,12 @@ import {
   NotFoundException,
   BadRequestException,
   Logger,
-} from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { GhgProtocolEsgProvider } from '../providers/ghg-protocol-esg.provider';
-import { MockPdfGeneratorProvider } from '../providers/mock-pdf-generator.provider';
-import { GenerateEsgReportDto, IssueManifestDto } from '../dto/recycler.dto';
-import { EsgComplianceStatus, LoadStatus } from '@prisma/client';
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { GhgProtocolEsgProvider } from "../providers/ghg-protocol-esg.provider";
+import { MockPdfGeneratorProvider } from "../providers/mock-pdf-generator.provider";
+import { GenerateEsgReportDto, IssueManifestDto } from "../dto/recycler.dto";
+import { EsgComplianceStatus, LoadStatus } from "@prisma/client";
 
 @Injectable()
 export class RecyclerEsgService {
@@ -25,7 +25,9 @@ export class RecyclerEsgService {
       where: { userId },
     });
     if (!profile) {
-      throw new NotFoundException('Recycler profile not found for current user.');
+      throw new NotFoundException(
+        "Recycler profile not found for current user.",
+      );
     }
     return profile;
   }
@@ -41,7 +43,9 @@ export class RecyclerEsgService {
         weighInTimestamp: { gte: startDate, lte: endDate },
         load: { status: LoadStatus.ACCEPTED },
       },
-      include: { load: { include: { materialBatches: { include: { category: true } } } } },
+      include: {
+        load: { include: { materialBatches: { include: { category: true } } } },
+      },
     });
 
     let totalIntakeKg = 0;
@@ -56,8 +60,12 @@ export class RecyclerEsgService {
       const recycledForLoad = (record.netWeightKg || 0) * 0.96;
       totalRecycledKg += recycledForLoad;
 
-      const categorySlug = record.load?.materialBatches?.[0]?.category?.slug || 'default';
-      const offset = this.esgProvider.calculateCarbonOffset(categorySlug, recycledForLoad);
+      const categorySlug =
+        record.load?.materialBatches?.[0]?.category?.slug || "default";
+      const offset = this.esgProvider.calculateCarbonOffset(
+        categorySlug,
+        recycledForLoad,
+      );
       co2OffsetKg += offset.co2OffsetKg;
       energySavedKwh += offset.energySavedKwh;
       waterSavedLiters += offset.waterSavedLiters;
@@ -67,16 +75,24 @@ export class RecyclerEsgService {
     if (totalIntakeKg === 0) {
       totalIntakeKg = 50000;
       totalRecycledKg = 48200;
-      const offset = this.esgProvider.calculateCarbonOffset('plastics-pet', totalRecycledKg);
+      const offset = this.esgProvider.calculateCarbonOffset(
+        "plastics-pet",
+        totalRecycledKg,
+      );
       co2OffsetKg = offset.co2OffsetKg;
       energySavedKwh = offset.energySavedKwh;
       waterSavedLiters = offset.waterSavedLiters;
     }
 
-    const landfillDiversionRate = this.esgProvider.calculateDiversionRate(totalIntakeKg, totalRecycledKg);
+    const landfillDiversionRate = this.esgProvider.calculateDiversionRate(
+      totalIntakeKg,
+      totalRecycledKg,
+    );
     const reportNumber = `ESG-${dto.reportingPeriod.toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    this.logger.log(`Generating ESG Report [${reportNumber}] for period [${dto.reportingPeriod}]: Diversion Rate = ${landfillDiversionRate}%`);
+    this.logger.log(
+      `Generating ESG Report [${reportNumber}] for period [${dto.reportingPeriod}]: Diversion Rate = ${landfillDiversionRate}%`,
+    );
 
     const esgReport = await this.prisma.esgReport.create({
       data: {
@@ -93,14 +109,14 @@ export class RecyclerEsgService {
         energySavedKwh: Number(energySavedKwh.toFixed(2)),
         waterSavedLiters: Number(waterSavedLiters.toFixed(2)),
         complianceStatus: EsgComplianceStatus.COMPLIANT,
-        generatedBy: 'SYSTEM_ESG_ENGINE',
+        generatedBy: "SYSTEM_ESG_ENGINE",
       },
     });
 
     return {
       success: true,
       statusCode: 201,
-      message: 'ESG Sustainability Report generated successfully.',
+      message: "ESG Sustainability Report generated successfully.",
       data: esgReport,
       timestamp: new Date().toISOString(),
     };
@@ -117,7 +133,7 @@ export class RecyclerEsgService {
         include: { scaleRecord: true, qualityInspection: true },
       });
       if (!load || load.recyclerId !== recycler.id) {
-        throw new NotFoundException('Specified incoming load not found.');
+        throw new NotFoundException("Specified incoming load not found.");
       }
       loadDetails = {
         truckPlate: load.truckPlate,
@@ -135,7 +151,7 @@ export class RecyclerEsgService {
         where: { id: dto.esgReportId },
       });
       if (!esg || esg.recyclerId !== recycler.id) {
-        throw new NotFoundException('Specified ESG report not found.');
+        throw new NotFoundException("Specified ESG report not found.");
       }
       esgSummary = {
         reportingPeriod: esg.reportingPeriod,
@@ -163,7 +179,9 @@ export class RecyclerEsgService {
 
     const pdfResult = await this.pdfProvider.generateManifestPdf(templateData);
 
-    this.logger.log(`Issued tamper-proof PDF Manifest [${manifestNumber}] (SHA-256: ${pdfResult.sha256Hash.substring(0, 16)}...)`);
+    this.logger.log(
+      `Issued tamper-proof PDF Manifest [${manifestNumber}] (SHA-256: ${pdfResult.sha256Hash.substring(0, 16)}...)`,
+    );
 
     const manifest = await this.prisma.pdfManifest.create({
       data: {
@@ -183,7 +201,7 @@ export class RecyclerEsgService {
     return {
       success: true,
       statusCode: 201,
-      message: 'Tamper-proof PDF manifest issued and stamped successfully.',
+      message: "Tamper-proof PDF manifest issued and stamped successfully.",
       data: manifest,
       timestamp: new Date().toISOString(),
     };
@@ -194,13 +212,13 @@ export class RecyclerEsgService {
     const reports = await this.prisma.esgReport.findMany({
       where: { recyclerId: recycler.id },
       include: { manifests: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return {
       success: true,
       statusCode: 200,
-      message: 'ESG reports retrieved successfully.',
+      message: "ESG reports retrieved successfully.",
       data: reports,
       timestamp: new Date().toISOString(),
     };
@@ -216,13 +234,13 @@ export class RecyclerEsgService {
     const manifests = await this.prisma.pdfManifest.findMany({
       where: whereClause,
       include: { load: true, esgReport: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return {
       success: true,
       statusCode: 200,
-      message: 'PDF manifests retrieved successfully.',
+      message: "PDF manifests retrieved successfully.",
       data: manifests,
       timestamp: new Date().toISOString(),
     };

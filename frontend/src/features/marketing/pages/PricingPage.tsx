@@ -88,22 +88,34 @@ export const PricingPage: React.FC = () => {
             Plans for Every Scale of Impact
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            From free household curbside recycling to industrial 50-ton weighbridge telemetry contracts.
+            From free household curbside recycling to industrial 50-ton weighbridge telemetry
+            contracts.
           </p>
 
           {/* Billing Toggle */}
           <div className="pt-4 flex items-center justify-center space-x-4">
-            <span className={`text-sm font-semibold ${!annualBilling ? 'text-white' : 'text-slate-400'}`}>Monthly Billing</span>
+            <span
+              className={`text-sm font-semibold ${!annualBilling ? 'text-white' : 'text-slate-400'}`}
+            >
+              Monthly Billing
+            </span>
             <button
               type="button"
               onClick={() => setAnnualBilling(!annualBilling)}
               className="w-14 h-8 rounded-full bg-slate-800 border border-slate-700 p-1 flex items-center transition-colors focus:outline-none focus:ring-2 focus:ring-[#D7FF43]"
               aria-label="Toggle annual billing discount"
             >
-              <div className={`w-6 h-6 rounded-full bg-[#D7FF43] transition-transform ${annualBilling ? 'translate-x-6' : 'translate-x-0'}`} />
+              <div
+                className={`w-6 h-6 rounded-full bg-[#D7FF43] transition-transform ${annualBilling ? 'translate-x-6' : 'translate-x-0'}`}
+              />
             </button>
-            <span className={`text-sm font-semibold flex items-center ${annualBilling ? 'text-white' : 'text-slate-400'}`}>
-              Annual Billing <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-xs">Save 20%</span>
+            <span
+              className={`text-sm font-semibold flex items-center ${annualBilling ? 'text-white' : 'text-slate-400'}`}
+            >
+              Annual Billing{' '}
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-xs">
+                Save 20%
+              </span>
             </span>
           </div>
         </div>
@@ -135,7 +147,9 @@ export const PricingPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-baseline space-x-2">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">{plan.price}</span>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-white">
+                    {plan.price}
+                  </span>
                   <span className="text-sm text-slate-400 font-medium">{plan.period}</span>
                 </div>
 
@@ -170,7 +184,10 @@ export const PricingPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-white text-center">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-2">
+              <div
+                key={idx}
+                className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-2"
+              >
                 <h3 className="font-bold text-white text-base">{faq.q}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
               </div>

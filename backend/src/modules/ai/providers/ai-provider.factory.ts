@@ -1,14 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { AiModelType } from '@prisma/client';
+import { Injectable, Logger } from "@nestjs/common";
+import { AiModelType } from "@prisma/client";
 import {
   IAiDetectionProvider,
   AiDetectionResponse,
-} from '../interfaces/ai.interface';
-import { MockVisionProvider } from './mock-vision.provider';
-import { YoloVisionProvider } from './yolo-vision.provider';
-import { OpenAiVisionProvider } from './openai-vision.provider';
-import { GeminiVisionProvider } from './gemini-vision.provider';
-import { HybridVisionProvider } from './hybrid-vision.provider';
+} from "../interfaces/ai.interface";
+import { MockVisionProvider } from "./mock-vision.provider";
+import { YoloVisionProvider } from "./yolo-vision.provider";
+import { OpenAiVisionProvider } from "./openai-vision.provider";
+import { GeminiVisionProvider } from "./gemini-vision.provider";
+import { HybridVisionProvider } from "./hybrid-vision.provider";
 
 @Injectable()
 export class AiProviderFactory {

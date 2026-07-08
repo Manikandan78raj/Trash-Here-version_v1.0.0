@@ -72,7 +72,9 @@ export const HomePage: React.FC = () => {
             </span>
           </h1>
           <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            We digitize urban waste logistics with AI polyline fleet routing, 50-ton weighbridge IoT telemetry, and SHA-256 carbon offset manifests for households, collectors, and enterprise recyclers.
+            We digitize urban waste logistics with AI polyline fleet routing, 50-ton weighbridge IoT
+            telemetry, and SHA-256 carbon offset manifests for households, collectors, and
+            enterprise recyclers.
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -98,7 +100,9 @@ export const HomePage: React.FC = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {stats.map((stat) => (
               <div key={stat.label} className="space-y-1">
-                <p className="text-3xl sm:text-4xl font-black text-white tracking-tight">{stat.value}</p>
+                <p className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                  {stat.value}
+                </p>
                 <p className="text-xs sm:text-sm text-slate-400 font-medium">{stat.label}</p>
               </div>
             ))}
@@ -113,7 +117,8 @@ export const HomePage: React.FC = () => {
             Engineered for Enterprise Scale
           </h2>
           <p className="text-base sm:text-lg text-slate-400">
-            Our platform merges fintech precision with industrial recycling telemetry to eliminate inefficiencies across the waste supply chain.
+            Our platform merges fintech precision with industrial recycling telemetry to eliminate
+            inefficiencies across the waste supply chain.
           </p>
         </div>
 
@@ -139,7 +144,8 @@ export const HomePage: React.FC = () => {
                   to={item.link}
                   className="text-sm font-semibold text-[#D7FF43] hover:text-white flex items-center transition-colors"
                 >
-                  Learn more <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                  Learn more{' '}
+                  <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
                 </Link>
               </div>
             </motion.div>
@@ -155,7 +161,8 @@ export const HomePage: React.FC = () => {
             Ready to digitize your waste logistics operations?
           </h2>
           <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto">
-            Join thousands of households, fleet operators, and certified recyclers building a circular economy.
+            Join thousands of households, fleet operators, and certified recyclers building a
+            circular economy.
           </p>
           <div className="pt-4 flex justify-center gap-4">
             <Link

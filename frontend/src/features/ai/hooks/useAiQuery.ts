@@ -1,10 +1,5 @@
 import { useEffect } from 'react';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { aiApi } from '../api/ai.api';
 import { aiSocketService } from '../services/ai-socket.service';
 import type {

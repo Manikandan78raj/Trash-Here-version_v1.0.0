@@ -33,7 +33,7 @@ export const AdminConfigPage: React.FC = () => {
         onSuccess: () => {
           setEditingKey(null);
         },
-      }
+      },
     );
   };
 
@@ -73,9 +73,7 @@ export const AdminConfigPage: React.FC = () => {
                     Updated by {cfg.updatedBy}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {cfg.description}
-                </p>
+                <p className="text-xs text-slate-300 leading-relaxed">{cfg.description}</p>
               </div>
 
               <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
@@ -106,8 +104,12 @@ export const AdminConfigPage: React.FC = () => {
                 ) : (
                   <div className="flex items-center justify-between w-full">
                     <div>
-                      <span className="text-[10px] text-slate-500 uppercase block font-mono">CURRENT VALUE</span>
-                      <span className="text-xl font-extrabold text-white font-mono">{cfg.value}</span>
+                      <span className="text-[10px] text-slate-500 uppercase block font-mono">
+                        CURRENT VALUE
+                      </span>
+                      <span className="text-xl font-extrabold text-white font-mono">
+                        {cfg.value}
+                      </span>
                     </div>
                     <button
                       onClick={() => handleStartEdit(cfg)}

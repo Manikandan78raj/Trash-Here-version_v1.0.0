@@ -6,7 +6,7 @@ import React from 'react';
 // Use a Proxy to dynamically mock any Framer Motion HTML element (div, article, span, section, etc.)
 const createMotionComponent = (tag: string) => {
   return React.forwardRef(({ children, className, onClick, href, type }: any, ref: any) =>
-    React.createElement(tag, { className, onClick, href, type, ref }, children)
+    React.createElement(tag, { className, onClick, href, type, ref }, children),
   );
 };
 
@@ -15,7 +15,7 @@ vi.mock('framer-motion', () => ({
     {},
     {
       get: (_target, prop: string) => createMotionComponent(prop),
-    }
+    },
   ),
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
@@ -43,7 +43,9 @@ vi.mock('../api/marketing.api', () => ({
     isPending: false,
   }),
   useGetSeoMetadata: () => ({
-    data: { data: { title: 'Test SEO Title', description: 'Test Description', ogImage: '/og.png' } },
+    data: {
+      data: { title: 'Test SEO Title', description: 'Test Description', ogImage: '/og.png' },
+    },
     isLoading: false,
   }),
   useGetBlogPosts: () => ({
@@ -113,7 +115,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     render(
       <MemoryRouter>
         <MarketingNavbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Trash Here/i)).toBeInTheDocument();
@@ -125,7 +127,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     render(
       <MemoryRouter>
         <MarketingFooter />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Venture-scale climate infrastructure/i)).toBeInTheDocument();
@@ -139,7 +141,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     render(
       <MemoryRouter>
         <EcoCalculatorPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Landfill Diversion/i)).toBeInTheDocument();
@@ -156,7 +158,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     render(
       <MemoryRouter>
         <ContactPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Let's Build Sustainable Cities Together/i)).toBeInTheDocument();
@@ -176,7 +178,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
         source: 'contact_page',
         subject: 'Enterprise Fleet Integration',
       }),
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -184,10 +186,12 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     render(
       <MemoryRouter>
         <BlogListingPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.getByText(/How AI Polyline Routing Reduces Municipal Fuel Emissions/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/How AI Polyline Routing Reduces Municipal Fuel Emissions/i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/The Rise of SHA-256 Cryptographic Manifests/i)).toBeInTheDocument();
 
     // Click 'Engineering & AI' filter
@@ -195,7 +199,9 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
     fireEvent.click(aiFilter);
 
     // Should still show polyline routing article
-    expect(screen.getByText(/How AI Polyline Routing Reduces Municipal Fuel Emissions/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/How AI Polyline Routing Reduces Municipal Fuel Emissions/i),
+    ).toBeInTheDocument();
   });
 
   it('6. should update document.title and inject JSON-LD schema via SeoHead', async () => {
@@ -207,7 +213,7 @@ describe('Sprint 10 Marketing & SEO Hub Components', () => {
           description="Test SEO description for unit testing."
           jsonLdSchema={{ '@context': 'https://schema.org', '@type': 'WebPage', name: 'Test' }}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await waitFor(() => {

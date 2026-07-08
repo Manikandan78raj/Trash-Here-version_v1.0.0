@@ -48,7 +48,8 @@ export const HowItWorksPage: React.FC = () => {
             How Trash Here Works
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            A seamless, transparent 4-step loop engineered to eliminate landfill waste and reward sustainable action.
+            A seamless, transparent 4-step loop engineered to eliminate landfill waste and reward
+            sustainable action.
           </p>
         </div>
 
@@ -64,7 +65,9 @@ export const HowItWorksPage: React.FC = () => {
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl sm:text-4xl font-black text-slate-700">{item.step}</span>
+                  <span className="text-3xl sm:text-4xl font-black text-slate-700">
+                    {item.step}
+                  </span>
                   <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-2xl">
                     {item.icon}
                   </div>
@@ -77,9 +80,12 @@ export const HowItWorksPage: React.FC = () => {
         </div>
 
         <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 rounded-3xl p-10 sm:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Experience the Loop Live</h2>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Experience the Loop Live
+          </h2>
           <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Schedule your first collection today and earn your initial 500 Green Points sign-up bonus.
+            Schedule your first collection today and earn your initial 500 Green Points sign-up
+            bonus.
           </p>
           <div className="pt-4">
             <Link

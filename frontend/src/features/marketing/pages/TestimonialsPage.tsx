@@ -5,32 +5,36 @@ import { SeoHead } from '../components/SeoHead';
 export const TestimonialsPage: React.FC = () => {
   const testimonials = [
     {
-      quote: "Trash Here transformed our municipal recycling collection. By switching from static weekly schedules to AI polyline routing, we reduced fuel emissions by 34% in just three months.",
-      author: "David K., Director of Solid Waste",
-      company: "City of Portland Metro Area",
+      quote:
+        'Trash Here transformed our municipal recycling collection. By switching from static weekly schedules to AI polyline routing, we reduced fuel emissions by 34% in just three months.',
+      author: 'David K., Director of Solid Waste',
+      company: 'City of Portland Metro Area',
       rating: 5,
-      avatar: "👨‍💼",
+      avatar: '👨‍💼',
     },
     {
-      quote: "As an independent fleet operator, the instant Stripe Connect payouts are a game changer. I get paid the minute my weighbridge ticket clears. No more waiting 60 days on paper invoices.",
-      author: "Carlos M., Fleet Owner & Driver",
-      company: "Bay Area Logistics LLC",
+      quote:
+        'As an independent fleet operator, the instant Stripe Connect payouts are a game changer. I get paid the minute my weighbridge ticket clears. No more waiting 60 days on paper invoices.',
+      author: 'Carlos M., Fleet Owner & Driver',
+      company: 'Bay Area Logistics LLC',
       rating: 5,
-      avatar: "👨‍✈️",
+      avatar: '👨‍✈️',
     },
     {
-      quote: "Our corporate Scope 3 auditors were blown away by the SHA-256 cryptographic manifests. We can trace every pound of organics from our 15 restaurant locations directly to composting hubs.",
-      author: "Sarah T., VP of Sustainability",
-      company: "Pacific Dining Group",
+      quote:
+        'Our corporate Scope 3 auditors were blown away by the SHA-256 cryptographic manifests. We can trace every pound of organics from our 15 restaurant locations directly to composting hubs.',
+      author: 'Sarah T., VP of Sustainability',
+      company: 'Pacific Dining Group',
       rating: 5,
-      avatar: "👩‍💼",
+      avatar: '👩‍💼',
     },
     {
-      quote: "My family loves the Green Points rewards! We've already cashed out $120 in Stripe rewards just by sorting our household recyclables and booking on-demand pickups.",
-      author: "Jessica R., Pro Citizen Subscriber",
-      company: "Seattle Household",
+      quote:
+        "My family loves the Green Points rewards! We've already cashed out $120 in Stripe rewards just by sorting our household recyclables and booking on-demand pickups.",
+      author: 'Jessica R., Pro Citizen Subscriber',
+      company: 'Seattle Household',
       rating: 5,
-      avatar: "👩‍🌾",
+      avatar: '👩‍🌾',
     },
   ];
 
@@ -51,7 +55,8 @@ export const TestimonialsPage: React.FC = () => {
             Trusted Across the Supply Chain
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            Read real feedback from municipal directors, independent collectors, and everyday citizens using our platform.
+            Read real feedback from municipal directors, independent collectors, and everyday
+            citizens using our platform.
           </p>
         </div>
 

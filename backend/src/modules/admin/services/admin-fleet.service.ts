@@ -1,8 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { CreateDispatchOrderDto, ReassignRouteDto } from '../dto/admin.dto';
-import { DispatchScoreInput, DispatchScoreResult } from '../interfaces/admin.interface';
-import { DispatchStatus, PickupStatus } from '@prisma/client';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { CreateDispatchOrderDto, ReassignRouteDto } from "../dto/admin.dto";
+import {
+  DispatchScoreInput,
+  DispatchScoreResult,
+} from "../interfaces/admin.interface";
+import { DispatchStatus, PickupStatus } from "@prisma/client";
 
 @Injectable()
 export class AdminFleetService {
@@ -16,7 +23,13 @@ export class AdminFleetService {
         vehicles: { where: { isActive: true } },
         assignedPickups: {
           where: {
-            status: { in: [PickupStatus.ASSIGNED, PickupStatus.EN_ROUTE, PickupStatus.ARRIVED] },
+            status: {
+              in: [
+                PickupStatus.ASSIGNED,
+                PickupStatus.EN_ROUTE,
+                PickupStatus.ARRIVED,
+              ],
+            },
           },
           include: { address: true },
         },
@@ -26,13 +39,13 @@ export class AdminFleetService {
     return collectors.map((c) => ({
       collectorId: c.id,
       userId: c.userId,
-      driverName: c.user?.fullName || 'Unknown Driver',
-      phone: c.user?.phone || 'N/A',
+      driverName: c.user?.fullName || "Unknown Driver",
+      phone: c.user?.phone || "N/A",
       rating: c.rating,
       isAvailable: c.isAvailable,
       currentLat: c.currentLat || 37.7749,
       currentLng: c.currentLng || -122.4194,
-      vehiclePlate: c.vehicles?.[0]?.licensePlate || 'NO-PLATE',
+      vehiclePlate: c.vehicles?.[0]?.licensePlate || "NO-PLATE",
       capacityKg: c.vehicles?.[0]?.capacityKg || 1000,
       activePickupsCount: c.assignedPickups.length,
       activePickups: c.assignedPickups,
@@ -47,7 +60,7 @@ export class AdminFleetService {
         distanceKm: 999,
         estimatedEtaMinutes: 999,
         isEligible: false,
-        rejectionReason: 'Collector is offline or unavailable',
+        rejectionReason: "Collector is offline or unavailable",
       };
     }
 
@@ -58,7 +71,8 @@ export class AdminFleetService {
         distanceKm: 999,
         estimatedEtaMinutes: 999,
         isEligible: false,
-        rejectionReason: 'Capacity exceeded: vehicle cannot hold estimated load weight',
+        rejectionReason:
+          "Capacity exceeded: vehicle cannot hold estimated load weight",
       };
     }
 
@@ -88,7 +102,9 @@ export class AdminFleetService {
       include: { address: true },
     });
     if (!pickup) {
-      throw new NotFoundException(`Pickup request ${dto.pickupRequestId} not found`);
+      throw new NotFoundException(
+        `Pickup request ${dto.pickupRequestId} not found`,
+      );
     }
 
     let targetCollectorId = dto.collectorId;
@@ -115,7 +131,10 @@ export class AdminFleetService {
           estimatedWeightKg: pickup.estimatedWeightKg,
         });
 
-        if (res.isEligible && (!highestScoring || res.score > highestScoring.score)) {
+        if (
+          res.isEligible &&
+          (!highestScoring || res.score > highestScoring.score)
+        ) {
           highestScoring = res;
         }
       }
@@ -146,7 +165,9 @@ export class AdminFleetService {
       where: { id: dto.pickupRequestId },
     });
     if (!pickup) {
-      throw new NotFoundException(`Pickup request ${dto.pickupRequestId} not found`);
+      throw new NotFoundException(
+        `Pickup request ${dto.pickupRequestId} not found`,
+      );
     }
 
     const newCollector = await this.prisma.collector.findUnique({
@@ -160,7 +181,13 @@ export class AdminFleetService {
       await tx.dispatchOrder.updateMany({
         where: {
           pickupRequestId: dto.pickupRequestId,
-          status: { in: [DispatchStatus.QUEUED, DispatchStatus.OFFERED, DispatchStatus.ACCEPTED] },
+          status: {
+            in: [
+              DispatchStatus.QUEUED,
+              DispatchStatus.OFFERED,
+              DispatchStatus.ACCEPTED,
+            ],
+          },
         },
         data: { status: DispatchStatus.CANCELLED },
       });

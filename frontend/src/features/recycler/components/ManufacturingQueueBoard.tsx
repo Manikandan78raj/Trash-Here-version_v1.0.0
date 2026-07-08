@@ -65,7 +65,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
             <Cog className="w-8 h-8 animate-spin-slow" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white tracking-tight">Shop-Floor Manufacturing Board</h3>
+            <h3 className="text-xl font-bold text-white tracking-tight">
+              Shop-Floor Manufacturing Board
+            </h3>
             <p className="text-sm text-slate-400 mt-1">
               Real-time machine processing queues, evaporation waste loss, and yield analytics.
             </p>
@@ -89,8 +91,12 @@ export const ManufacturingQueueBoard: React.FC = () => {
         ) : queue.length === 0 ? (
           <div className="col-span-full text-center py-12 rounded-[30px] bg-slate-900/40 border border-slate-800/50">
             <Cpu className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400 font-medium">No manufacturing machine lines currently active.</p>
-            <p className="text-xs text-slate-500 mt-1">Click "Start Machine Line" to assign lot stock to shredding or washing units.</p>
+            <p className="text-slate-400 font-medium">
+              No manufacturing machine lines currently active.
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Click "Start Machine Line" to assign lot stock to shredding or washing units.
+            </p>
           </div>
         ) : (
           <div
@@ -143,34 +149,45 @@ export const ManufacturingQueueBoard: React.FC = () => {
                                   item.status === 'COMPLETED'
                                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                                     : item.status === 'IN_PROGRESS'
-                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse'
-                                    : 'bg-slate-800 text-slate-300'
+                                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse'
+                                      : 'bg-slate-800 text-slate-300'
                                 }`}
                               >
                                 {item.status}
                               </span>
                             </div>
-                            <h4 className="text-lg font-bold text-white tracking-tight">{item.processStage}</h4>
+                            <h4 className="text-lg font-bold text-white tracking-tight">
+                              {item.processStage}
+                            </h4>
                             <p className="text-xs text-slate-400 font-mono mt-1">
-                              Lot: <span className="text-slate-200">{item.batch?.batchNumber || item.batchId}</span>
+                              Lot:{' '}
+                              <span className="text-slate-200">
+                                {item.batch?.batchNumber || item.batchId}
+                              </span>
                             </p>
                           </div>
 
                           <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/60 space-y-2 text-xs font-mono">
                             <div className="flex justify-between">
                               <span className="text-slate-400">Input Weight:</span>
-                              <span className="text-white font-bold">{item.inputWeightKg.toLocaleString()} kg</span>
+                              <span className="text-white font-bold">
+                                {item.inputWeightKg.toLocaleString()} kg
+                              </span>
                             </div>
                             {item.outputWeightKg !== undefined && item.outputWeightKg > 0 && (
                               <div className="flex justify-between">
                                 <span className="text-slate-400">Output Yield:</span>
-                                <span className="text-emerald-400 font-bold">{item.outputWeightKg.toLocaleString()} kg</span>
+                                <span className="text-emerald-400 font-bold">
+                                  {item.outputWeightKg.toLocaleString()} kg
+                                </span>
                               </div>
                             )}
                             {item.wasteLossKg !== undefined && item.wasteLossKg > 0 && (
                               <div className="flex justify-between">
                                 <span className="text-slate-400">Waste Loss / Evap:</span>
-                                <span className="text-rose-400 font-bold">{item.wasteLossKg.toLocaleString()} kg</span>
+                                <span className="text-rose-400 font-bold">
+                                  {item.wasteLossKg.toLocaleString()} kg
+                                </span>
                               </div>
                             )}
                           </div>
@@ -213,7 +230,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
             </div>
             <form onSubmit={handleStartSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Lot Batch ID / UUID</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Lot Batch ID / UUID
+                </label>
                 <input
                   type="text"
                   required
@@ -224,7 +243,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Machine Line ID</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Machine Line ID
+                </label>
                 <input
                   type="text"
                   required
@@ -235,7 +256,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Processing Stage</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Processing Stage
+                </label>
                 <select
                   value={processStage}
                   onChange={(e) => setProcessStage(e.target.value)}
@@ -248,7 +271,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Input Weight (kg)</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Input Weight (kg)
+                </label>
                 <input
                   type="number"
                   step="1"
@@ -298,7 +323,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
             </div>
             <form onSubmit={handleCompleteSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Output Yield Weight (kg)</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Output Yield Weight (kg)
+                </label>
                 <input
                   type="number"
                   step="0.1"
@@ -310,7 +337,9 @@ export const ManufacturingQueueBoard: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Waste Loss / Evaporation (kg)</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Waste Loss / Evaporation (kg)
+                </label>
                 <input
                   type="number"
                   step="0.1"

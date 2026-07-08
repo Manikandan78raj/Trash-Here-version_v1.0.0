@@ -8,7 +8,15 @@ import {
   useIssueManifest,
   type IncomingLoadDto,
 } from '../api/recycler.api';
-import { Scale, Truck, ShieldCheck, AlertTriangle, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import {
+  Scale,
+  Truck,
+  ShieldCheck,
+  AlertTriangle,
+  FileText,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 
 export const WeighbridgeIntakeCard: React.FC = () => {
   const { data: loads = [], isLoading } = useRecyclerLoads();
@@ -68,7 +76,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-xl font-bold text-white tracking-tight">IoT Weighbridge Hub #01</h3>
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                IoT Weighbridge Hub #01
+              </h3>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping" />
                 ONLINE (Modbus TCP)
@@ -102,8 +112,12 @@ export const WeighbridgeIntakeCard: React.FC = () => {
         ) : loads.length === 0 ? (
           <div className="text-center py-12 rounded-2xl bg-slate-950/40 border border-slate-800/50">
             <Truck className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400 font-medium">No active collection trucks currently at the facility.</p>
-            <p className="text-xs text-slate-500 mt-1">Click "Gate Check-In Vehicle" when a collection truck arrives at gate.</p>
+            <p className="text-slate-400 font-medium">
+              No active collection trucks currently at the facility.
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Click "Gate Check-In Vehicle" when a collection truck arrives at gate.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -124,7 +138,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                   <tr key={load.id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="py-4 px-4 font-medium text-white">
                       <div className="font-bold">{load.manifestNumber}</div>
-                      <div className="text-xs text-[#D7FF43] font-mono mt-0.5">{load.truckPlate}</div>
+                      <div className="text-xs text-[#D7FF43] font-mono mt-0.5">
+                        {load.truckPlate}
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-slate-300">{load.driverName}</td>
                     <td className="py-4 px-4">
@@ -133,17 +149,21 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                           load.status === 'ACCEPTED'
                             ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                             : load.status === 'REJECTED' || load.status === 'CONTAMINATED'
-                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         }`}
                       >
-                        {load.status === 'ACCEPTED' && <CheckCircle2 className="w-3.5 h-3.5 mr-1" />}
+                        {load.status === 'ACCEPTED' && (
+                          <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                        )}
                         {load.status === 'REJECTED' && <XCircle className="w-3.5 h-3.5 mr-1" />}
                         {load.status}
                       </span>
                     </td>
                     <td className="py-4 px-4 font-mono text-slate-300">
-                      {load.scaleRecord ? `${load.scaleRecord.grossWeightKg.toLocaleString()} kg` : '—'}
+                      {load.scaleRecord
+                        ? `${load.scaleRecord.grossWeightKg.toLocaleString()} kg`
+                        : '—'}
                     </td>
                     <td className="py-4 px-4 font-mono text-slate-300">
                       {load.scaleRecord && load.scaleRecord.tareWeightKg > 0
@@ -154,7 +174,10 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                       {load.scaleRecord && load.scaleRecord.netWeightKg > 0 ? (
                         <div className="flex items-center space-x-1.5">
                           <span>{load.scaleRecord.netWeightKg.toLocaleString()} kg</span>
-                          <span title="HMAC-SHA256 Digital Seal Verified" className="text-emerald-400">
+                          <span
+                            title="HMAC-SHA256 Digital Seal Verified"
+                            className="text-emerald-400"
+                          >
                             <ShieldCheck className="w-4 h-4 inline" />
                           </span>
                         </div>
@@ -165,7 +188,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                     <td className="py-4 px-4 text-right space-x-2">
                       {load.status === 'ARRIVED' && (
                         <button
-                          onClick={() => weighInMutation.mutate({ loadId: load.id, scaleId: 'SCALE-01' })}
+                          onClick={() =>
+                            weighInMutation.mutate({ loadId: load.id, scaleId: 'SCALE-01' })
+                          }
                           disabled={weighInMutation.isPending}
                           className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[#D7FF43] font-medium text-xs border border-slate-700 transition-all shadow"
                         >
@@ -182,7 +207,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                       )}
                       {load.status === 'INSPECTING' && (
                         <button
-                          onClick={() => weighOutMutation.mutate({ loadId: load.id, scaleId: 'SCALE-01' })}
+                          onClick={() =>
+                            weighOutMutation.mutate({ loadId: load.id, scaleId: 'SCALE-01' })
+                          }
                           disabled={weighOutMutation.isPending}
                           className="px-3.5 py-1.5 rounded-xl bg-[#D7FF43] hover:bg-[#c5ec36] text-slate-950 font-bold text-xs transition-all shadow"
                         >
@@ -231,7 +258,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
             </div>
             <form onSubmit={handleCheckInSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Truck License Plate</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Truck License Plate
+                </label>
                 <input
                   type="text"
                   required
@@ -242,7 +271,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Driver Full Name</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Driver Full Name
+                </label>
                 <input
                   type="text"
                   required
@@ -291,21 +322,29 @@ export const WeighbridgeIntakeCard: React.FC = () => {
             </div>
             <form onSubmit={handleInspectSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Material Purity Grade</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                  Material Purity Grade
+                </label>
                 <select
                   value={overallGrade}
                   onChange={(e) => setOverallGrade(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-[#D7FF43]"
                 >
                   <option value="GRADE_A_PURE">Grade A — Pure / Premium Yield (&gt;98%)</option>
-                  <option value="GRADE_B_MINOR_SORT">Grade B — Minor Sorting Required (90-98%)</option>
-                  <option value="GRADE_C_HEAVY_SORT">Grade C — Heavy Contamination (&lt;90%)</option>
+                  <option value="GRADE_B_MINOR_SORT">
+                    Grade B — Minor Sorting Required (90-98%)
+                  </option>
+                  <option value="GRADE_C_HEAVY_SORT">
+                    Grade C — Heavy Contamination (&lt;90%)
+                  </option>
                   <option value="REJECTED_HAZARDOUS">Rejected — Hazardous / Unsafe Material</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Moisture %</label>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                    Moisture %
+                  </label>
                   <input
                     type="number"
                     step="0.1"
@@ -317,7 +356,9 @@ export const WeighbridgeIntakeCard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Contaminant %</label>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">
+                    Contaminant %
+                  </label>
                   <input
                     type="number"
                     step="0.1"

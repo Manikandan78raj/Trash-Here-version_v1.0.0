@@ -1,5 +1,16 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, IsArray, IsBoolean, Min, Max, IsDateString } from 'class-validator';
-import { RoleType, DispatchStatus } from '@prisma/client';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  IsArray,
+  IsBoolean,
+  Min,
+  Max,
+  IsDateString,
+} from "class-validator";
+import { RoleType, DispatchStatus } from "@prisma/client";
 
 export class AssignRoleDto {
   @IsString()

@@ -26,7 +26,7 @@ export const AdminImpersonationModal: React.FC<Props> = ({ isOpen, onClose }) =>
           setReason('');
           onClose();
         },
-      }
+      },
     );
   };
 
@@ -38,10 +38,7 @@ export const AdminImpersonationModal: React.FC<Props> = ({ isOpen, onClose }) =>
             <ShieldAlert className="w-5 h-5 text-amber-400 animate-pulse" />
             <span>Support Impersonation</span>
           </h3>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white text-sm font-mono"
-          >
+          <button onClick={onClose} className="text-slate-400 hover:text-white text-sm font-mono">
             ✕
           </button>
         </div>
@@ -52,7 +49,8 @@ export const AdminImpersonationModal: React.FC<Props> = ({ isOpen, onClose }) =>
             <span>SOC 2 Type II Audit Notice</span>
           </div>
           <p className="text-[11px] text-amber-200/80 leading-relaxed">
-            All impersonation sessions emit an immutable cryptographic audit trail. Impersonating a SUPER_ADMIN account is strictly prohibited by platform security rules.
+            All impersonation sessions emit an immutable cryptographic audit trail. Impersonating a
+            SUPER_ADMIN account is strictly prohibited by platform security rules.
           </p>
         </div>
 

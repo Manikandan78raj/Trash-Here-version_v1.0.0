@@ -36,7 +36,10 @@ export function VirtualizedTable<T>({
     getScrollElement: () => parentRef.current,
     estimateSize: () => rowHeight,
     overscan: 5,
-    initialRect: { width: 800, height: typeof height === 'number' ? height : parseInt(height, 10) || 500 },
+    initialRect: {
+      width: 800,
+      height: typeof height === 'number' ? height : parseInt(height, 10) || 500,
+    },
   });
 
   return (
@@ -93,7 +96,10 @@ export function VirtualizedTable<T>({
                 {columns.map((col, colIdx) => (
                   <td
                     key={colIdx}
-                    className={clsx('py-3 px-4 text-sm text-slate-200 flex-1 truncate', col.className)}
+                    className={clsx(
+                      'py-3 px-4 text-sm text-slate-200 flex-1 truncate',
+                      col.className,
+                    )}
                   >
                     {col.accessor(item, virtualRow.index)}
                   </td>

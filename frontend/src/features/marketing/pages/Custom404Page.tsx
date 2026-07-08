@@ -22,10 +22,13 @@ export const Custom404Page: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <span className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">Error 404 // Route Not Found</span>
+          <span className="text-xs font-bold text-[#D7FF43] uppercase tracking-wider">
+            Error 404 // Route Not Found
+          </span>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">Off the Grid</h1>
           <p className="text-sm text-slate-400 leading-relaxed">
-            We couldn't find the page or municipal collection route you're looking for. It may have been moved or archived.
+            We couldn't find the page or municipal collection route you're looking for. It may have
+            been moved or archived.
           </p>
         </div>
 
@@ -42,10 +45,7 @@ export const Custom404Page: React.FC = () => {
           >
             Try Eco Calculator
           </Link>
-          <Link
-            to="/contact"
-            className="text-xs text-slate-500 hover:text-slate-300 pt-2 block"
-          >
+          <Link to="/contact" className="text-xs text-slate-500 hover:text-slate-300 pt-2 block">
             Report Broken Link →
           </Link>
         </div>

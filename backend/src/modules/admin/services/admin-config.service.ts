@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { AdminAuditService } from './admin-audit.service';
-import { UpdateSystemConfigDto } from '../dto/admin.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { AdminAuditService } from "./admin-audit.service";
+import { UpdateSystemConfigDto } from "../dto/admin.dto";
 
 @Injectable()
 export class AdminConfigService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly auditService: AdminAuditService
+    private readonly auditService: AdminAuditService,
   ) {}
 
   async getConfig(key: string, fallbackDefault: string): Promise<string> {
@@ -35,8 +35,8 @@ export class AdminConfigService {
 
     await this.auditService.recordAudit({
       userId: adminId,
-      action: 'CONFIG_UPDATE',
-      entity: 'SystemConfig',
+      action: "CONFIG_UPDATE",
+      entity: "SystemConfig",
       entityId: updated.id,
       details: `Updated ${dto.key} to ${dto.value}`,
     });
@@ -46,7 +46,7 @@ export class AdminConfigService {
 
   async getAllConfigs() {
     return this.prisma.systemConfig.findMany({
-      orderBy: { key: 'asc' },
+      orderBy: { key: "asc" },
     });
   }
 }

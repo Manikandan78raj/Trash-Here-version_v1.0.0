@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { TOKEN_KEY, USER_KEY } from '@/common/api/client';
+import { apiClient, TOKEN_KEY, USER_KEY } from '@/common/api/client';
+import { stripSensitiveTokenData } from '@/common/security/auth-security';
+import {
+  auditAndCleanSecureStorage,
+  sanitizeUrlParameters,
+} from '@/common/security/secure-storage';
 
 export type UserRole = 'USER' | 'COLLECTOR' | 'RECYCLER' | 'ADMIN';
 
@@ -33,7 +38,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<UserProfile | null>(() => {
     const savedUser = localStorage.getItem(USER_KEY);
     try {
-      return savedUser ? JSON.parse(savedUser) : null;
+      return savedUser ? stripSensitiveTokenData(JSON.parse(savedUser)) : null;
     } catch {
       return null;
     }
@@ -46,6 +51,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    auditAndCleanSecureStorage();
+    sanitizeUrlParameters();
+
     const handleUnauthorized = () => {
       logout();
     };
@@ -55,14 +63,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = (newToken: string, newUser: UserProfile) => {
     setIsLoading(true);
+    const safeUser = stripSensitiveTokenData(newUser);
     localStorage.setItem(TOKEN_KEY, newToken);
-    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    localStorage.setItem(USER_KEY, JSON.stringify(safeUser));
     setToken(newToken);
-    setUser(newUser);
+    setUser(safeUser);
     setIsLoading(false);
   };
 
   const logout = () => {
+    try {
+      apiClient.post('/auth/logout', {}).catch(() => {
+        /* ignore error */
+      });
+    } catch {
+      /* ignore error */
+    }
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     setToken(null);
@@ -70,8 +86,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const updateUser = (updatedUser: UserProfile) => {
-    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    const safeUser = stripSensitiveTokenData(updatedUser);
+    localStorage.setItem(USER_KEY, JSON.stringify(safeUser));
+    setUser(safeUser);
   };
 
   const hasRole = (roles: UserRole | UserRole[]): boolean => {

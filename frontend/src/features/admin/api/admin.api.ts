@@ -103,7 +103,11 @@ export const useAdminFleetMap = () => {
 export const useAdminReassignRoute = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (dto: { pickupRequestId: string; newCollectorId: string; reason: string }) => {
+    mutationFn: async (dto: {
+      pickupRequestId: string;
+      newCollectorId: string;
+      reason: string;
+    }) => {
       const res = await apiClient.put('/admin/dispatch/reassign', dto);
       return res.data;
     },

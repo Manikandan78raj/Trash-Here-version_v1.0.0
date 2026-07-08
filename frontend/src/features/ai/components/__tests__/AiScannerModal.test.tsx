@@ -38,11 +38,7 @@ describe('AiScannerModal Component (TDD)', () => {
   const renderComponent = (isOpen = true) =>
     render(
       <QueryClientProvider client={queryClient}>
-        <AiScannerModal
-          isOpen={isOpen}
-          onClose={mockOnClose}
-          onScanComplete={mockOnScanComplete}
-        />
+        <AiScannerModal isOpen={isOpen} onClose={mockOnClose} onScanComplete={mockOnScanComplete} />
       </QueryClientProvider>,
     );
 
@@ -73,7 +69,11 @@ describe('AiScannerModal Component (TDD)', () => {
 
     renderComponent(true);
 
-    const file = new File(['dummy content'], 'waste.jpg', { type: 'image/jpeg' });
+    const file = new File(
+      [new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46])],
+      'waste.jpg',
+      { type: 'image/jpeg' },
+    );
     const input = screen.getByTestId('file-upload-input');
     fireEvent.change(input, { target: { files: [file] } });
 

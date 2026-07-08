@@ -28,7 +28,17 @@ describe('WasteDetectionDashboard Virtualization Suite (TDD)', () => {
           [
             {
               target,
-              contentRect: { width: 400, height: 500, top: 0, left: 0, bottom: 500, right: 400, x: 0, y: 0, toJSON: () => {} },
+              contentRect: {
+                width: 400,
+                height: 500,
+                top: 0,
+                left: 0,
+                bottom: 500,
+                right: 400,
+                x: 0,
+                y: 0,
+                toJSON: () => {},
+              },
               borderBoxSize: [{ inlineSize: 400, blockSize: 500 }],
               contentBoxSize: [{ inlineSize: 400, blockSize: 500 }],
             } as any,
@@ -41,8 +51,14 @@ describe('WasteDetectionDashboard Virtualization Suite (TDD)', () => {
     }
     window.ResizeObserver = MockResizeObserver as any;
 
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, value: 500 });
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', { configurable: true, value: 50000 });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      value: 500,
+    });
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: 50000,
+    });
     Element.prototype.getBoundingClientRect = () => ({
       width: 400,
       height: 500,
@@ -87,7 +103,9 @@ describe('WasteDetectionDashboard Virtualization Suite (TDD)', () => {
       expect(screen.getByText('Scan History Timeline')).toBeInTheDocument();
     });
 
-    const historyItems = container.querySelectorAll('[data-testid="scan-history-item"], [data-index]');
+    const historyItems = container.querySelectorAll(
+      '[data-testid="scan-history-item"], [data-index]',
+    );
     expect(historyItems.length).toBeGreaterThan(0);
     expect(historyItems.length).toBeLessThan(40);
   });

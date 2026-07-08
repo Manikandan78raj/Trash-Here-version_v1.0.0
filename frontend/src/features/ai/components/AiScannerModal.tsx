@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Upload, X, RefreshCw, CheckCircle2, AlertCircle, FileImage } from 'lucide-react';
 import { useCreateUploadUrl, useUploadImage, useAnalyzeImage } from '../hooks/useAiQuery';
 import type { AiModelType } from '../types/ai.types';
+import { validateFileUpload } from '@/common/security/upload-validator';
 
 interface AiScannerModalProps {
   isOpen: boolean;
@@ -11,13 +12,7 @@ interface AiScannerModalProps {
   defaultModelType?: AiModelType;
 }
 
-const SUPPORTED_MIME_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/heic',
-  'image/heif',
-];
+const SUPPORTED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
 export const AiScannerModal: React.FC<AiScannerModalProps> = ({
   isOpen,
@@ -28,7 +23,9 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [statusStep, setStatusStep] = useState<'IDLE' | 'UPLOADING' | 'ANALYZING' | 'ERROR' | 'SUCCESS'>('IDLE');
+  const [statusStep, setStatusStep] = useState<
+    'IDLE' | 'UPLOADING' | 'ANALYZING' | 'ERROR' | 'SUCCESS'
+  >('IDLE');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
 
@@ -58,6 +55,12 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
 
       if (file.size > 20 * 1024 * 1024) {
         setErrorMessage('File size exceeds maximum limit of 20MB.');
+        return;
+      }
+
+      const validation = await validateFileUpload(file, { maxSizeBytes: 20 * 1024 * 1024 });
+      if (!validation.isValid) {
+        setErrorMessage(validation.error || 'Invalid file format or security check failed.');
         return;
       }
 
@@ -161,13 +164,19 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const file = new File([blob], `camera-scan-${Date.now()}.jpg`, { type: 'image/jpeg' });
-            stopCamera();
-            handleFileSelect(file);
-          }
-        }, 'image/jpeg', 0.92);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const file = new File([blob], `camera-scan-${Date.now()}.jpg`, {
+                type: 'image/jpeg',
+              });
+              stopCamera();
+              handleFileSelect(file);
+            }
+          },
+          'image/jpeg',
+          0.92,
+        );
       }
     }
   };
@@ -244,12 +253,7 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
 
             {isCameraActive ? (
               <div className="relative overflow-hidden bg-black rounded-2xl aspect-video">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  className="object-cover w-full h-full"
-                />
+                <video ref={videoRef} autoPlay playsInline className="object-cover w-full h-full" />
                 <div className="absolute inset-x-0 bottom-4 flex justify-center gap-4">
                   <button
                     onClick={capturePhoto}
@@ -324,7 +328,9 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
                     {statusStep === 'UPLOADING' && (
                       <>
                         <RefreshCw className="w-8 h-8 mb-2 text-[#D7FF43] animate-spin" />
-                        <p className="text-sm font-medium text-white">Uploading to secure cloud storage...</p>
+                        <p className="text-sm font-medium text-white">
+                          Uploading to secure cloud storage...
+                        </p>
                       </>
                     )}
                     {statusStep === 'ANALYZING' && (
@@ -333,7 +339,9 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
                           <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-[#D7FF43]" />
                           <Camera className="w-6 h-6 text-[#D7FF43]" />
                         </div>
-                        <p className="text-sm font-medium text-white">AI Vision Engine auditing waste purity...</p>
+                        <p className="text-sm font-medium text-white">
+                          AI Vision Engine auditing waste purity...
+                        </p>
                       </>
                     )}
                     {statusStep === 'SUCCESS' && (
@@ -349,7 +357,11 @@ export const AiScannerModal: React.FC<AiScannerModalProps> = ({
                 <div className="w-full max-w-md mt-6">
                   <div className="flex justify-between mb-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                     <span>
-                      {statusStep === 'UPLOADING' ? 'Uploading...' : statusStep === 'ANALYZING' ? 'Running AI Vision Inference...' : 'Complete'}
+                      {statusStep === 'UPLOADING'
+                        ? 'Uploading...'
+                        : statusStep === 'ANALYZING'
+                          ? 'Running AI Vision Inference...'
+                          : 'Complete'}
                     </span>
                     <span>{uploadProgress}%</span>
                   </div>

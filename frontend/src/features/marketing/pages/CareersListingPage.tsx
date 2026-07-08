@@ -8,7 +8,13 @@ export const CareersListingPage: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState<string>('ALL');
   const { data: jobsResponse, isLoading, isError } = useGetCareerJobs(selectedDept);
 
-  const departments = ['ALL', 'Core Platform & Infrastructure', 'Engineering & AI', 'Operations & Logistics', 'Product & Design'];
+  const departments = [
+    'ALL',
+    'Core Platform & Infrastructure',
+    'Engineering & AI',
+    'Operations & Logistics',
+    'Product & Design',
+  ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 py-16 px-4 sm:px-6 lg:px-8">
@@ -27,7 +33,8 @@ export const CareersListingPage: React.FC = () => {
             Build the Future of Planetary Infrastructure
           </h1>
           <p className="text-base sm:text-lg text-slate-400">
-            We are solving one of humanity's most urgent physical challenges with distributed systems, AI vision models, and real-time logistics optimization.
+            We are solving one of humanity's most urgent physical challenges with distributed
+            systems, AI vision models, and real-time logistics optimization.
           </p>
         </div>
 
@@ -36,22 +43,34 @@ export const CareersListingPage: React.FC = () => {
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-2">
             <p className="text-2xl">🌍</p>
             <h3 className="font-bold text-white">Remote-First & Global</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">Work from anywhere with top-tier asynchronous collaboration and quarterly engineering summits.</p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Work from anywhere with top-tier asynchronous collaboration and quarterly engineering
+              summits.
+            </p>
           </div>
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-2">
             <p className="text-2xl">📈</p>
             <h3 className="font-bold text-white">Venture Equity & Compensation</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">Top-of-market salary bands paired with significant early equity ownership in a hyper-growth venture.</p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Top-of-market salary bands paired with significant early equity ownership in a
+              hyper-growth venture.
+            </p>
           </div>
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-2">
             <p className="text-2xl">🔬</p>
             <h3 className="font-bold text-white">Deep Tech & Autonomous AI</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">Tackle hard technical problems across Rust systems, YOLOv8 vision models, and IoT weighbridges.</p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Tackle hard technical problems across Rust systems, YOLOv8 vision models, and IoT
+              weighbridges.
+            </p>
           </div>
         </div>
 
         {/* Department Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-800/80 pb-6" role="tablist">
+        <div
+          className="flex flex-wrap items-center justify-center gap-2 border-b border-slate-800/80 pb-6"
+          role="tablist"
+        >
           {departments.map((dept) => (
             <button
               key={dept}
@@ -73,7 +92,10 @@ export const CareersListingPage: React.FC = () => {
         {isLoading && (
           <div className="space-y-4">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 h-28 animate-pulse" />
+              <div
+                key={n}
+                className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 h-28 animate-pulse"
+              />
             ))}
           </div>
         )}
@@ -87,7 +109,10 @@ export const CareersListingPage: React.FC = () => {
         {!isLoading && !isError && (!jobsResponse?.data || jobsResponse.data.length === 0) && (
           <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
             <p className="text-xl font-bold text-white">No open roles found in this department.</p>
-            <p className="text-sm text-slate-400">We are always looking for exceptional talent. Send your resume to talent@trashhere.com!</p>
+            <p className="text-sm text-slate-400">
+              We are always looking for exceptional talent. Send your resume to
+              talent@trashhere.com!
+            </p>
           </div>
         )}
 

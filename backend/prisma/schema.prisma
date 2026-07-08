@@ -213,9 +213,16 @@ model User {
   referredBy       String?
   isVerified       Boolean          @default(true)
   emailVerifiedAt  DateTime?
+  emailVerificationToken String?    @unique
   bio              String?
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
+  refreshTokenHash     String?      // SHA-256 hash of active refresh token
+  failedLoginAttempts  Int          @default(0)
+  lockoutUntil         DateTime?    // Timestamp until which account is locked
+  passwordChangedAt    DateTime?    // Invalidate JWTs issued before this date
+  mfaSecret            String?      // TOTP secret for enterprise MFA
+  mfaEnabled           Boolean      @default(false)
   deviceTokens     String[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -394,6 +401,7 @@ model Transaction {
   type             TransactionType
   status           TransactionStatus @default(COMPLETED)
   stripePaymentId  String?
+  idempotencyKey   String?           @unique
   description      String
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt

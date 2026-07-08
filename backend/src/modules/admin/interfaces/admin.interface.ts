@@ -1,4 +1,4 @@
-import { RoleType, DispatchStatus } from '@prisma/client';
+import { RoleType, DispatchStatus } from "@prisma/client";
 
 export interface AuditEvent {
   userId?: string;
@@ -11,7 +11,7 @@ export interface AuditEvent {
 }
 
 export interface SecurityAlert {
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   title: string;
   message: string;
   metadata?: Record<string, any>;
@@ -63,5 +63,9 @@ export interface PnLSnapshot {
 
 export interface IAdminFinanceProvider {
   calculatePnL(startDate: Date, endDate: Date): Promise<PnLSnapshot>;
-  reconcileLedgers(): Promise<{ success: boolean; discrepanciesFound: number; details: string[] }>;
+  reconcileLedgers(): Promise<{
+    success: boolean;
+    discrepanciesFound: number;
+    details: string[];
+  }>;
 }

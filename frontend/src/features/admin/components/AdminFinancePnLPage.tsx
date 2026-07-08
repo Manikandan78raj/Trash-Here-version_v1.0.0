@@ -1,6 +1,13 @@
 import React from 'react';
 import { useAdminPnL, useAdminReconcileLedgers } from '../api/admin.api';
-import { DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight, RefreshCw, ShieldCheck } from 'lucide-react';
+import {
+  DollarSign,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowDownRight,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react';
 
 export const AdminFinancePnLPage: React.FC = () => {
   const { data: pnl, isLoading } = useAdminPnL();
@@ -34,7 +41,8 @@ export const AdminFinancePnLPage: React.FC = () => {
             </h2>
           </div>
           <p className="text-xs text-slate-400 font-mono">
-            Double-entry accounting engine • Real-time Stripe / Green Points / Connect payout ledger balancing
+            Double-entry accounting engine • Real-time Stripe / Green Points / Connect payout ledger
+            balancing
           </p>
         </div>
 
@@ -55,7 +63,9 @@ export const AdminFinancePnLPage: React.FC = () => {
         {/* Stripe Revenue */}
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden group">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Stripe Revenue</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Stripe Revenue
+            </span>
             <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
               <ArrowUpRight className="w-4 h-4" />
             </span>
@@ -69,7 +79,9 @@ export const AdminFinancePnLPage: React.FC = () => {
         {/* Recycler B2B Invoices */}
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden group">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Recycler B2B Invoices</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Recycler B2B Invoices
+            </span>
             <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
               <ArrowUpRight className="w-4 h-4" />
             </span>
@@ -77,13 +89,17 @@ export const AdminFinancePnLPage: React.FC = () => {
           <div className="text-3xl font-extrabold text-white mt-3 font-mono">
             {formatUsd(pnl?.recyclerInvoicesUsd)}
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Material lot sales & processing fees</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Material lot sales & processing fees
+          </div>
         </div>
 
         {/* Collector Payouts */}
         <div className="p-6 rounded-[30px] bg-slate-900/60 border border-slate-800/80 backdrop-blur-md relative overflow-hidden group">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Collector Payouts</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Collector Payouts
+            </span>
             <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
               <ArrowDownRight className="w-4 h-4" />
             </span>
@@ -97,7 +113,9 @@ export const AdminFinancePnLPage: React.FC = () => {
         {/* Net Margin */}
         <div className="p-6 rounded-[30px] bg-gradient-to-br from-slate-900 via-slate-900 to-[#D7FF43]/10 border border-[#D7FF43]/30 backdrop-blur-md relative overflow-hidden shadow-xl shadow-[#D7FF43]/5">
           <div className="flex justify-between items-start">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-[#D7FF43]">Net Margin</span>
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#D7FF43]">
+              Net Margin
+            </span>
             <span className="p-2 rounded-xl bg-[#D7FF43]/20 text-[#D7FF43]">
               <TrendingUp className="w-4 h-4" />
             </span>
@@ -116,7 +134,9 @@ export const AdminFinancePnLPage: React.FC = () => {
           <h3 className="text-lg font-bold text-white">Double-Entry Ledger Integrity Audit</h3>
         </div>
         <p className="text-xs text-slate-400 leading-relaxed">
-          The Trash Here financial reconciliation engine verifies 100% of wallet cash balances against the net sum of historical payments and payouts. Any mathematical deviation down to the cent triggers an automated discrepancy alert.
+          The Trash Here financial reconciliation engine verifies 100% of wallet cash balances
+          against the net sum of historical payments and payouts. Any mathematical deviation down to
+          the cent triggers an automated discrepancy alert.
         </p>
 
         <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs font-mono">

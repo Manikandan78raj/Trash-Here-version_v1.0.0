@@ -1,4 +1,4 @@
-import { AiJobStatus, AiModelType, AiRecommendationType } from '@prisma/client';
+import { AiJobStatus, AiModelType, AiRecommendationType } from "@prisma/client";
 
 export interface BoundingBox {
   xMin: number; // Normalized 0.0 to 1.0
@@ -69,7 +69,7 @@ export interface AiQueueJobPayload {
 export interface AiQueueJobOptions {
   attempts?: number;
   backoff?: {
-    type: 'exponential' | 'fixed';
+    type: "exponential" | "fixed";
     delay: number;
   };
   timeout?: number;

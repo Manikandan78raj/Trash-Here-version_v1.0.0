@@ -68,6 +68,7 @@ describe("WalletService", () => {
     transaction: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
     },
     subscription: {
@@ -187,6 +188,88 @@ describe("WalletService", () => {
 
       await expect(
         service.redeemReward("user-1", { rewardId: "reward-1" }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it("should return existing transaction without deducting points when idempotencyKey replay is detected", async () => {
+      mockPrismaService.transaction.findFirst.mockResolvedValueOnce({
+        id: "tx-replay-1",
+        idempotencyKey: "idem_reward_1",
+      });
+      mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
+
+      const result = await service.redeemReward("user-1", {
+        rewardId: "reward-1",
+        idempotencyKey: "idem_reward_1",
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("idempotency replay");
+      expect(mockPrismaService.wallet.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("withdrawCash", () => {
+    it("should withdraw cash successfully when balance and limits are respected", async () => {
+      mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
+      mockPrismaService.transaction.findFirst.mockResolvedValue(null);
+      mockPrismaService.transaction.findMany.mockResolvedValue([]);
+      mockPrismaService.wallet.update.mockResolvedValue({
+        ...mockWallet,
+        cashBalance: 50.0,
+      });
+      mockPrismaService.transaction.create.mockResolvedValue({
+        id: "tx-withdraw-1",
+      });
+
+      const result = await service.withdrawCash("user-1", { amount: 50.0 });
+      expect(result.success).toBe(true);
+      expect(result.remainingCashBalance).toBe(50.0);
+    });
+
+    it("should return existing transaction without decrementing balance when idempotencyKey replay is detected", async () => {
+      mockPrismaService.transaction.findFirst.mockResolvedValueOnce({
+        id: "tx-withdraw-replay",
+        idempotencyKey: "idem_withdraw_1",
+        stripePaymentId: "tr_sim_123",
+      });
+      mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
+
+      const result = await service.withdrawCash("user-1", {
+        amount: 50.0,
+        idempotencyKey: "idem_withdraw_1",
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("idempotency replay");
+      expect(mockPrismaService.wallet.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw BadRequestException when daily withdrawal velocity limit (5/day) is exceeded", async () => {
+      mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
+      mockPrismaService.transaction.findFirst.mockResolvedValue(null);
+      mockPrismaService.transaction.findMany.mockResolvedValue([
+        { id: "1", amount: -10 },
+        { id: "2", amount: -10 },
+        { id: "3", amount: -10 },
+        { id: "4", amount: -10 },
+        { id: "5", amount: -10 },
+      ]);
+
+      await expect(
+        service.withdrawCash("user-1", { amount: 20.0 }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it("should throw BadRequestException when daily withdrawal cash limit ($1000/day) is exceeded", async () => {
+      mockPrismaService.wallet.findUnique.mockResolvedValue(mockWallet);
+      mockPrismaService.transaction.findFirst.mockResolvedValue(null);
+      mockPrismaService.transaction.findMany.mockResolvedValue([
+        { id: "1", amount: -950 },
+      ]);
+
+      await expect(
+        service.withdrawCash("user-1", { amount: 100.0 }),
       ).rejects.toThrow(BadRequestException);
     });
   });

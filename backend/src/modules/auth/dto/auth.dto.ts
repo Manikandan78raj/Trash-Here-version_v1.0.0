@@ -5,6 +5,7 @@ import {
   IsString,
   MinLength,
   IsEnum,
+  IsIn,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { RoleType } from "@prisma/client";
@@ -55,11 +56,15 @@ export class RegisterDto {
   password: string;
 
   @ApiProperty({
-    enum: RoleType,
+    enum: [RoleType.USER, RoleType.COLLECTOR, RoleType.RECYCLER],
     default: RoleType.USER,
-    description: "Role to register as",
+    description:
+      "Role to register as (Administrative roles cannot be self-registered)",
   })
-  @IsEnum(RoleType)
+  @IsIn([RoleType.USER, RoleType.COLLECTOR, RoleType.RECYCLER], {
+    message:
+      "Role must be USER, COLLECTOR, or RECYCLER. Administrative roles cannot be self-registered.",
+  })
   @IsOptional()
   role?: RoleType;
 }
@@ -84,4 +89,43 @@ export class VerifyOtpDto {
   @IsString()
   @IsNotEmpty()
   otp: string;
+}
+
+export class RefreshTokenDto {
+  @ApiProperty({
+    example: "mock_refresh_token_hex_string",
+    description: "Refresh token string",
+  })
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string;
+}
+
+export class ForgotPasswordDto {
+  @ApiProperty({
+    example: "user@trashhere.com",
+    description: "User email address",
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty({
+    example: "mock_reset_token_hex_string",
+    description: "Password reset token",
+  })
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+
+  @ApiProperty({
+    example: "NewStrongPassword123!",
+    description: "New strong password",
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  newPassword: string;
 }
