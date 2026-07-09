@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     req: any,
     payload: { sub: string; email: string; role: string; iat?: number },
   ) {
-    const token = req.headers?.authorization?.replace("Bearer ", "").trim();
+    const token = req.headers?.authorization?.replace(/Bearer /i, "").trim();
     if (token) {
       const isRevoked = await this.redisCacheService.get(
         `auth:blocklist:${token}`,
@@ -62,7 +62,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    const { passwordHash, ...result } = user;
+    const {
+      passwordHash,
+      refreshTokenHash,
+      mfaSecret,
+      resetPasswordToken,
+      emailVerificationToken,
+      ...result
+    } = user;
     return result;
   }
 }

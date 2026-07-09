@@ -94,11 +94,12 @@ export class VerifyOtpDto {
 export class RefreshTokenDto {
   @ApiProperty({
     example: "mock_refresh_token_hex_string",
-    description: "Refresh token string",
+    description: "Refresh token string (optional if passed via HttpOnly cookie)",
+    required: false,
   })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  refreshToken: string;
+  refreshToken?: string;
 }
 
 export class ForgotPasswordDto {

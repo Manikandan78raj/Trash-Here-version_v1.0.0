@@ -18,7 +18,9 @@ import { RedisCacheModule } from "../../common/cache/redis-cache.module";
         secret:
           configService.get<string>("JWT_SECRET") ||
           "super-secret-trash-here-enterprise-jwt-key-2026",
-        signOptions: { expiresIn: "15m" },
+        signOptions: {
+          expiresIn: configService.get<string>("JWT_EXPIRES_IN") || "15m",
+        },
       }),
     }),
   ],
