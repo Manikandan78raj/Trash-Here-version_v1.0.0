@@ -35,7 +35,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export const ProfileTab: React.FC = () => {
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading, isError, refetch } = useProfile();
   const updateProfileMutation = useUpdateProfile();
   const uploadAvatarMutation = useUploadAvatar();
 
@@ -112,11 +112,24 @@ export const ProfileTab: React.FC = () => {
     setTimeout(() => setCopiedReferral(false), 2000);
   };
 
-  if (isLoading || !profile) {
+  if (isLoading && !profile) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
         <p className="text-sm font-bold text-muted-foreground">Loading profile data...</p>
+      </div>
+    );
+  }
+
+  if (isError || !profile) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 p-6">
+        <p className="text-sm font-bold text-destructive mb-4">
+          {isError ? 'Failed to load profile data.' : 'Profile data not available.'}
+        </p>
+        <Button size="sm" variant="outline" onClick={() => refetch()}>
+          Retry
+        </Button>
       </div>
     );
   }

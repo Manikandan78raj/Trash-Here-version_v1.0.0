@@ -45,7 +45,8 @@ apiClient.interceptors.response.use(
       error.response?.status === 401 &&
       originalConfig &&
       !originalConfig._retry &&
-      !originalConfig.url?.includes('/auth/refresh')
+      !originalConfig.url?.includes('/auth/refresh') &&
+      !originalConfig.url?.includes('/auth/logout')
     ) {
       originalConfig._retry = true;
 
@@ -60,11 +61,17 @@ apiClient.interceptors.response.use(
           },
         );
 
-        const newAccessToken = refreshResponse.data?.accessToken;
+        const tokenData = refreshResponse.data?.data || refreshResponse.data;
+        const newAccessToken = tokenData?.accessToken;
         if (newAccessToken) {
           localStorage.setItem(TOKEN_KEY, newAccessToken);
           if (originalConfig.headers) {
             originalConfig.headers.Authorization = `Bearer ${newAccessToken}`;
+          }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('auth:token-refreshed', { detail: newAccessToken }),
+            );
           }
           return apiClient(originalConfig);
         }

@@ -55,10 +55,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     sanitizeUrlParameters();
 
     const handleUnauthorized = () => {
-      logout();
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      setToken(null);
+      setUser(null);
     };
+
+    const handleTokenRefreshed = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        setToken(customEvent.detail);
+      }
+    };
+
     window.addEventListener('auth:unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    window.addEventListener('auth:token-refreshed', handleTokenRefreshed);
+
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem(TOKEN_KEY);
+      if (!storedToken) return;
+      setIsLoading(true);
+      try {
+        const res = await apiClient.get<{ message: string; data: UserProfile }>('/auth/me');
+        const userData = res.data?.data || res.data;
+        if (userData && (userData as any).id) {
+          const safeUser = stripSensitiveTokenData(userData as UserProfile);
+          localStorage.setItem(USER_KEY, JSON.stringify(safeUser));
+          setUser(safeUser);
+        }
+      } catch {
+        // Interceptor handled refresh or auth:unauthorized event
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    initAuth();
+
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+      window.removeEventListener('auth:token-refreshed', handleTokenRefreshed);
+    };
   }, []);
 
   const login = (newToken: string, newUser: UserProfile) => {
@@ -71,18 +107,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false);
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      apiClient.post('/auth/logout', {}).catch(() => {
-        /* ignore error */
-      });
+      if (localStorage.getItem(TOKEN_KEY)) {
+        await apiClient.post('/auth/logout', {}).catch(() => {
+          /* ignore error */
+        });
+      }
     } catch {
       /* ignore error */
+    } finally {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      setToken(null);
+      setUser(null);
     }
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    setToken(null);
-    setUser(null);
   };
 
   const updateUser = (updatedUser: UserProfile) => {

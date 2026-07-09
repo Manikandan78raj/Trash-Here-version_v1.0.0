@@ -2,9 +2,22 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AppLayout } from '@/common/layouts/AppLayout';
 import { ErrorBoundary } from '@/common/routing/ErrorBoundary';
+import { ProtectedRoute } from '@/common/routing/ProtectedRoute';
 import { Skeleton } from '@/components/ui';
 
 // Lazy load named exports for optimal code splitting & bundle performance
+const AuthLayout = lazy(() => import('@/features/auth').then((m) => ({ default: m.AuthLayout })));
+const LoginPage = lazy(() => import('@/features/auth').then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() =>
+  import('@/features/auth').then((m) => ({ default: m.RegisterPage })),
+);
+const ForgotPasswordPage = lazy(() =>
+  import('@/features/auth').then((m) => ({ default: m.ForgotPasswordPage })),
+);
+const VerifyOtpPage = lazy(() =>
+  import('@/features/auth').then((m) => ({ default: m.VerifyOtpPage })),
+);
+
 const DesignSystemShowcase = lazy(() =>
   import('@/pages/DesignSystemShowcase').then((module) => ({
     default: module.DesignSystemShowcase,
@@ -195,57 +208,67 @@ export const App: React.FC = () => {
             <Route path="cookies" element={<CookiesPolicyPage />} />
           </Route>
 
-          {/* Internal Logged-In Application & Dashboards */}
-          <Route path="/app" element={<AppLayout />}>
-            <Route index element={<HouseholdDashboard />} />
-            <Route path="book" element={<PickupBookingPage />} />
-            <Route path="tracking" element={<LivePickupTrackingPage />} />
-            <Route path="pickups/:id" element={<LivePickupTrackingPage />} />
-            <Route path="wallet" element={<WalletDashboardPage />} />
-            <Route path="rewards" element={<RewardsStorePage />} />
-            <Route path="subscriptions" element={<SubscriptionPage />} />
-            <Route path="settings" element={<HubPage />} />
-            <Route path="profile" element={<HubPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="showcase" element={<DesignSystemShowcase />} />
-            <Route path="*" element={<HouseholdDashboard />} />
+          {/* Authentication Pages */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/verify-otp" element={<VerifyOtpPage />} />
           </Route>
 
-          <Route
-            path="/collector/*"
-            element={
-              <AppLayout>
-                <CollectorWorkspacePage />
-              </AppLayout>
-            }
-          />
+          {/* Protected Internal Logged-In Application & Dashboards */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/app" element={<AppLayout />}>
+              <Route index element={<HouseholdDashboard />} />
+              <Route path="book" element={<PickupBookingPage />} />
+              <Route path="tracking" element={<LivePickupTrackingPage />} />
+              <Route path="pickups/:id" element={<LivePickupTrackingPage />} />
+              <Route path="wallet" element={<WalletDashboardPage />} />
+              <Route path="rewards" element={<RewardsStorePage />} />
+              <Route path="subscriptions" element={<SubscriptionPage />} />
+              <Route path="settings" element={<HubPage />} />
+              <Route path="profile" element={<HubPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="showcase" element={<DesignSystemShowcase />} />
+              <Route path="*" element={<HouseholdDashboard />} />
+            </Route>
 
-          <Route
-            path="/recycler/*"
-            element={
-              <AppLayout>
-                <RecyclerWorkspacePage />
-              </AppLayout>
-            }
-          />
+            <Route
+              path="/collector/*"
+              element={
+                <AppLayout>
+                  <CollectorWorkspacePage />
+                </AppLayout>
+              }
+            />
 
-          <Route
-            path="/admin/*"
-            element={
-              <AppLayout>
-                <AdminWorkspacePage />
-              </AppLayout>
-            }
-          />
+            <Route
+              path="/recycler/*"
+              element={
+                <AppLayout>
+                  <RecyclerWorkspacePage />
+                </AppLayout>
+              }
+            />
 
-          <Route
-            path="/ai/*"
-            element={
-              <AppLayout>
-                <AiWorkspacePage />
-              </AppLayout>
-            }
-          />
+            <Route
+              path="/admin/*"
+              element={
+                <AppLayout>
+                  <AdminWorkspacePage />
+                </AppLayout>
+              }
+            />
+
+            <Route
+              path="/ai/*"
+              element={
+                <AppLayout>
+                  <AiWorkspacePage />
+                </AppLayout>
+              }
+            />
+          </Route>
 
           <Route path="*" element={<Custom404Page />} />
         </Routes>
@@ -255,3 +278,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

@@ -65,9 +65,9 @@ export interface WalletDashboardData {
 export const useWalletDashboard = () => {
   return useQuery({
     queryKey: ['wallet', 'dashboard'],
-    queryFn: async () => {
-      const response = await apiClient.get<WalletDashboardData>('/wallet/dashboard');
-      return response.data;
+    queryFn: async (): Promise<WalletDashboardData> => {
+      const response = await apiClient.get<{ data: WalletDashboardData }>('/wallet/dashboard');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 30000,
@@ -77,9 +77,9 @@ export const useWalletDashboard = () => {
 export const useRewards = () => {
   return useQuery({
     queryKey: ['wallet', 'rewards'],
-    queryFn: async () => {
-      const response = await apiClient.get<RewardItem[]>('/wallet/rewards');
-      return response.data;
+    queryFn: async (): Promise<RewardItem[]> => {
+      const response = await apiClient.get<{ data: RewardItem[] }>('/wallet/rewards');
+      return (response.data as any)?.data || response.data;
     },
     staleTime: 60000,
   });
@@ -88,9 +88,11 @@ export const useRewards = () => {
 export const useMyVouchers = () => {
   return useQuery({
     queryKey: ['wallet', 'my-vouchers'],
-    queryFn: async () => {
-      const response = await apiClient.get<UserRewardItem[]>('/wallet/rewards/my-vouchers');
-      return response.data;
+    queryFn: async (): Promise<UserRewardItem[]> => {
+      const response = await apiClient.get<{ data: UserRewardItem[] }>(
+        '/wallet/rewards/my-vouchers',
+      );
+      return (response.data as any)?.data || response.data;
     },
     staleTime: 30000,
   });
@@ -134,9 +136,9 @@ export const useWithdrawCash = () => {
 export const useCoupons = () => {
   return useQuery({
     queryKey: ['wallet', 'coupons'],
-    queryFn: async () => {
-      const response = await apiClient.get<CouponItem[]>('/wallet/coupons');
-      return response.data;
+    queryFn: async (): Promise<CouponItem[]> => {
+      const response = await apiClient.get<{ data: CouponItem[] }>('/wallet/coupons');
+      return (response.data as any)?.data || response.data;
     },
     staleTime: 300000,
   });
@@ -157,11 +159,11 @@ export const useValidateCoupon = () => {
 export const useCurrentSubscription = () => {
   return useQuery({
     queryKey: ['wallet', 'subscription'],
-    queryFn: async () => {
-      const response = await apiClient.get<SubscriptionItem | null>(
+    queryFn: async (): Promise<SubscriptionItem | null> => {
+      const response = await apiClient.get<{ data: SubscriptionItem | null }>(
         '/wallet/subscriptions/current',
       );
-      return response.data;
+      return (response.data as any)?.data || response.data;
     },
     staleTime: 60000,
   });

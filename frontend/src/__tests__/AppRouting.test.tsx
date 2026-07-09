@@ -33,6 +33,17 @@ vi.mock('@/features/collector/pages/CollectorWorkspacePage', () => ({
   ),
 }));
 
+vi.mock('@/common/auth/useAuth', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    isLoading: false,
+    user: { id: 'test-usr', email: 'test@trashhere.com', role: 'ADMIN', fullName: 'Test Admin' },
+    login: vi.fn(),
+    logout: vi.fn(),
+    updateUser: vi.fn(),
+  }),
+}));
+
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {

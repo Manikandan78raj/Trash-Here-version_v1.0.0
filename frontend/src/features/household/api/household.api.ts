@@ -178,9 +178,9 @@ export interface NotificationItem {
 export const useUserProfile = () => {
   return useQuery({
     queryKey: ['user', 'profile'],
-    queryFn: async () => {
-      const response = await apiClient.get<UserProfile>('/users/profile');
-      return response.data;
+    queryFn: async (): Promise<UserProfile> => {
+      const response = await apiClient.get<{ data: UserProfile }>('/users/profile');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 60000, // 1 minute
@@ -193,9 +193,9 @@ export const useUserProfile = () => {
 export const useEcoScore = () => {
   return useQuery({
     queryKey: ['user', 'eco-score'],
-    queryFn: async () => {
-      const response = await apiClient.get<EcoScoreMetrics>('/users/eco-score');
-      return response.data;
+    queryFn: async (): Promise<EcoScoreMetrics> => {
+      const response = await apiClient.get<{ data: EcoScoreMetrics }>('/users/eco-score');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 30000, // 30 seconds
@@ -208,9 +208,9 @@ export const useEcoScore = () => {
 export const useWalletBalance = () => {
   return useQuery({
     queryKey: ['wallet', 'balance'],
-    queryFn: async () => {
-      const response = await apiClient.get<WalletSummary>('/wallet');
-      return response.data;
+    queryFn: async (): Promise<WalletSummary> => {
+      const response = await apiClient.get<{ data: WalletSummary }>('/wallet');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 30000,
@@ -223,9 +223,9 @@ export const useWalletBalance = () => {
 export const useWalletTransactions = () => {
   return useQuery({
     queryKey: ['wallet', 'transactions'],
-    queryFn: async () => {
-      const response = await apiClient.get<WalletTransaction[]>('/wallet/transactions');
-      return response.data;
+    queryFn: async (): Promise<WalletTransaction[]> => {
+      const response = await apiClient.get<{ data: WalletTransaction[] }>('/wallet/transactions');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 30000,
@@ -238,9 +238,9 @@ export const useWalletTransactions = () => {
 export const useNotifications = () => {
   return useQuery({
     queryKey: ['notifications'],
-    queryFn: async () => {
-      const response = await apiClient.get<NotificationItem[]>('/users/notifications');
-      return response.data;
+    queryFn: async (): Promise<NotificationItem[]> => {
+      const response = await apiClient.get<{ data: NotificationItem[] }>('/users/notifications');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     refetchInterval: 10000,
@@ -284,9 +284,9 @@ export const useWasteCategories = () => {
 export const useAddresses = () => {
   return useQuery({
     queryKey: ['user', 'addresses'],
-    queryFn: async () => {
-      const response = await apiClient.get<UserAddress[]>('/users/addresses');
-      return response.data;
+    queryFn: async (): Promise<UserAddress[]> => {
+      const response = await apiClient.get<{ data: UserAddress[] }>('/users/addresses');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 60000,
@@ -341,9 +341,9 @@ export const useDeleteAddress = () => {
 export const useMyPickups = () => {
   return useQuery({
     queryKey: ['pickups', 'my'],
-    queryFn: async () => {
-      const response = await apiClient.get<PickupRequest[]>('/pickups/my');
-      return response.data;
+    queryFn: async (): Promise<PickupRequest[]> => {
+      const response = await apiClient.get<{ data: PickupRequest[] }>('/pickups/my');
+      return (response.data as any)?.data || response.data;
     },
     retry: 2,
     staleTime: 30000,
@@ -430,10 +430,10 @@ export const useCreatePickup = () => {
 export const usePickupById = (id: string | undefined) => {
   return useQuery({
     queryKey: ['pickups', id],
-    queryFn: async () => {
+    queryFn: async (): Promise<PickupRequest> => {
       if (!id) throw new Error('Pickup ID is required');
-      const response = await apiClient.get<PickupRequest>(`/pickups/${id}`);
-      return response.data;
+      const response = await apiClient.get<{ data: PickupRequest }>(`/pickups/${id}`);
+      return (response.data as any)?.data || response.data;
     },
     enabled: !!id,
     retry: 2,
